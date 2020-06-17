@@ -2,6 +2,7 @@ export class HttpService {
   static async get(url) {
     const options = {
       method: 'GET',
+      withCredentials: true,
       headers: HttpService.createHeaders()
     };
     const result = await HttpService.request(url, options);
@@ -11,6 +12,7 @@ export class HttpService {
   static async post(url, data) {   
     const options = {
       method: 'POST',
+      withCredentials: true,
       headers: HttpService.createHeaders(),
       body: JSON.stringify(data)
     };
@@ -32,10 +34,11 @@ export class HttpService {
   static async request(url, options) {  
     try {
       const res = await fetch(url, options);
-      const data = await res.json();
-      if (data.response.status === '401') {
+      if (res.status === '401') {
+        localStorage.removeItem('token');
         // add transition to authorization page
       }
+      const data = await res.json();      
       return data;
     }
     catch(error) {
@@ -44,12 +47,12 @@ export class HttpService {
   }
 
   static createHeaders() {
-    const token = localStorage.getItem('token');
     const myHeaders = new Headers({
-      'Authorization': `Bearer ${token}`,
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     });
+    const token = localStorage.getItem('token');
+    if (token) myHeaders.append('Authorization', `Bearer ${token}`);
     return myHeaders;
   }
 }
