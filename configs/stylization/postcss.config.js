@@ -37,7 +37,7 @@ module.exports = {
     require('postcss-svg')({ dirs: [`${root}/src/img`], svgo: {} }),
     require('postcss-line-height-px-to-unitless')(),
     require('postcss-pxtorem')({
-      propList: ["font", "font-size", "line-height", "letter-spacing"],
+      propList: ['font', 'font-size', 'line-height', 'letter-spacing'],
       rootValue: 16,
       replace: true,
       mediaQuery: false,
