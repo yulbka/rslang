@@ -15,4 +15,29 @@ export const API_USER = {
       }
     }
   },
+  async setUserSettings({ userId, userSettings }) {
+    try {
+      return await requestCreator({
+        url: `/users/${userId}/settings`,
+        method: requestCreator.methods.put,
+        data: userSettings,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  async getUserSettings({ userId }) {
+    try {
+      const { optional, id, ...restResult } = await requestCreator({
+        url: `/users/${userId}/settings`,
+        method: requestCreator.methods.get,
+      });
+      return {
+        ...restResult,
+        ...optional,
+      };
+    } catch (error) {
+      console.error(error);
+    }
+  },
 };
