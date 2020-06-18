@@ -1,0 +1,255 @@
+@import './helpers/variables.scss';
+
+.root-sidebar-burger {
+  border-radius: 4px;
+  height: 50px;
+  left: 20px;
+  position: fixed;
+  top: 20px;
+  width: 50px;
+  z-index: 10;
+}
+
+.root-sidebar-burger span {
+  left: 50%;
+  margin-bottom: 9px;
+  margin-left: -15px;
+  margin-right: -1.5px;
+  margin-top: 9px;
+  position: absolute;
+  top: 50%;
+}
+.root-sidebar-burger span,
+.root-sidebar-burger span::before,
+.root-sidebar-burger span::after {
+  background-color: $colorViolet;
+  display: block;
+  height: 3px;
+  outline: 1px solid transparent;
+  transition-duration: 0.3s;
+  transition-property: background-color, transform;
+  width: 30px;
+}
+.root-sidebar-burger span::before,
+.root-sidebar-burger span::after {
+  content: '';
+  position: absolute;
+}
+.root-sidebar-burger span::before {
+  top: -9px;
+}
+.root-sidebar-burger span::after {
+  top: 9px;
+}
+.root-sidebar.isOpen .root-sidebar-burger span {
+  background-color: transparent;
+  opacity: 0;
+}
+.root-sidebar.isOpen .root-sidebar-burger span::before {
+  transform: translateY(9px) rotate(45deg);
+}
+.root-sidebar.isOpen .root-sidebar-burger span::after {
+  transform: translateY(-9px) rotate(-45deg);
+}
+.root-sidebar.isOpen .root-sidebar-burger span::before,
+.root-sidebar.isOpen .root-sidebar-burger span::after {
+  background-color: $colorWhite;
+  pointer-events: none;
+}
+.root-sidebar-burger:hover {
+  cursor: pointer;
+}
+
+.root-sidebar-navigation {
+  background-color: $colorViolet;
+  height: 100%;
+  left: -876px;
+  max-width: 320px;
+  overflow-y: scroll;
+  padding: 100px 40px 60px 40px;
+  position: fixed;
+  top: 0;
+  transition: transform 0.55s cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  width: 100%;
+  z-index: 9;
+
+  .root-sidebar-innerBurger {
+    border-radius: 4px;
+    height: 50px;
+    left: 20px;
+    position: fixed;
+    top: 20px;
+    width: 50px;
+    z-index: 10;
+  }
+
+  .root-sidebar-innerBurger span,
+  .root-sidebar-innerBurger span::before,
+  .root-sidebar-innerBurger span::after {
+    background-color: $colorWhite;
+    display: block;
+    height: 3px;
+    outline: 1px solid transparent;
+    transition-duration: 0.3s;
+    transition-property: background-color, transform;
+    width: 30px;
+  }
+  .root-sidebar-innerBurger span::before,
+  .root-sidebar-innerBurger span::after {
+    content: '';
+    position: absolute;
+  }
+  .root-sidebar-innerBurger span::before {
+    top: -9px;
+    transform: translateY(9px) rotate(45deg);
+  }
+  .root-sidebar-innerBurger span::after {
+    top: 9px;
+    transform: translateY(-9px) rotate(-45deg);
+  }
+  .root-sidebar-innerBurger:hover {
+    cursor: pointer;
+  }
+}
+
+.root-sidebar-navigation .root-sidebar-innerBurger span {
+  background-color: transparent;
+  left: 50%;
+  margin-bottom: 9px;
+  margin-left: -15px;
+  margin-right: -1.5px;
+  margin-top: 9px;
+  position: absolute;
+  top: 50%;
+}
+
+.root-sidebar.isOpen .root-sidebar-navigation {
+  transform: translateX(876px);
+}
+.root-sidebar.isOpen .root-sidebar-navigation ul.main li {
+  opacity: 1;
+  transform: translateX(0);
+}
+.root-sidebar.isOpen .root-sidebar-navigation ul.main li:nth-child(1) {
+  transition-delay: 0.15s;
+}
+.root-sidebar.isOpen .root-sidebar-navigation ul.main li:nth-child(2) {
+  transition-delay: 0.3s;
+}
+.root-sidebar.isOpen .root-sidebar-navigation ul.main li:nth-child(3) {
+  transition-delay: 0.45s;
+}
+.root-sidebar.isOpen .root-sidebar-navigation ul.main li:nth-child(4) {
+  transition-delay: 0.6s;
+}
+.root-sidebar.isOpen .root-sidebar-navigation ul.main li:nth-child(5) {
+  transition-delay: 0.75s;
+}
+.root-sidebar.isOpen .root-sidebar-navigation ul.main li:nth-child(6) {
+  transition-delay: 0.9s;
+}
+.root-sidebar.isOpen .root-sidebar-navigation ul.main li:nth-child(7) {
+  transition-delay: 1.05s;
+}
+.root-sidebar.isOpen .root-sidebar-navigation ul.main li:nth-child(8) {
+  transition-delay: 1.2s;
+}
+.root-sidebar.isOpen .root-sidebar-navigation ul.main li:nth-child(9) {
+  transition-delay: 1.35s;
+}
+
+.root-sidebar-navigation.isOpen ul.main li:nth-child(6) {
+  transition-delay: 1.35s;
+}
+.root-sidebar-navigation.isOpen ul.main li:nth-child(7) {
+  transition-delay: 1.45s;
+}
+.root-sidebar-navigation.isOpen ul.main li:nth-child(8) {
+  transition-delay: 1.55s;
+}
+.root-sidebar-navigation.isOpen ul.main li:nth-child(9) {
+  transition-delay: 1.65s;
+}
+.root-sidebar.isOpen .root-sidebar-navigation .about,
+.root-sidebar.isOpen .root-sidebar-navigation .social,
+.root-sidebar.isOpen .root-sidebar-navigation ul.team {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 1.8s;
+}
+
+@media (max-width: 400px) {
+  .root-sidebar-navigation {
+    padding: 80px 0 60px 30px;
+  }
+}
+.root-sidebar-navigation ul.main {
+  list-style-type: none;
+  padding-inline-start: 0;
+}
+.root-sidebar-navigation ul.main li {
+  margin-bottom: 10px;
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.3s ease;
+}
+.root-sidebar-navigation ul.main li:last-of-type {
+  margin-bottom: 0;
+}
+.root-sidebar-navigation ul.main li a {
+  color: $colorWhite;
+  display: block;
+  font-family: Roboto, Helvetica, Arial, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 5px;
+  padding: 10px 0;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: opacity 0.3s ease;
+}
+.root-sidebar-navigation ul.main li a span {
+  color: $colorHover;
+}
+.root-sidebar-navigation ul.main li a:hover {
+  color: $colorHover;
+}
+.root-sidebar-navigation .about {
+  margin-top: 40px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s ease;
+}
+.root-sidebar-navigation .about p {
+  color: $colorWhite;
+  font-family: 'Spectral', serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  line-height: 170%;
+}
+
+.root-sidebar-navigation ul.team {
+  list-style-type: none;
+  margin-top: 40px;
+  opacity: 0;
+  padding-inline-start: 0;
+  transform: translateY(30px);
+  transition: opacity 0.4s ease;
+}
+.root-sidebar-navigation ul.team li {
+  margin-bottom: 10px;
+}
+.root-sidebar-navigation ul.team li:last-of-type {
+  margin-bottom: 0;
+}
+.root-sidebar-navigation ul.team li a {
+  color: $colorWhite;
+  font-family: 'Raleway', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+.root-sidebar-navigation ul.team li a:hover {
+  color: $colorHover;
+}
