@@ -9,49 +9,49 @@ export const router = new Navigo(root, useHash, hash);
 
 router
   .on({
-    '/': function f() {
+    '/': () => {
       App.reRender();
     },
-    login: function f() {
+    login: () => {
       App.reRender('login');
     },
-    learn: function f() {
+    learn: () => {
       App.reRender('learn');
     },
-    progress: function f() {
+    progress: () => {
       App.reRender('progress');
     },
-    dictionary: function f() {
+    dictionary: () => {
       App.reRender('dictionary');
     },
-    '/games/speakIt': function f() {
+    '/games/speakIt': () => {
       App.reRender('speakIt');
     },
-    '/games/englishPuzzle': function f() {
+    '/games/englishPuzzle': () => {
       App.reRender('puzzle');
     },
-    '/games/savannah': function f() {
+    '/games/savannah': () => {
       App.reRender('savannah');
     },
-    '/games/audioCall': function f() {
+    '/games/audioCall': () => {
       App.reRender('audioCall');
     },
-    '/games/sprint': function f() {
+    '/games/sprint': () => {
       App.reRender('sprint');
     },
-    '/games/ourGame': function f() {
+    '/games/ourGame': () => {
       // replace route according to name of our game
       App.reRender('ourGame');
     },
-    promo: function f() {
+    promo: () => {
       App.reRender('promo');
     },
-    aboutUs: function f() {
+    aboutUs: () => {
       App.reRender('aboutUs');
     },
   })
   .resolve();
 
-router.notFound(function f() {
+router.notFound(() => {
   router.navigate('/');
 });
