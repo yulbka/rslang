@@ -10,6 +10,8 @@ export async function requestCreator(settings) {
     let url = `${API_HOST}${settings.url}`;
     let body;
 
+    if (!Object.values(requestCreator.methods).includes(settings.method)) throw `${settings.method} is unknown method`;
+
     switch (settings.method) {
       case requestCreator.methods.get: {
         if (settings.data) {
@@ -19,22 +21,23 @@ export async function requestCreator(settings) {
         break;
       }
 
-      case requestCreator.methods.post: {
+      case requestCreator.methods.post:
+      case requestCreator.methods.put: {
         body = JSON.stringify(settings.data);
         break;
       }
 
       default:
-        throw `${settings.method} is unknown method`;
+        break;
     }
 
+    //TODO: need to use separate field in localStorage for all data our application
     const token = localStorage.getItem('token');
-
     const headers = new Headers({
-      Authorization: token ? `Bearer ${token}` : undefined,
       Accept: 'application/json',
       'Content-Type': 'application/json',
     });
+    if (token) headers.append('Authorization', `Bearer ${token}`);
 
     const response = await fetch(url, {
       method: settings.method,
@@ -44,6 +47,10 @@ export async function requestCreator(settings) {
     });
 
     if (!response.ok) throw Error('Something went wrong');
+    if (response.status === 401) {
+      localStorage.removeItem('token');
+      //TODO: add transition to authorization page
+    }
 
     const result = await response.json();
     return result;
@@ -61,6 +68,8 @@ export async function requestCreator(settings) {
 requestCreator.methods = {
   get: 'GET',
   post: 'POST',
+  put: 'PUT',
+  delete: 'DELETE',
 };
 
 function getSearchParams({ initValue, apiParamsMap, params }) {
