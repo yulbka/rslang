@@ -14,10 +14,11 @@
     "postcss-preset-env": "6.7.0",
     "postcss-property-lookup": "2.0.0",
     "postcss-pxtorem": "5.1.1",
-    "postcss-scale": "1.0.1",
     "postcss-selector-matches": "4.0.0",
     "postcss-selector-not": "4.0.0",
     "postcss-svg": "3.0.0",
-    "css-mqpacker": "7.0.0"
+    "postcss-import": "12.0.1",
+    "css-mqpacker": "7.0.0",
+    "cssnano": "4.1.10"
   }
 }
