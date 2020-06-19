@@ -1,6 +1,10 @@
 @import 'helpers/postcss-reset/mobile.css';
 @import 'helpers/variables.scss';
-@import "node_modules/bootstrap/dist/css/bootstrap.min.css";
+@import 'node_modules/bootstrap/dist/css/bootstrap.min.css';
+@import '../../src/components/forms/index.scss';
+@import '../../src/pages/main/index.scss';
 
 .page-home {
+  display: flex;
+  flex-direction: column;
 }
