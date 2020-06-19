@@ -1,5 +1,6 @@
 @import 'helpers/postcss-reset/mobile.css';
-@import 'helpers/variables';
+@import 'helpers/variables.scss';
+@import "node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 .page-home {
 }
