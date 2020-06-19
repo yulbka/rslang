@@ -1,10 +1,9 @@
 import '../css/burger.scss';
-import { createElement } from './helpers/createElement.ts';
-import { linksText, linksTextTeam, hrefs, hrefsTeam } from './helpers/variables';
+import { createElement } from './helpers/createElement';
+import { linksText, linksTextTeam, hrefs, hrefsTeam, SIDEBAR } from './helpers/variables';
 
 export function createSidebar() {
-  const body = document.querySelector('body');
-  const aside = createElement('aside', body, ['root-sidebar']);
+  const aside = createElement('aside', SIDEBAR, ['root-sidebar']);
   const burger = createElement('div', aside, ['root-sidebar-burger']);
   const navigation = createElement('div', aside, ['root-sidebar-navigation']);
   const innerBurger = createElement('div', navigation, ['root-sidebar-innerBurger']);
@@ -28,11 +27,12 @@ export function createSidebar() {
     createElement('a', li, undefined, `${linksTextTeam[index]}`, 'href', `${hrefsTeam[index]}`);
   }
   createElement('span', burger, navigation, ul, about);
-  body.appendChild(aside);
+  SIDEBAR.appendChild(aside);
 
   function toggleBurger() {
     document.querySelector('.root-sidebar').classList.toggle('isOpen');
   }
 
-  document.querySelector('.root-sidebar-burger, .root-sidebar-innerBurger').addEventListener('click', toggleBurger);
+  document.querySelector('.root-sidebar-burger').addEventListener('click', toggleBurger);
+  document.querySelector('.root-sidebar-innerBurger').addEventListener('click', toggleBurger);
 }

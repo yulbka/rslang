@@ -1,3 +1,6 @@
+export const MAIN = document.querySelector('#main');
+export const SIDEBAR = document.querySelector('#sidebar');
+
 export const linksText = [
   'Учи слова',
   'Твой прогресс',
