@@ -1,4 +1,5 @@
 import { SIDEBAR, MAIN } from './constants';
+import { LearnWords } from './learn_words/learnWords';
 
 export class App {
   static reRender(page) {
@@ -7,7 +8,8 @@ export class App {
     } else {
       this.checkSideBar();
     }    
-    MAIN.innerHTML = this.setContent(page);
+    MAIN.innerHTML = '';
+    this.setContent(page);
   }
 
   static checkSideBar() {
@@ -23,7 +25,8 @@ export class App {
       case 'sidebar':  
         return '<div>sidebar</div>'; // replace with function that render sidebar
       case 'learn':
-        return '<div>learn</div>'; // replace with function that render page learn words
+        LearnWords.render();
+        break;
       case 'progress':
         return '<div>progress</div>'; // replace with function that render progress page
       case 'dictionary':
