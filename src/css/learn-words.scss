@@ -1,0 +1,23 @@
+
+.learn-wrapper {
+  position: relative;
+  margin: 0 auto;
+  max-width: 550px;
+}
+
+.card-input {
+  display: inline-flex;
+  box-sizing: content-box;
+  text-align: left;
+}
+
+.card-translate-hidden {
+  display: none;
+}
+
+@media screen and (max-width: 350px) {
+  .card-body .btn-group {
+    flex-direction: column;
+  }
+}
+

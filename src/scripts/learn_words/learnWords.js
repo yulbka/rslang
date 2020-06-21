@@ -1,17 +1,25 @@
 import { createElement } from '../helpers/createElement';
 import { initializeSwiper } from './swiper';
+import { WordService } from '../service/Word.Service';
+import { Card } from './Card';
 
 export class LearnWords {
-  static render() {
+  static async render() {
     const MAIN = document.querySelector('#main');
     const fragment = document.createDocumentFragment();
-    const swiperContainer = createElement('div', fragment, ['swiper-container']);
-    ['swiper-wrapper', 'swiper-button-prev', 'swiper-button-next'].forEach((className) => {
-      createElement('div', swiperContainer, [className]);
-    });     
+    const wrapper = createElement('div', fragment, ['learn-wrapper']);
+    const swiperContainer = createElement('div', wrapper, ['swiper-container']);
+    createElement('div', swiperContainer, ['swiper-wrapper']);
+    ['swiper-button-prev', 'swiper-button-next'].forEach((className) => {
+      createElement('div', wrapper, [className]);
+    });
     MAIN.append(fragment);
     const mySwiper = initializeSwiper('.swiper-container');
-    mySwiper.appendSlide('<div class="swiper-slide">Slide 1</div>')
-    mySwiper.appendSlide('<div class="swiper-slide">Slide 2</div>')
+    const words = await WordService.getWords();
+    console.log(words);
+    words[0].forEach((word) => {
+      const card = new Card(word, true, true, true, true, true, true, true, true).render();
+      mySwiper.appendSlide(card);
+    });
   }
 }
