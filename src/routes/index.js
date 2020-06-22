@@ -1,4 +1,4 @@
-import { App } from '../js/App';
+import { App } from '../scripts/App';
 
 const root = null;
 const useHash = true;
