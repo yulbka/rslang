@@ -42,15 +42,21 @@ export class WordService {
 
   static async getMoreWords() {
     this.page += 1;
-    let newWords = await HttpService.get(`https://afternoon-falls-25894.herokuapp.com/words?page=${this.page}&group=${this.level}`);
+    let newWords = await HttpService.get(
+      `https://afternoon-falls-25894.herokuapp.com/words?page=${this.page}&group=${this.level}`
+    );
     if (!newWords.length) {
       this.level += 1;
       this.page = 0;
-      newWords = await HttpService.get(`https://afternoon-falls-25894.herokuapp.com/words?page=${this.page}&group=${this.level}`);
+      newWords = await HttpService.get(
+        `https://afternoon-falls-25894.herokuapp.com/words?page=${this.page}&group=${this.level}`
+      );
       if (!newWords.length) {
         this.level = 0;
         this.page = 0;
-        newWords = await HttpService.get(`https://afternoon-falls-25894.herokuapp.com/words?page=${this.page}&group=${this.level}`);
+        newWords = await HttpService.get(
+          `https://afternoon-falls-25894.herokuapp.com/words?page=${this.page}&group=${this.level}`
+        );
       }
     }
     this.words.push(newWords);
