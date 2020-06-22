@@ -1,18 +1,60 @@
-
 .learn-wrapper {
   position: relative;
   margin: 0 auto;
   max-width: 550px;
 }
 
+.card-img-top {
+  object-fit: cover;
+}
+
+.card-text span {
+  vertical-align: middle;
+}
+
+.input-container {
+  display: inline-block;
+  position: relative;
+  padding: 0.375rem 0.75rem;
+  height: 24px;
+  box-sizing: content-box;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+
+.word-container {
+  position: absolute;
+  padding: 0.375rem 0.75rem;
+  left: 1px;
+  top: -1.2px;
+}
+
 .card-input {
+  position: absolute;
+  left: 0;
+  top: 0;
   display: inline-flex;
   box-sizing: content-box;
   text-align: left;
+  background: transparent;
+  vertical-align: middle;
 }
 
 .card-translate-hidden {
   display: none;
+}
+
+.letter {
+  opacity: 1;
+}
+
+.letter-hidden {
+  visibility: hidden;
+}
+
+.letter-transparent {
+  opacity: 0.5;
+  transition: opacity 3s;
 }
 
 @media screen and (max-width: 350px) {
@@ -20,4 +62,3 @@
     flex-direction: column;
   }
 }
-

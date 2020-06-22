@@ -3,18 +3,18 @@ export class HttpService {
     const options = {
       method: 'GET',
       withCredentials: true,
-      headers: HttpService.createHeaders()
+      headers: HttpService.createHeaders(),
     };
     const result = await HttpService.request(url, options);
     return result;
   }
 
-  static async post(url, data) {   
+  static async post(url, data) {
     const options = {
       method: 'POST',
       withCredentials: true,
       headers: HttpService.createHeaders(),
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     };
     const result = await HttpService.request(url, options);
     return result;
@@ -25,31 +25,30 @@ export class HttpService {
       method: 'PUT',
       withCredentials: true,
       headers: HttpService.createHeaders(),
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     };
     const result = await HttpService.request(url, options);
     return result;
   }
 
-  static async request(url, options) {  
+  static async request(url, options) {
     try {
       const res = await fetch(url, options);
       if (res.status === '401') {
         localStorage.removeItem('token');
         // add transition to authorization page
       }
-      const data = await res.json();      
+      const data = await res.json();
       return data;
-    }
-    catch(error) {
+    } catch (error) {
       console.log(error);
     }
   }
 
   static createHeaders() {
     const myHeaders = new Headers({
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
     });
     const token = localStorage.getItem('token');
     if (token) myHeaders.append('Authorization', `Bearer ${token}`);

@@ -21,5 +21,51 @@ export class LearnWords {
       const card = new Card(word, true, true, true, true, true, true, true, true).render();
       mySwiper.appendSlide(card);
     });
+    this.inputHandler();
+  }
+
+  static inputHandler() {
+    document.body.addEventListener('change', (event) => {
+      const target = event.target.closest('.card-input');
+      if (!target) return;
+      const mySwiper = document.querySelector('.swiper-container').swiper;
+      const activeSlide = document.querySelector('.swiper-slide-active');
+      const letters = activeSlide.querySelectorAll('.letter-hidden');
+      if (target.value.toLowerCase() === target.dataset.word.toLowerCase()) {
+        mySwiper.allowSlideNext = true;
+        mySwiper.slideNext();
+        mySwiper.allowSlideNext = false;
+      } else {
+        this.hightLightAnswer(target, letters);
+      }
+      target.value = '';
+      target.addEventListener('input', () => {
+        letters.forEach((letter) => {
+          letter.classList.remove('text-success', 'text-warning', 'text-danger', 'letter-transparent');
+          letter.classList.add('letter-hidden');
+        });
+      });
+    });
+  }
+
+  static hightLightAnswer(input, letters) {
+    const activeSlide = document.querySelector('.swiper-slide-active');
+    letters.forEach((letter, index) => {
+      letter.classList.remove('letter-hidden');
+      if (input.value[index] && letter.textContent.toLowerCase() === input.value[index].toLowerCase()) {
+        letter.classList.add('text-success');
+      } else {
+        letter.classList.add('text-warning');
+      }
+    });
+    const wrongs = activeSlide.querySelectorAll('.text-warning');
+    if (wrongs.length > 2) {
+      wrongs.forEach((letter) => {
+        letter.classList.add('text-danger');
+      });
+    }
+    letters.forEach((letter) => {
+      letter.classList.add('letter-transparent');
+    });
   }
 }
