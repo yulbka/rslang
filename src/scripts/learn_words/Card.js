@@ -43,7 +43,6 @@ export class Card {
     } else {
       this.renderInputContainer(sentence, word);
     }
-    createElement('p', sentence, ['card-translate', 'card-translate-hidden'], this.word.wordTranslate);
     const ul = createElement('ul', card, ['list-group', 'list-group-flush']);
     createElement(
       'li',
@@ -100,5 +99,6 @@ export class Card {
       'beforeend',
       `<input class='card-input input-group-text' type='text' data-word='${this.word.word}' style='width: ${example.offsetWidth}px;' autofocus>`
     );
+    createElement('span', inputContainer, ['card-translate', 'card-translate-hidden', 'word-translate'], this.word.wordTranslate);
   }
 }

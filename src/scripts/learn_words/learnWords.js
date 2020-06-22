@@ -64,6 +64,7 @@ export class LearnWords {
     const activeSlide = document.querySelector('.swiper-slide-active');
     const input = activeSlide.querySelector('.card-input');
     const letters = activeSlide.querySelectorAll('.letter-hidden');
+    this.showTranslate();
     if (input.value.toLowerCase() === input.dataset.word.toLowerCase()) {
       this.showAnswer();
       await this.playAudio();
@@ -118,18 +119,8 @@ export class LearnWords {
   }
 
   static async playAudio() {
-    const playList = [];
     const activeSlide = document.querySelector('.swiper-slide-active');
-    const audioWord = activeSlide.querySelector('.audio-word');
-    playList.push(audioWord);
-    const audioExample = activeSlide.querySelector('.audio-example');
-    if (audioExample) {
-      playList.push(audioExample);
-    }
-    const audioMeaning = activeSlide.querySelector('.audio-meaning');
-    if (audioMeaning) {
-      playList.push(audioMeaning);
-    }
+    const playList = activeSlide.querySelectorAll('audio');
     return new Promise((resolve) => {
       playList.forEach((sound, index) => {
         const audio = sound;
@@ -151,5 +142,13 @@ export class LearnWords {
       }); 
     })
     
+  }
+
+  static showTranslate() {
+    const activeSlide = document.querySelector('.swiper-slide-active');
+    const translates = activeSlide.querySelectorAll('.card-translate');
+    translates.forEach((translate) => {
+      translate.classList.remove('card-translate-hidden');
+    })
   }
 }

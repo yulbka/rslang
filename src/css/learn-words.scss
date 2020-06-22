@@ -40,6 +40,15 @@
   vertical-align: middle;
 }
 
+.word-translate {
+  margin: 0;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+
+}
+
 .card-translate-hidden {
   display: none;
 }
