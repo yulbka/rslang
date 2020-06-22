@@ -13,7 +13,6 @@ export class App {
 
   static checkSideBar() {
     if (!SIDEBAR.innerHTML) {
-      SIDEBAR.innerHTML = '';
       createSidebar();
     }
   }

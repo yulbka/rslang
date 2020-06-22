@@ -1,3 +1,5 @@
+import { router } from '../../routes/index';
+
 export class HttpService {
   static async get(url) {
     const options = {
@@ -36,7 +38,7 @@ export class HttpService {
       const res = await fetch(url, options);
       if (res.status === '401') {
         localStorage.removeItem('token');
-        // add transition to authorization page
+        router.navigate('login');
       }
       const data = await res.json();
       return data;

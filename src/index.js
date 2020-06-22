@@ -1,6 +1,6 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import './css/index.scss';
-import { App } from './scripts/App';
+import { router } from './routes/index';
 
-App.reRender();
+router.navigate('/');
