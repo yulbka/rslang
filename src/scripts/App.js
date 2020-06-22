@@ -1,4 +1,5 @@
-import { SIDEBAR, MAIN } from './constants';
+import { SIDEBAR, MAIN } from './helpers/variables';
+import { createSidebar } from './burger';
 import { Authorization } from './Authorization';
 
 export class App {
@@ -25,7 +26,7 @@ export class App {
         Authorization.render(content);
         break;
       case 'sidebar':
-        SIDEBAR.innerHTML = '<div>sidebar</div>'; // replace with function that render sidebar
+        createSidebar();
         break;
       case 'learn':
         MAIN.innerHTML = '<div>learn</div>'; // replace with function that render page learn words
