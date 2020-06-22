@@ -1,5 +1,5 @@
 import { SIDEBAR, MAIN } from './constants';
-import { LearnWords } from './learn_words/LearnWords';
+import { LearnWords } from './learn_words/learnWords';
 
 export class App {
   static reRender(page) {

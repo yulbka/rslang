@@ -22,30 +22,60 @@ export class LearnWords {
       mySwiper.appendSlide(card);
     });
     this.inputHandler();
+    this.showAnswerHandler();
   }
 
   static inputHandler() {
-    document.body.addEventListener('change', (event) => {
+    const learnPage = document.querySelector('.learn-wrapper');
+    learnPage.addEventListener('keydown', (event) => {
       const target = event.target.closest('.card-input');
+      if (!target) return;
+      if(event.keyCode === 13) {
+        this.checkAnswer();
+      }     
+    });
+    learnPage.addEventListener('click', (event) => {
+      const target = event.target.closest('.swiper-button-next');
       if (!target) return;
       const mySwiper = document.querySelector('.swiper-container').swiper;
       const activeSlide = document.querySelector('.swiper-slide-active');
-      const letters = activeSlide.querySelectorAll('.letter-hidden');
-      if (target.value.toLowerCase() === target.dataset.word.toLowerCase()) {
+      const input = activeSlide.querySelector('.card-input');
+      if (input.hasAttribute('readonly')) {
         mySwiper.allowSlideNext = true;
-        mySwiper.slideNext();
-        mySwiper.allowSlideNext = false;
       } else {
-        this.hightLightAnswer(target, letters);
-      }
-      target.value = '';
-      target.addEventListener('input', () => {
+        mySwiper.allowSlideNext = false;
+        this.checkAnswer();
+      }      
+    });
+  }
+
+  static showAnswerHandler() {
+    const learnPage = document.querySelector('.learn-wrapper');
+    learnPage.addEventListener('click', (event) => {
+      const target = event.target.closest('.show-answer');
+      if (!target) return;
+      this.showAnswer();
+      this.goToNextCard();
+    });
+  }
+
+  static checkAnswer() {
+    const activeSlide = document.querySelector('.swiper-slide-active');
+    const input = activeSlide.querySelector('.card-input');
+    const letters = activeSlide.querySelectorAll('.letter-hidden');
+    if (input.value.toLowerCase() === input.dataset.word.toLowerCase()) {
+      this.showAnswer();
+      this.goToNextCard();
+    } else {
+      this.hightLightAnswer(input, letters);
+      input.addEventListener('input', () => {
         letters.forEach((letter) => {
           letter.classList.remove('text-success', 'text-warning', 'text-danger', 'letter-transparent');
           letter.classList.add('letter-hidden');
         });
       });
-    });
+    }
+    input.value = '';
   }
 
   static hightLightAnswer(input, letters) {
@@ -67,5 +97,20 @@ export class LearnWords {
     letters.forEach((letter) => {
       letter.classList.add('letter-transparent');
     });
+  }
+
+  static showAnswer() {    
+    const activeSlide = document.querySelector('.swiper-slide-active');
+    const input = activeSlide.querySelector('.card-input');
+    const letters = activeSlide.querySelectorAll('.letter-hidden');
+    letters.forEach((letter) => letter.classList.remove('letter-hidden'));
+    input.setAttribute('readonly', '');
+  }
+
+  static goToNextCard() {
+    const mySwiper = document.querySelector('.swiper-container').swiper;
+    mySwiper.allowSlideNext = true;
+    mySwiper.slideNext();
+    mySwiper.allowSlideNext = false;
   }
 }

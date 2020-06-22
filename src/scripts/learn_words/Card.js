@@ -77,7 +77,7 @@ export class Card {
     const footer = createElement('div', card, ['card-body']);
     const controls = createElement('div', footer, ['btn-group'], '', 'role', 'group');
     if (this.withAnswer) {
-      createElement('button', controls, ['btn', 'btn-light'], 'Показать ответ');
+      createElement('button', controls, ['btn', 'btn-light', 'show-answer'], 'Показать ответ');
     }
     if (this.withDelete) {
       createElement('button', controls, ['btn', 'btn-light'], 'Удалить');
