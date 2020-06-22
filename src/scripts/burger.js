@@ -1,6 +1,6 @@
 import '../css/burger.scss';
 import { createElement } from './helpers/createElement';
-import { linksText, linksTextTeam, hrefs, hrefsTeam, SIDEBAR } from './helpers/variables';
+import { SIDEBAR, routesMap } from './helpers/variables';
 
 export function createSidebar() {
   const aside = createElement('aside', SIDEBAR, ['root-sidebar']);
@@ -16,16 +16,12 @@ export function createSidebar() {
     undefined,
     'RS Lang – приложение для изучения иностранных слов с методикой интервального повторения, отслеживанием индивидуального прогресса и мини-играми.'
   );
-  const ulteam = createElement('ul', navigation, ['team']);
 
-  for (let index = 0; index < hrefs.length; index++) {
+  for (const value of routesMap.values()) {
     const li = createElement('li', ul);
-    createElement('a', li, undefined, `${linksText[index]}`, 'href', `${hrefs[index]}`);
+    createElement('a', li, undefined, value.title, 'href', value.url);
   }
-  for (let index = 0; index < hrefsTeam.length; index++) {
-    const li = createElement('li', ulteam);
-    createElement('a', li, undefined, `${linksTextTeam[index]}`, 'href', `${hrefsTeam[index]}`);
-  }
+
   createElement('span', burger, navigation, ul, about);
   SIDEBAR.appendChild(aside);
 
