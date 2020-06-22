@@ -1,7 +1,7 @@
-import { MAIN } from './constants';
+import { MAIN } from './helpers/variables';
 import { createElement } from './helpers/createElement';
 import { validatePassword } from './helpers/validatePassword';
-import { App } from './App';
+import { router } from '../routes/index';
 import { HttpService } from './service/HttpClient.Service';
 export class Authorization {
   static render(type = 'login') {
@@ -42,7 +42,7 @@ export class Authorization {
   static linkHandler() {
     const link = document.querySelector('.authorization-link');
     link.addEventListener('click', () => {
-      App.reRender(link.dataset.type);
+      router.navigate(link.dataset.type);
     });
   }
 
@@ -72,8 +72,17 @@ export class Authorization {
     const message = document.querySelector('.invalid-feedback-email');
     const url = 'https://afternoon-falls-25894.herokuapp.com/users';
     const user = await HttpService.post(url, { email: email.value, password: password.value });
-    if (user === 'user with this e-mail exists') {
-      message.textContent = 'пользователь с таким e-mail уже существует';
+    if (typeof user === 'number') {
+      switch (user) {
+        case 417:
+          message.textContent = 'Пользователь с таким e-mail уже существует';
+          break;
+        case 422:
+          message.textContent = 'Необходимо ввести валидный e-mai';
+          break;
+        default:
+          message.textContent = 'Что-то пошло не так';
+      }
       email.classList.add('is-invalid');
     } else {
       this.loginUser(email, password);
@@ -87,7 +96,7 @@ export class Authorization {
     if (user.message === 'Authenticated') {
       localStorage.setItem('token', user.token);
       localStorage.setItem('userId', user.userId);
-      App.reRender();
+      router.navigate('/');
     } else {
       message.textContent = 'Неверный e-mail или пароль';
       password.classList.add('is-invalid');

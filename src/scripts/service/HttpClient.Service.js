@@ -41,9 +41,7 @@ export class HttpService {
         router.navigate('login');
       }
       if (!res.ok) {
-        return res.text().then((text) => {
-          return text;
-        });
+        return res.status;
       }
       const data = await res.json();
       return data;
