@@ -1,6 +1,8 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import './css/index.scss';
+
+import { router } from './routes/index';
 import { store } from './store';
 import { API_USER } from './api/user';
 
@@ -37,3 +39,6 @@ import { API_USER } from './api/user';
 
   console.log('usr', { ...store });
 })();
+
+router.navigate('/');
+
