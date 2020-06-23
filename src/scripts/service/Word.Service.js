@@ -62,4 +62,5 @@ export class WordService {
     this.words.push(newWords);
     return newWords;
   }
+
 }
