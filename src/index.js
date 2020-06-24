@@ -5,15 +5,26 @@ import './css/index.scss';
 import { router } from './routes/index';
 import { store } from './store';
 import { API_USER } from './api/user';
+import { PRELOADER } from './scripts/helpers/variables';
+
+API_USER.getUser({ userId: localStorage.getItem('userId') })
+  .then((data) => {
+    if (data) {
+      router.navigate('/');
+    }
+  })
+  .finally(() => PRELOADER.classList.add('preload-wrapper-hidden'));
 
 //example
+
 (async () => {
   const [user, userSettings] = await Promise.all([
-    API_USER.getUser({ userId: '5eea492edffad00017faa81c' }),
+    API_USER.getUser({ userId: store.user.auth.userId }),
     API_USER.getUserSettings({
-      userId: '5eea492edffad00017faa81c',
+      userId: store.user.auth.userId,
     }),
   ]);
+  console.log(user);
 
   Object.entries(user).forEach(([key, value]) => {
     store.user.auth[key] = value;
@@ -39,14 +50,3 @@ import { API_USER } from './api/user';
 
   console.log('usr', { ...store });
 })();
-
-<<<<<<< HEAD
-if (localStorage.getItem('token')) {
-  router.navigate('/');
-} else {
-  router.navigate('login');
-}
-=======
-router.navigate('/');
-
->>>>>>> develop

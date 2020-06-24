@@ -2,7 +2,10 @@ import { MAIN } from './helpers/variables';
 import { createElement } from './helpers/createElement';
 import { validatePassword } from './helpers/validatePassword';
 import { router } from '../routes/index';
-import { HttpService } from './service/HttpClient.Service';
+import { requestCreator } from '../utils/requests';
+import { API_USER } from '../api/user';
+import { store } from '../store';
+
 export class Authorization {
   static render(type = 'login') {
     const fragment = document.createDocumentFragment();
@@ -69,33 +72,53 @@ export class Authorization {
   }
 
   static async registerUser(email, password) {
-    const message = document.querySelector('.invalid-feedback-email');
-    const url = 'https://afternoon-falls-25894.herokuapp.com/users';
-    const user = await HttpService.post(url, { email: email.value, password: password.value });
-    if (typeof user === 'number') {
-      switch (user) {
-        case 417:
+    try {
+      await requestCreator({
+        url: '/users',
+        method: requestCreator.methods.post,
+        data: { email: email.value, password: password.value },
+      });
+      await this.loginUser(email, password);
+      const { wordsPerDay, ...restSettings } = store.user.learning;
+      await API_USER.setUserSettings({
+        userId: localStorage.getItem('userId'),
+        userSettings: {
+          wordsPerDay,
+          optional: restSettings,
+        },
+      });
+      // TODO: add initial statistic
+    } catch (error) {
+      const message = document.querySelector('.invalid-feedback-email');
+      switch (error.message) {
+        case '417':
           message.textContent = 'Пользователь с таким e-mail уже существует';
           break;
-        case 422:
+        case '422':
           message.textContent = 'Необходимо ввести валидный e-mai';
           break;
         default:
           message.textContent = 'Что-то пошло не так';
       }
       email.classList.add('is-invalid');
-    } else {
-      this.loginUser(email, password);
     }
   }
 
   static async loginUser(email, password) {
     const message = document.querySelector('.invalid-feedback-password');
-    const url = 'https://afternoon-falls-25894.herokuapp.com/signin';
-    const user = await HttpService.post(url, { email: email.value, password: password.value });
+    const user = await requestCreator({
+      url: '/signin',
+      method: requestCreator.methods.post,
+      data: { email: email.value, password: password.value },
+    });
     if (user.message === 'Authenticated') {
       localStorage.setItem('token', user.token);
       localStorage.setItem('userId', user.userId);
+      store.user.auth = {
+        ...store.user.auth,
+        email: email.value,
+        password: password.value,
+      };
       router.navigate('/');
     } else {
       message.textContent = 'Неверный e-mail или пароль';
