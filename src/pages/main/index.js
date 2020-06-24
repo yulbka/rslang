@@ -104,3 +104,27 @@ export function createSettingsBlock() {
     }
   });
 }
+
+export function createButtonToLearningWords() {
+  constants.DOM.main.insertAdjacentHTML('beforeend', `<button class="btn btn-info">Перейти к изучению слов</button>`);
+}
+
+export function createBlockWithGames({ gamesData }) {
+  console.log(gamesData);
+  constants.DOM.main.insertAdjacentHTML(
+    'afterbegin',
+    `
+        <section class="previews-container">
+           ${gamesData
+             .map(
+               (game) =>
+                 `<div class="preview-block">
+                <p>${game.title}</p>
+                <img src="${game.preview}"/>
+            </div>`
+             )
+             .join('')}
+        </section>
+        `
+  );
+}
