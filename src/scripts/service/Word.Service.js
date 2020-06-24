@@ -62,4 +62,48 @@ export class WordService {
     this.words.push(newWords);
     return newWords;
   }
+
+  static async getAllUserWords() {
+    const url = `https://afternoon-falls-25894.herokuapp.com/users/${localStorage.getItem('userId')}/words`;
+    const words = await HttpService.get(url);
+    console.log(words);
+    return words;
+  }
+
+  static async getUserWord(wordId) {
+    const url = `https://afternoon-falls-25894.herokuapp.com/users/${localStorage.getItem('userId')}/words/${wordId}`;
+    const word = await HttpService.get(url);
+    console.log(word);
+    return word;
+  }
+
+  static async createUserWord(wordId, difficulty, category, nextDayRepeat, mistakeCount, progressCount) {
+    const url = `https://afternoon-falls-25894.herokuapp.com/users/${localStorage.getItem('userId')}/words/${wordId}`;
+    const word = {
+      "difficulty": difficulty, // weak, hard, normal, easy
+      "optional": {
+        "category": category, // learned, deleted, difficult
+        "nextDayRepeat": nextDayRepeat,
+        "mistakeCount": mistakeCount,
+        "progressCount": progressCount // if mistake -1, if correct +1, >= 0
+      }
+    }
+    const result = await HttpService.post(url, word );
+    console.log(result);
+  }
+
+  static async updateUserWord(wordId, difficulty, updatedFields) {
+    const url = `https://afternoon-falls-25894.herokuapp.com/users/${localStorage.getItem('userId')}/words/${wordId}`;
+    const word = await this.getUserWord(wordId);
+    const { optional } = word;
+    const result = await HttpService.put(url, { 
+      "difficulty": difficulty,
+      "optional": {
+        ...updatedFields,
+        ...optional,
+      }
+     });
+     console.log(result);
+  }
+
 }
