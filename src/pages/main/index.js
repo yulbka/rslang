@@ -85,6 +85,19 @@ export function createSettingsBlock() {
 
   userSettingsForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    (function validateShowInCards() {
+      const requiredFieldsBlock = userSettingsForm.querySelector('.block-with-required-field');
+      const fields = requiredFieldsBlock.querySelectorAll('.is-required-field');
+      const errorBlock = requiredFieldsBlock.querySelector('.error-message');
+      const hasSomeoneChecked = Array.from(fields).some((el) => el.checked);
+      if (!hasSomeoneChecked) {
+        errorBlock.classList.add('active');
+        throw Error;
+      } else {
+        errorBlock.classList.remove('active');
+      }
+    })();
+
     const { wordsPerDay, ...restFormData } = getFormData({ form: userSettingsForm });
     try {
       const newSettings = await API_USER.setUserSettings({
