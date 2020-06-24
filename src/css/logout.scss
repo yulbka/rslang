@@ -1,0 +1,19 @@
+.header {
+  padding: $space-xxs;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  background-color: $colorViolet;
+}
+
+.logout {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: $space-xs;
+  width: $space-md;
+  height:  $space-md;
+  background: url('../assets/images/logout.png') no-repeat;
+  background-size: cover;
+  cursor: pointer;
+}

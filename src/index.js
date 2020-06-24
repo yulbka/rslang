@@ -3,25 +3,25 @@ import 'regenerator-runtime/runtime';
 import './css/index.scss';
 
 import { router } from './routes/index';
-import { store } from './store';
-import { API_USER } from './api/user';
+// import { store } from './store';
+// import { API_USER } from './api/user';
 
 //example
-(async () => {
-  const [user, userSettings] = await Promise.all([
-    API_USER.getUser({ userId: '5eea492edffad00017faa81c' }),
-    API_USER.getUserSettings({
-      userId: '5eea492edffad00017faa81c',
-    }),
-  ]);
+// (async () => {
+//   const [user, userSettings] = await Promise.all([
+//     API_USER.getUser({ userId: '5eea492edffad00017faa81c' }),
+//     API_USER.getUserSettings({
+//       userId: '5eea492edffad00017faa81c',
+//     }),
+//   ]);
 
-  Object.entries(user).forEach(([key, value]) => {
-    store.user.auth[key] = value;
-  });
+//   Object.entries(user).forEach(([key, value]) => {
+//     store.user.auth[key] = value;
+//   });
 
-  Object.entries(userSettings).forEach(([key, value]) => {
-    store.user.learning[key] = value;
-  });
+//   Object.entries(userSettings).forEach(([key, value]) => {
+//     store.user.learning[key] = value;
+//   });
 
   /*API_USER.setUserSettings({
         userId: '5eea492edffad00017faa81c',
@@ -37,8 +37,8 @@ import { API_USER } from './api/user';
         }
     });*/
 
-  console.log('usr', { ...store });
-})();
+//   console.log('usr', { ...store });
+// })();
 
 router.navigate('/');
 

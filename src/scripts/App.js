@@ -1,14 +1,18 @@
-import { SIDEBAR, MAIN } from './helpers/variables';
+import { SIDEBAR, MAIN, LOGOUT } from './helpers/variables';
 import { createSidebar } from './burger';
+import { createLogout } from './logout';
 
 export class App {
   static reRender(page) {
-    if (page === 'login') {
+    if (page === 'login' || page === 'registration') {
       SIDEBAR.innerHTML = '';
+      LOGOUT.innerHTML = '';
     } else {
       this.checkSideBar();
+      this.checkLogout();
     }
-    MAIN.innerHTML = this.setContent(page);
+    MAIN.innerHTML = '';
+    this.setContent(page);
   }
 
   static checkSideBar() {
@@ -17,12 +21,16 @@ export class App {
     }
   }
 
+  static checkLogout() {
+    if (!LOGOUT.innerHTML) {
+      createLogout();
+    }
+  }
+
   static setContent(content) {
     switch (content) {
       case 'login':
-        return '<div>login</div>'; // replace with function that render authorization page
-      case 'sidebar':
-        return '<div>sidebar</div>'; // replace with function that render sidebar
+        return '<div>login</div>'; // replace with function that render authorization page      
       case 'learn':
         return '<div>learn</div>'; // replace with function that render page learn words
       case 'progress':
