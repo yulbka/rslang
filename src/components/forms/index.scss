@@ -1,6 +1,62 @@
 .rs-form {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.7em;
+  border-radius: $borderRadius5;
 }
 
-.rs-field-error:empty {
-  display: none;
+.rs-form-field {
+  --margin: 10px;
+  display: flex;
+  align-items: center;
+  width: 45%;
+  border-radius: $borderRadius5;
+  padding: 10px 10px 10px 40px;
+  margin: var(--margin);
+  background-color: $colorGrayLight;
+}
+
+.option-block {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 20px;
+  border-radius: 5px;
+  background-color: $colorWhite;
+  box-shadow: 0 0 0.125rem 0 $colorGrayTransparent1, 0 0.125rem 0.25rem 0 $colorGrayTransparent1;
+
+  & > h6 {
+    width: 100%;
+    margin: 10px;
+  }
+
+  & + & {
+    margin-top: 30px;
+  }
+}
+
+.block-with-required-field {
+  .error-message {
+    display: none;
+
+    &.active {
+      display: block;
+    }
+  }
+}
+
+.custom-control-label {
+  &::before,
+  &::after {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.settings-buttons-block {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin-top: 30px;
 }
