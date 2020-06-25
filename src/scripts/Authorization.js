@@ -1,6 +1,6 @@
 import { MAIN } from './helpers/variables';
 import { createElement } from './helpers/createElement';
-import { validatePassword } from './helpers/validatePassword';
+import { validatePassword, validateEmail } from './helpers/validate';
 import { router } from '../routes/index';
 import { requestCreator } from '../utils/requests';
 import { API_USER } from '../api/user';
@@ -14,7 +14,9 @@ export class Authorization {
     const formGroup1 = createElement('div', form, ['form-group', 'is-invalid']);
     createElement('label', formGroup1, [], 'Email', 'for', 'email');
     const email = createElement('input', formGroup1, ['form-control'], '', 'required', '');
-    ['id', 'type'].forEach((attr) => email.setAttribute(`${attr}`, 'email'));
+    email.id = 'email';
+    email.type = 'text';
+    createElement('div', formGroup1, ['invalid-feedback', 'invalid-feedback-email']);
     createElement('div', formGroup1, ['invalid-feedback', 'invalid-feedback-email']);
     const formGroup2 = createElement('div', form, ['form-group']);
     createElement('label', formGroup2, [], 'Пароль', 'for', 'password');
@@ -54,16 +56,27 @@ export class Authorization {
     const submit = document.querySelector('.authorization__submit');
     form.addEventListener('submit', (event) => {
       event.preventDefault();
-      const message = document.querySelector('.invalid-feedback-password');
       const { email, password } = form.elements;
       if (submit.dataset.type === 'signIn') {
         this.loginUser(email, password);
       }
       if (submit.dataset.type === 'signUp') {
-        if (!validatePassword(password.value)) {
-          message.textContent =
-            'Пароль должен содержать не менее 8 символов, как минимум 1 прописную букву, 1 заглавную букву, 1 цифру и 1 спецсимвол +-_@$!%*?&#.,;:[]{}';
-          password.classList.add('is-invalid');
+        const emailMessage = document.querySelector('.invalid-feedback-email');
+        const passwordMessage = document.querySelector('.invalid-feedback-password');
+        emailMessage.textContent = '';
+        passwordMessage.textContent = '';
+        email.classList.remove('is-invalid');
+        password.classList.remove('is-invalid');
+        if (!validateEmail(email.value) || !validatePassword(password.value)) {
+          if (!validatePassword(password.value)) {          
+            passwordMessage.textContent =
+              'Пароль должен содержать не менее 8 символов, как минимум 1 прописную букву, 1 заглавную букву, 1 цифру и 1 спецсимвол +-_@$!%*?&#.,;:[]{}';
+            password.classList.add('is-invalid');
+          }
+          if (!validateEmail(email.value)) {          
+            emailMessage.textContent = 'Необходимо ввести валидный e-mai';
+            email.classList.add('is-invalid');
+          }        
         } else {
           this.registerUser(email, password);
         }
@@ -89,29 +102,31 @@ export class Authorization {
       });
       // TODO: add initial statistic
     } catch (error) {
-      const message = document.querySelector('.invalid-feedback-email');
+      const emailMessage = document.querySelector('.invalid-feedback-email');
+      const passwordMessage = document.querySelector('.invalid-feedback-password');
       switch (error.message) {
         case '417':
-          message.textContent = 'Пользователь с таким e-mail уже существует';
+          emailMessage.textContent = 'Пользователь с таким e-mail уже существует';
           break;
         case '422':
-          message.textContent = 'Необходимо ввести валидный e-mai';
+          passwordMessage.textContent = 'Неверный e-mail или пароль';
+          password.classList.add('is-invalid');
           break;
         default:
-          message.textContent = 'Что-то пошло не так';
+          passwordMessage.textContent = 'Что-то пошло не так';
+          password.classList.add('is-invalid');
       }
       email.classList.add('is-invalid');
     }
   }
 
   static async loginUser(email, password) {
-    const message = document.querySelector('.invalid-feedback-password');
-    const user = await requestCreator({
-      url: '/signin',
-      method: requestCreator.methods.post,
-      data: { email: email.value, password: password.value },
-    });
-    if (user.message === 'Authenticated') {
+    try {
+      const user = await requestCreator({
+        url: '/signin',
+        method: requestCreator.methods.post,
+        data: { email: email.value, password: password.value },
+      });      
       localStorage.setItem('token', user.token);
       localStorage.setItem('userId', user.userId);
       store.user.auth = {
@@ -120,8 +135,18 @@ export class Authorization {
         password: password.value,
       };
       router.navigate('/');
-    } else {
-      message.textContent = 'Неверный e-mail или пароль';
+    } catch (error) {
+      const message = document.querySelector('.invalid-feedback-password');
+      switch(error.message) {
+        case '404':
+          message.textContent = 'Пользователь не найден';
+          break;
+        case '403':
+          message.textContent = 'Неверный e-mail или пароль';
+          break;
+        default:
+          message.textContent = 'Что-то пошло не так';
+      }
       password.classList.add('is-invalid');
       email.classList.add('is-invalid');
     }
