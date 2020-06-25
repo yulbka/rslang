@@ -9,8 +9,8 @@ export const userSettings = {
   auth: {
     email: null,
     password: null,
-    token: null,
-    userId: null,
+    token: localStorage.getItem('token'),
+    userId: localStorage.getItem('userId'),
   },
   learning: {
     wordsPerDay: 50,

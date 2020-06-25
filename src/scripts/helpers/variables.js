@@ -1,5 +1,6 @@
 export const MAIN = document.querySelector('#main');
 export const SIDEBAR = document.querySelector('#sidebar');
+export const PRELOADER = document.querySelector('.preload-wrapper');
 
 export const routesMap = new Map([
   ['game1', { url: '#0', title: 'Учи слова' }],
