@@ -16,5 +16,5 @@ export function createLogout() {
   logoutBtn.addEventListener('click', () => {
     localStorage.removeItem('token');
     router.navigate('login');
-  })
+  });
 }

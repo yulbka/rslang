@@ -48,6 +48,5 @@ API_USER.getUser({ userId: localStorage.getItem('userId') })
         }
     });*/
 
-
   console.log('usr', { ...store });
 })();
