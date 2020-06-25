@@ -27,6 +27,7 @@ module.exports = {
     radix: ['error', 'as-needed'],
     'spaced-comment': 0,
     'new-cap': 1,
+    'global-require': 0,
     'import/no-extraneous-dependencies': 0, //because of Yarn Workspaces
     'import/prefer-default-export': 0,
     'import/no-cycle': 0,

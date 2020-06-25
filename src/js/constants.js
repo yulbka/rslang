@@ -6,5 +6,11 @@ export const constants = {
     get userSettingsForm() {
       return document.forms.userSettings;
     },
+    get rootContainer() {
+      return document.getElementById('root');
+    },
+    get main() {
+      return document.querySelector('#main');
+    },
   },
 };

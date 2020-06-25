@@ -2,13 +2,15 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import './css/index.scss';
 import { API_USER } from './api/user';
-import { createSettingsBlock } from './pages/main';
+import { createSettingsBlock, createButtonToLearningWords, createBlockWithGames } from './pages/main';
 import { store } from './store';
+import { gamesMap } from './scripts/helpers/variables';
 
 window.onload = async () => {
   await initRequests();
-
+  createButtonToLearningWords();
   createSettingsBlock();
+  createBlockWithGames({ gamesData: gamesMap });
 };
 
 async function initRequests() {
