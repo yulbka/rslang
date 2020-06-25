@@ -2,8 +2,9 @@ import { API_USER } from 'api/user';
 import { store } from 'store';
 import { constants } from 'js/constants';
 import { getFormData, setFormData } from 'components/forms';
+import { gamesMap } from "scripts/helpers/variables";
 
-export function createSettingsBlock() {
+function createSettingsBlock() {
   document.body.classList.add('main-page');
   constants.DOM.main.classList.add('container', 'main-page-container');
   constants.DOM.main.insertAdjacentHTML(
@@ -117,14 +118,14 @@ export function createSettingsBlock() {
   });
 }
 
-export function createButtonToLearningWords() {
+function createButtonToLearningWords() {
   constants.DOM.main.insertAdjacentHTML(
     'beforeend',
     `<button class="btn btn-info button-to-learning">Перейти к изучению слов</button>`
   );
 }
 
-export function createBlockWithGames({ gamesData }) {
+function createBlockWithGames({ gamesData }) {
   constants.DOM.main.insertAdjacentHTML(
     'afterbegin',
     `
@@ -141,4 +142,10 @@ export function createBlockWithGames({ gamesData }) {
         </section>
         `
   );
+}
+
+export function pageHomeCreate() {
+  createButtonToLearningWords();
+  createSettingsBlock();
+  createBlockWithGames({ gamesData: gamesMap });
 }

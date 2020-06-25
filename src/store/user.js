@@ -13,14 +13,17 @@ export const userSettings = {
     userId: localStorage.getItem('userId'),
   },
   learning: {
-    wordsPerDay: 50,
-    newWordsPerDay: 50, //<= wordsPerDay
+    wordsPerDay: 150,
+    cardsPerDay: 150,
     withTranslation: true,
     withExplanation: false,
     withExample: false,
     withTranscription: true,
-    withHelpImage: true,
+    withHelpImage: false,
+    deleteWord: true,
+    hardWord: false,
     showAnswerButton: false,
+    autoplay: false,
   },
   // ...userExample,
 };
