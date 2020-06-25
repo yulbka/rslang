@@ -1,11 +1,53 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import './css/index.scss';
-import { App } from './scripts/App';
-import { WordService } from './scripts/service/Word.Service';
+import { router } from './routes/index';
+import { store } from './store';
+import { API_USER } from './api/user';
+import { PRELOADER } from './scripts/helpers/variables';
 
-App.reRender('learn');
+API_USER.getUser({ userId: localStorage.getItem('userId') })
+  .then((data) => {
+    if (data) {
+      router.navigate('/');
+    }
+  })
+  .finally(() => PRELOADER.classList.add('preload-wrapper-hidden'));
 
-WordService.getAllUserWords();
+//example
 
-WordService.createUserWord('5e9f5ee35eb9e72bc21af4a1', 'easy', 'learned', '30.06.2020', '0', '1');
+(async () => {
+  const [user, userSettings] = await Promise.all([
+    API_USER.getUser({ userId: store.user.auth.userId }),
+    API_USER.getUserSettings({
+      userId: store.user.auth.userId,
+    }),
+  ]);
+  console.log(user);
+
+  Object.entries(user).forEach(([key, value]) => {
+    store.user.auth[key] = value;
+  });
+
+  Object.entries(userSettings).forEach(([key, value]) => {
+    store.user.learning[key] = value;
+  });
+
+  /*API_USER.setUserSettings({
+        userId: '5eea492edffad00017faa81c',
+        userSettings: {
+            "wordsPerDay": 551,  // must be less than or equal to 1000
+            "optional": {
+                "translation": true,
+                "withExplanation": false,
+                "withExample": false,
+                "transcription": true,
+                "image": false
+            }
+        }
+    });*/
+
+  console.log('usr', { ...store });
+})();
+
+router.navigate('learn');

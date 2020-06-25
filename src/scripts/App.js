@@ -1,9 +1,11 @@
-import { SIDEBAR, MAIN } from './constants';
+import { SIDEBAR, MAIN } from './helpers/variables';
+import { createSidebar } from './burger';
+import { Authorization } from './Authorization';
 import { LearnWords } from './learn_words/learnWords';
 
 export class App {
   static reRender(page) {
-    if (page === 'login') {
+    if (page === 'login' || page === 'registration') {
       SIDEBAR.innerHTML = '';
     } else {
       this.checkSideBar();
@@ -14,41 +16,54 @@ export class App {
 
   static checkSideBar() {
     if (!SIDEBAR.innerHTML) {
-      SIDEBAR.innerHTML = this.setContent('sidebar');
+      this.setContent('sidebar');
     }
   }
 
   static setContent(content) {
     switch (content) {
       case 'login':
-        return '<div>login</div>'; // replace with function that render authorization page
+      case 'registration':
+        Authorization.render(content);
+        break;
       case 'sidebar':
-        return '<div>sidebar</div>'; // replace with function that render sidebar
+        createSidebar();
+        break;
       case 'learn':
         LearnWords.render();
         break;
       case 'progress':
-        return '<div>progress</div>'; // replace with function that render progress page
+        MAIN.innerHTML = '<div>progress</div>'; // replace with function that render progress page
+        break;
       case 'dictionary':
-        return '<div>dictionary</div>'; // replace with function that render dictionary page
+        MAIN.innerHTML = '<div>dictionary</div>'; // replace with function that render dictionary page
+        break;
       case 'speakIt':
-        return '<div>speakIt</div>'; // replace with function that render speakIt mini-game page
+        MAIN.innerHTML = '<div>speakIt</div>'; // replace with function that render speakIt mini-game page
+        break;
       case 'puzzle':
-        return '<div>puzzle</div>'; // replace with function that render puzzle mini-game page
+        MAIN.innerHTML = '<div>puzzle</div>'; // replace with function that render puzzle mini-game page
+        break;
       case 'savannah':
-        return '<div>savannah</div>'; // replace with function that render savannah mini-game page
+        MAIN.innerHTML = '<div>savannah</div>'; // replace with function that render savannah mini-game page
+        break;
       case 'audioCall':
-        return '<div>audioCall</div>'; // replace with function that render audioCall mini-game page
+        MAIN.innerHTML = '<div>audioCall</div>'; // replace with function that render audioCall mini-game page
+        break;
       case 'sprint':
-        return '<div>sprint</div>'; // replace with function that render sprint mini-game page
+        MAIN.innerHTML = '<div>sprint</div>'; // replace with function that render sprint mini-game page
+        break;
       case 'ourGame':
-        return '<div>ourGame</div>'; // replace with function that render ourGame mini-game page
+        MAIN.innerHTML = '<div>ourGame</div>'; // replace with function that render ourGame mini-game page
+        break;
       case 'promo':
-        return '<div>promo</div>'; // replace with function that render promo page
+        MAIN.innerHTML = '<div>promo</div>'; // replace with function that render promo page
+        break;
       case 'aboutUs':
-        return '<div>aboutUs</div>'; // replace with function that render aboutUs page
+        MAIN.innerHTML = '<div>aboutUs</div>'; // replace with function that render aboutUs page
+        break;
       default:
-        return '<div>main</div><button type="button" class="btn btn-primary">Button</button>'; // replace with function that render main page
+        MAIN.innerHTML = '<div>main</div><button type="button" class="btn btn-primary">Button</button>'; // replace with function that render main page
     }
   }
 }
