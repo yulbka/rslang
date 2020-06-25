@@ -13,13 +13,14 @@ window.onload = async () => {
 };
 
 async function initRequests() {
-  //await auth()
-  const userSettings = await API_USER.getUserSettings({
-    userId: store.user.auth.userId,
-  });
-
-  store.user.learning = {
-    ...store.user.learning,
-    ...userSettings,
-  };
+  const { userId } = store.user.auth
+  if (!userId) {
+    router.navigate(routesMap.get('login').url);
+  } else {
+    const userSettings = await API_USER.getUserSettings({ userId });
+    store.user.learning = {
+      ...store.user.learning,
+      ...userSettings,
+    };
+  }
 }

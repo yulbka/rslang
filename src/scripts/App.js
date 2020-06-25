@@ -7,7 +7,11 @@ import { router } from '../routes'
 
 export class App {
   static reRender(page) {
-    if (page === 'login' || page === 'registration') {
+    const isAuthPage = ['login', 'registration'].includes(page);
+    const iaAuthorized = !!store.user.auth.token
+
+    if (isAuthPage) {
+      if (iaAuthorized) return router.navigate('/');
       SIDEBAR.innerHTML = '';
     } else {
       this.checkSideBar();

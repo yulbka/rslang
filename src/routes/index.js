@@ -56,6 +56,7 @@ export function initializeRouter() {
         })
         .resolve();
 
-router.notFound(() => {
-  router.navigate('/');
-});
+    router.notFound(() => {
+        router.navigate('/');
+    });
+}

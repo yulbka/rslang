@@ -134,6 +134,11 @@ export class Authorization {
         email: email.value,
         password: password.value,
       };
+      const userSettings = await API_USER.getUserSettings({ userId: user.userId });
+      store.user.learning = {
+        ...store.user.learning,
+        ...userSettings,
+      };
       router.navigate('/');
     } catch (error) {
       const message = document.querySelector('.invalid-feedback-password');
