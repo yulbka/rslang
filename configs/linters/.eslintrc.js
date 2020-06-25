@@ -1,5 +1,6 @@
 const path = require('path');
 const root = path.resolve(__dirname, '../..');
+const isDev = process.env.NODE_ENV === 'development'
 
 module.exports = {
   env: {
@@ -13,6 +14,7 @@ module.exports = {
   plugins: ['import', 'prettier'],
   extends: ['eslint:recommended', 'airbnb-base', 'plugin:import/errors', 'plugin:import/warnings', 'prettier'],
   rules: {
+    'no-unused-vars': isDev ? 0 : 2,
     'no-use-before-define': 1,
     'no-restricted-globals': 0,
     'no-plusplus': 0,
