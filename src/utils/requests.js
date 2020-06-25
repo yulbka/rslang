@@ -1,3 +1,5 @@
+import { router } from '../routes/index';
+
 const API_HOST = 'https://afternoon-falls-25894.herokuapp.com';
 
 /*
@@ -46,10 +48,13 @@ export async function requestCreator(settings) {
       body,
     });
 
-    if (!response.ok) throw Error('Something went wrong');
-    if (response.status === 401) {
-      localStorage.removeItem('token');
-      //TODO: add transition to authorization page
+    if (!response.ok) {
+      if (response.status === 401) {
+        localStorage.removeItem('token');
+        router.navigate('login');
+      } else {
+        throw Error(response.status);
+      }
     }
 
     const result = await response.json();

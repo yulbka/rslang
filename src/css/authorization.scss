@@ -1,0 +1,17 @@
+.authorization__wrapper {
+  display: flex;
+  flex-direction: column;
+  margin: $space-md auto 0;
+  max-width: 500px;
+  width: 90%;
+}
+
+.authorization__text {
+  font-size: 0.8rem;
+  margin: $space-md 0 5px;
+  text-align: center;
+}
+
+.authorization-link {
+  align-self: center;
+}

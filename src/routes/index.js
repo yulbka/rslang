@@ -15,6 +15,9 @@ router
     login: () => {
       App.reRender('login');
     },
+    registration: () => {
+      App.reRender('registration');
+    },
     learn: () => {
       App.reRender('learn');
     },
