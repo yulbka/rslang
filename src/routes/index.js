@@ -1,9 +1,9 @@
+import Navigo from 'navigo'
 import { App } from '../scripts/App';
 
 const root = null;
 const useHash = true;
 const hash = '#';
-const { Navigo } = window;
 
 export const router = new Navigo(root, useHash, hash);
 
