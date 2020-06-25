@@ -3,6 +3,8 @@
 @import 'node_modules/bootstrap/dist/css/bootstrap.min.css';
 @import '../../src/components/forms/index.scss';
 @import '../../src/pages/main/index.scss';
+@import './preloader.scss';
+@import './authorization.scss';
 
 /********* CUSTOM RESET: START **********/
 label {

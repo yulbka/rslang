@@ -1,4 +1,4 @@
-import { HttpService } from './HttpClient.Service';
+import { requestCreator } from '../../utils/requests';
 
 export class WordService {
   constructor() {
@@ -34,23 +34,36 @@ export class WordService {
   static async getWords(level = 0, page = 0) {
     this.level = level;
     this.page = page;
-    const url = `https://afternoon-falls-25894.herokuapp.com/words?page=${page}&group=${level}`;
     this.words = [];
-    this.words.push(await HttpService.get(url));
+    this.words.push(
+      await requestCreator({
+        url: `/words?page=${page}&group=${level}`,
+        method: requestCreator.methods.get,
+      })
+    );
     return this.words;
   }
 
   static async getMoreWords() {
     this.page += 1;
-    let newWords = await HttpService.get(`https://afternoon-falls-25894.herokuapp.com/words?page=${this.page}&group=${this.level}`);
+    let newWords = await requestCreator({
+      url: `/words?page=${this.page}&group=${this.level}`,
+      method: requestCreator.methods.get,
+    });
     if (!newWords.length) {
       this.level += 1;
       this.page = 0;
-      newWords = await HttpService.get(`https://afternoon-falls-25894.herokuapp.com/words?page=${this.page}&group=${this.level}`);
+      newWords = await requestCreator({
+        url: `/words?page=${this.page}&group=${this.level}`,
+        method: requestCreator.methods.get,
+      });
       if (!newWords.length) {
         this.level = 0;
         this.page = 0;
-        newWords = await HttpService.get(`https://afternoon-falls-25894.herokuapp.com/words?page=${this.page}&group=${this.level}`);
+        newWords = await requestCreator({
+          url: `/words?page=${this.page}&group=${this.level}`,
+          method: requestCreator.methods.get,
+        });
       }
     }
     this.words.push(newWords);

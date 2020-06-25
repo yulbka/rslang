@@ -8,7 +8,7 @@ export const API_USER = {
         method: requestCreator.methods.get,
       });
     } catch (error) {
-      if (error.message === 'User non exist') {
+      if (error.message === '404') {
         console.log('error: User non exist');
       } else {
         /*show alert(error) */
