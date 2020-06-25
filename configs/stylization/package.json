@@ -6,7 +6,6 @@
   "scripts": {},
   "devDependencies": {
     "postcss-advanced-variables": "3.0.1",
-    "postcss-assets": "5.0.0",
     "postcss-color-function": "4.1.0",
     "postcss-css-reset": "1.0.2",
     "postcss-line-height-px-to-unitless": "0.2.1",
