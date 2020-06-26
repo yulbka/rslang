@@ -8,4 +8,13 @@
   background: url('../assets/images/logout.png') no-repeat;
   background-size: cover;
   cursor: pointer;
+  border: none;
+  outline: none;
+  opacity: 0.8;
+  &:focus {
+    outline: none;
+  }
+  &:hover {
+    opacity: 1;
+  }
 }

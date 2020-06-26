@@ -1,6 +1,6 @@
 export const MAIN = document.querySelector('#main');
 export const SIDEBAR = document.querySelector('#sidebar');
-export const LOGOUT = document.querySelector('#logout');
+export const HEADER = document.querySelector('#header');
 export const PRELOADER = document.querySelector('.preload-wrapper');
 
 export const routesMap = new Map([
