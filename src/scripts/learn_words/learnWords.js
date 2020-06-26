@@ -17,21 +17,28 @@ export class LearnWords {
       createElement('div', wrapper, [className]);
     });
     MAIN.append(fragment);
-    const mySwiper = initializeSwiper('.swiper-container');
-    await WordService.getAllUserWords();
-    await WordService.getNewWords();
-    const words = await WordService.getNewWords(0, 20);
-    words.forEach((word) => {
-      const card = new Card(word, true, true, true, true, true, true, true, true).render();
-      mySwiper.appendSlide(card);
-    });
-    store.user.wordsToRepeat.forEach((word) => {
-     const slideIndex = getRandomNumber(20);
-      const card = new Card(word, true, true, true, true, true, true, true, true).render();
-      mySwiper.addSlide(slideIndex, card);
-    });
+    await this.addCards();
     this.inputHandler();
     this.showAnswerHandler();
+  }
+
+  static async addCards() {
+    const mySwiper = initializeSwiper('.swiper-container');
+    const { wordsPerDay, newWordsPerDay, withTranslation, withExplanation, withExample,
+       withTranscription, withHelpImage, showAnswerButton } = store.user.learning;
+    const numToRepeat = wordsPerDay - newWordsPerDay;
+    const words = await WordService.getNewWords(newWordsPerDay);
+    words.forEach((word) => {
+      const card = new Card(word, withTranslation, withExplanation, withExample,
+        withTranscription, withHelpImage, showAnswerButton, true, true).render();
+      mySwiper.appendSlide(card);
+    });
+    store.user.wordsToRepeat.slice(0, numToRepeat).forEach((word) => {
+     const slideIndex = getRandomNumber(newWordsPerDay);
+      const card = new Card(word, withTranslation, withExplanation, withExample,
+        withTranscription, withHelpImage, showAnswerButton, true, true).render();
+      mySwiper.addSlide(slideIndex, card);
+    });
   }
 
   static inputHandler() {

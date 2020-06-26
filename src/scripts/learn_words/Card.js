@@ -44,12 +44,14 @@ export class Card {
       this.renderInputContainer(sentence, word);
     }
     const ul = createElement('ul', card, ['list-group', 'list-group-flush']);
-    createElement(
-      'li',
-      ul,
-      ['list-group-item', 'card-translate', 'card-translate-hidden'],
-      this.word.textExampleTranslate
-    );
+    if (this.withExample) {
+      createElement(
+        'li',
+        ul,
+        ['list-group-item', 'card-translate', 'card-translate-hidden'],
+        this.word.textExampleTranslate
+      );
+    }    
     if (this.withTranscription) {
       createElement('li', ul, ['list-group-item'], this.word.transcription);
     }
@@ -66,13 +68,13 @@ export class Card {
         `${meaning.slice(delimiter, delimiter + 1).toUpperCase()}${meaning.slice(delimiter + 1)}`
       );
       createElement('audio', sentence, ['audio-meaning'], '', 'src', `${API_HOST}${this.word.audioMeaning}`);
-    }
-    createElement(
-      'li',
-      ul,
-      ['list-group-item', 'card-translate', 'card-translate-hidden'],
-      this.word.textMeaningTranslate
-    );
+      createElement(
+        'li',
+        ul,
+        ['list-group-item', 'card-translate', 'card-translate-hidden'],
+        this.word.textMeaningTranslate
+      );
+    }    
     const footer = createElement('div', card, ['card-body']);
     const controls = createElement('div', footer, ['btn-group'], '', 'role', 'group');
     if (this.withAnswer) {
@@ -101,11 +103,6 @@ export class Card {
       'beforeend',
       `<input class='card-input input-group-text' type='text' data-word='${this.word.word}' data-word-id='${this.word._id}' data-repeat='${repeat}' style='width: ${example.offsetWidth}px;' autofocus>`
     );
-    createElement(
-      'span',
-      inputContainer,
-      ['card-translate', 'card-translate-hidden', 'word-translate'],
-      this.word.wordTranslate
-    );
+    createElement('span', inputContainer, ['card-translate', 'card-translate-hidden', 'word-translate'], this.word.wordTranslate);
   }
 }

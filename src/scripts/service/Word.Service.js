@@ -31,11 +31,11 @@ export class WordService {
     this._page = page;
   }
 
-  static async getNewWords(level = 0, wordsPerPage = 50) {
+  static async getNewWords(wordsPerPage = 50) {
     const words = await requestCreator({
       url: `/users/${localStorage.getItem(
         'userId'
-      )}/aggregatedWords/?group=${level}&wordsPerPage=${wordsPerPage}&filter={"userWord":null}`,
+      )}/aggregatedWords/?wordsPerPage=${wordsPerPage}&filter={"userWord":null}`,
       method: requestCreator.methods.get,
     });
     console.log(words);
