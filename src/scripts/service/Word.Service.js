@@ -111,7 +111,7 @@ export class WordService {
     return word;
   }
 
-  static async createUserWord(wordId, text, difficulty, category, nextDayRepeat, mistakeCount, progressCount) {
+  static async createUserWord(wordId, text, difficulty, category, nextDayRepeat, mistakeCount = 0, progressCount = 0) {
     const word = {
       difficulty, // weak, hard, normal, easy
       optional: {

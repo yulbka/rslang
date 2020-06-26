@@ -21,6 +21,8 @@ export const userSettings = {
     withTranscription: true,
     withHelpImage: true,
     showAnswerButton: false,
+    showDeleteButton: true,
+    showHardButton: true,
   },
   // ...userExample,
 };

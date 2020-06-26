@@ -81,10 +81,10 @@ export class Card {
       createElement('button', controls, ['btn', 'btn-light', 'show-answer'], 'Показать ответ');
     }
     if (this.withDelete) {
-      createElement('button', controls, ['btn', 'btn-light'], 'Удалить');
+      createElement('button', controls, ['btn', 'btn-light', 'btn-delete'], 'Удалить');
     }
     if (this.withDifficulty) {
-      createElement('button', controls, ['btn', 'btn-light'], 'Сложное слово');
+      createElement('button', controls, ['btn', 'btn-light', 'btn-difficulty'], 'Сложное слово');
     }
     word.remove();
     return fragment;

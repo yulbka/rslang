@@ -16,7 +16,8 @@ API_USER.getUser({ userId: localStorage.getItem('userId') })
   .finally(async () => {
     store.user.wordsToRepeat = [];
     const userWords = await WordService.getAllUserWords();
-    const filteredWords = userWords.filter((word) => {
+    const filteredWords = userWords.filter((word) => word.optional.category !== 'deleted')
+    .filter((word) => {
       return new Date() - new Date(word.optional.nextDayRepeat) > 0;
     });
     await Promise.all(filteredWords.map((word) => WordService.getAggregatedWord(word.wordId)))
