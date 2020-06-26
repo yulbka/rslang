@@ -31,16 +31,30 @@ export class WordService {
     this._page = page;
   }
 
+  static async getNewWords(level = 0, wordsPerPage = 50) {
+    const words = await requestCreator({
+      url: `/users/${localStorage.getItem(
+        'userId'
+      )}/aggregatedWords/?group=${level}&wordsPerPage=${wordsPerPage}&filter={"userWord":null}`,
+      method: requestCreator.methods.get,
+    });
+    console.log(words);
+    return words[0].paginatedResults;
+  }
+
   static async getWords(level = 0, page = 0) {
     this.level = level;
     this.page = page;
     this.words = [];
-    this.words.push(
-      await requestCreator({
-        url: `/words?page=${page}&group=${level}`,
-        method: requestCreator.methods.get,
-      })
-    );
+    const words = await requestCreator({
+      url: `/words?page=${page}&group=${level}`,
+      method: requestCreator.methods.get,
+    });
+    words.map((word) => {
+      const newWord = word;
+      newWord.status = 'new';
+      return this.words.push(newWord);
+    });
     return this.words;
   }
 
@@ -70,6 +84,15 @@ export class WordService {
     return newWords;
   }
 
+  static async getWordById(wordId) {
+    const word = await requestCreator({
+      url: `/words/${wordId}`,
+      method: requestCreator.methods.get,
+    });
+    console.log(word);
+    return word;
+  }
+
   static async getAllUserWords() {
     const words = await requestCreator({
       url: `/users/${localStorage.getItem('userId')}/words`,
@@ -81,27 +104,28 @@ export class WordService {
 
   static async getUserWord(wordId) {
     const word = await requestCreator({
-      url: `/users/${localStorage.getItem('userId')}/words${wordId}`,
+      url: `/users/${localStorage.getItem('userId')}/words/${wordId}`,
       method: requestCreator.methods.get,
     });
     console.log(word);
     return word;
   }
 
-  static async createUserWord(wordId, difficulty, category, nextDayRepeat, mistakeCount, progressCount) {
+  static async createUserWord(wordId, text, difficulty, category, nextDayRepeat, mistakeCount, progressCount) {
     const word = {
-      "difficulty": difficulty, // weak, hard, normal, easy
-      "optional": {
-        "category": category, // learned, deleted, difficult
-        "nextDayRepeat": nextDayRepeat,
-        "mistakeCount": mistakeCount,
-        "progressCount": progressCount // if mistake -1, if correct +1, >= 0
-      }
-    }
+      difficulty, // weak, hard, normal, easy
+      optional: {
+        word: text,
+        category, // learned, deleted, difficult
+        nextDayRepeat,
+        mistakeCount,
+        progressCount, // if mistake -1, if correct +1, >= 0
+      },
+    };
     const result = await requestCreator({
-      url: `/users/${localStorage.getItem('userId')}/words${wordId}`,
+      url: `/users/${localStorage.getItem('userId')}/words/${wordId}`,
       method: requestCreator.methods.post,
-      data: word
+      data: word,
     });
     console.log(result);
   }
@@ -110,16 +134,34 @@ export class WordService {
     const word = await this.getUserWord(wordId);
     const { optional } = word;
     const result = await requestCreator({
-      url: `/users/${localStorage.getItem('userId')}/words${wordId}`,
+      url: `/users/${localStorage.getItem('userId')}/words/${wordId}`,
       method: requestCreator.methods.put,
-      data: { 
-        "difficulty": difficulty,
-        "optional": {
-          ...updatedFields,
+      data: {
+        difficulty,
+        optional: {
           ...optional,
-        }    
-      }
+          ...updatedFields,
+        },
+      },
     });
     console.log(result);
+  }
+
+  static async getAllAggregatedWords() {
+    const words = await requestCreator({
+      url: `/users/${localStorage.getItem('userId')}/aggregatedWords`,
+      method: requestCreator.methods.get,
+    });
+    console.log(words);
+    return words;
+  }
+
+  static async getAggregatedWord(wordId) {
+    const word = await requestCreator({
+      url: `/users/${localStorage.getItem('userId')}/aggregatedWords/${wordId}`,
+      method: requestCreator.methods.get,
+    });
+    console.log(word);
+    return word;
   }
 }

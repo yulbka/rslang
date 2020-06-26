@@ -95,10 +95,17 @@ export class Card {
     this.word.word.split('').forEach((letter) => {
       createElement('span', wordContainer, ['letter-hidden'], letter);
     });
+    let repeat = 'new';
+    if (this.word.userWord) repeat = 'repeated';
     inputContainer.insertAdjacentHTML(
       'beforeend',
-      `<input class='card-input input-group-text' type='text' data-word='${this.word.word}' style='width: ${example.offsetWidth}px;' autofocus>`
+      `<input class='card-input input-group-text' type='text' data-word='${this.word.word}' data-word-id='${this.word._id}' data-repeat='${repeat}' style='width: ${example.offsetWidth}px;' autofocus>`
     );
-    createElement('span', inputContainer, ['card-translate', 'card-translate-hidden', 'word-translate'], this.word.wordTranslate);
+    createElement(
+      'span',
+      inputContainer,
+      ['card-translate', 'card-translate-hidden', 'word-translate'],
+      this.word.wordTranslate
+    );
   }
 }

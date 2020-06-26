@@ -2,6 +2,9 @@ import { createElement } from '../helpers/createElement';
 import { initializeSwiper } from './swiper';
 import { WordService } from '../service/Word.Service';
 import { Card } from './Card';
+import { setWordNextDayRepeat } from '../helpers/setWordNextDayRepeat';
+import { store } from '../../store';
+import { getRandomNumber } from '../helpers/getRandomNumber';
 
 export class LearnWords {
   static async render() {
@@ -15,11 +18,17 @@ export class LearnWords {
     });
     MAIN.append(fragment);
     const mySwiper = initializeSwiper('.swiper-container');
-    const words = await WordService.getWords();
-    console.log(words);
-    words[0].forEach((word) => {
+    await WordService.getAllUserWords();
+    await WordService.getNewWords();
+    const words = await WordService.getNewWords(0, 20);
+    words.forEach((word) => {
       const card = new Card(word, true, true, true, true, true, true, true, true).render();
       mySwiper.appendSlide(card);
+    });
+    store.user.wordsToRepeat.forEach((word) => {
+     const slideIndex = getRandomNumber(20);
+      const card = new Card(word, true, true, true, true, true, true, true, true).render();
+      mySwiper.addSlide(slideIndex, card);
     });
     this.inputHandler();
     this.showAnswerHandler();
@@ -30,9 +39,9 @@ export class LearnWords {
     learnPage.addEventListener('keydown', (event) => {
       const target = event.target.closest('.card-input');
       if (!target) return;
-      if(event.keyCode === 13) {
+      if (event.keyCode === 13) {
         this.checkAnswer();
-      }     
+      }
     });
     learnPage.addEventListener('click', (event) => {
       const target = event.target.closest('.swiper-button-next');
@@ -45,7 +54,7 @@ export class LearnWords {
       } else {
         mySwiper.allowSlideNext = false;
         this.checkAnswer();
-      }      
+      }
     });
   }
 
@@ -70,6 +79,7 @@ export class LearnWords {
       await this.playAudio();
       this.goToNextCard();
     } else {
+      input.dataset.mistake = 'mistake';
       this.hightLightAnswer(input, letters);
       this.playAudio();
       input.addEventListener('input', () => {
@@ -79,7 +89,7 @@ export class LearnWords {
         });
       });
     }
-    input.value = ''; 
+    input.value = '';
   }
 
   static hightLightAnswer(input, letters) {
@@ -103,15 +113,59 @@ export class LearnWords {
     });
   }
 
-  static showAnswer() {    
+  static async showAnswer() {
     const activeSlide = document.querySelector('.swiper-slide-active');
     const input = activeSlide.querySelector('.card-input');
     const letters = activeSlide.querySelectorAll('.letter-hidden');
     letters.forEach((letter) => letter.classList.remove('letter-hidden'));
     input.setAttribute('readonly', '');
+    if (input.dataset.repeat === 'new') {
+      if (input.dataset.mistake) {
+        WordService.createUserWord(
+          input.dataset.wordId,
+          input.dataset.word,
+          'weak',
+          'learned',
+          setWordNextDayRepeat('weak', true),
+          '1',
+          '0'
+        );
+      } else {
+        WordService.createUserWord(
+          input.dataset.wordId,
+          input.dataset.word,
+          'normal',
+          'learned',
+          setWordNextDayRepeat('normal'),
+          '0',
+          '1'
+        );
+      }
+    } else {
+      const word = await WordService.getUserWord(input.dataset.wordId);
+      const { optional } = word;
+      if (input.dataset.mistake) {
+        const mistakeCount = +optional.mistakeCount + 1;
+        let progressCount = +optional.progressCount - 1;
+        if (progressCount < 0) progressCount = 0;
+        WordService.updateUserWord(input.dataset.currentWord.id, 'weak', {
+          nextDayRepeat: setWordNextDayRepeat('weak', true),
+          mistakeCount,
+          progressCount,
+        });
+      } else {
+        const progressCount = +optional.progressCount + 1;
+        const mistakeCount = +optional.mistakeCount;
+        WordService.updateUserWord(input.dataset.wordId, 'normal', {
+          nextDayRepeat: setWordNextDayRepeat('normal', false, progressCount),
+          mistakeCount,
+          progressCount,
+        });
+      }
+    }
   }
 
-  static goToNextCard() {
+  static async goToNextCard() {
     const mySwiper = document.querySelector('.swiper-container').swiper;
     mySwiper.allowSlideNext = true;
     mySwiper.slideNext();
@@ -128,7 +182,7 @@ export class LearnWords {
         input.addEventListener('input', () => {
           audio.pause();
           audio.currentTime = 0;
-        });  
+        });
         if (index === 0) {
           audio.play();
         } else {
@@ -138,10 +192,9 @@ export class LearnWords {
         }
         playList[playList.length - 1].addEventListener('ended', () => {
           resolve();
-        }); 
-      }); 
-    })
-    
+        });
+      });
+    });
   }
 
   static showTranslate() {
@@ -149,6 +202,6 @@ export class LearnWords {
     const translates = activeSlide.querySelectorAll('.card-translate');
     translates.forEach((translate) => {
       translate.classList.remove('card-translate-hidden');
-    })
+    });
   }
 }

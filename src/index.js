@@ -5,14 +5,26 @@ import { router } from './routes/index';
 import { store } from './store';
 import { API_USER } from './api/user';
 import { PRELOADER } from './scripts/helpers/variables';
+import { WordService } from './scripts/service/Word.Service';
 
 API_USER.getUser({ userId: localStorage.getItem('userId') })
   .then((data) => {
     if (data) {
-      router.navigate('/');
+      router.navigate('learn');
     }
   })
-  .finally(() => PRELOADER.classList.add('preload-wrapper-hidden'));
+  .finally(async () => {
+    store.user.wordsToRepeat = [];
+    const userWords = await WordService.getAllUserWords();
+    const filteredWords = userWords.filter((word) => {
+      return new Date() - new Date(word.optional.nextDayRepeat) > 0;
+    });
+    await Promise.all(filteredWords.map((word) => WordService.getAggregatedWord(word.wordId)))
+    .then((results) =>
+      results.forEach((word) => store.user.wordsToRepeat.push(word[0]))
+    );
+    PRELOADER.classList.add('preload-wrapper-hidden');
+  });
 
 //example
 
@@ -49,5 +61,3 @@ API_USER.getUser({ userId: localStorage.getItem('userId') })
 
   console.log('usr', { ...store });
 })();
-
-router.navigate('learn');
