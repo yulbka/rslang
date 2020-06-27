@@ -164,4 +164,15 @@ export class WordService {
     console.log(word);
     return word;
   }
+
+  static async getWordsByCategory(category, wordsPerPage = 50) {
+    const words = await requestCreator({
+      url: `/users/${localStorage.getItem(
+        'userId'
+      )}/aggregatedWords/?wordsPerPage=${wordsPerPage}&filter={"userWord.optional.category":"${category}"}`,
+      method: requestCreator.methods.get,
+    });
+    console.log(words);
+    return words[0].paginatedResults;
+  }
 }

@@ -1,3 +1,4 @@
+import tippy from 'tippy.js';
 import { createElement } from '../helpers/createElement';
 import { initializeSwiper } from './swiper';
 import { WordService } from '../service/Word.Service';
@@ -18,27 +19,58 @@ export class LearnWords {
     });
     MAIN.append(fragment);
     await WordService.getAllUserWords();
+    await WordService.getWordsByCategory('deleted');
     await this.addCards();
+    tippy('[data-tippy-content]');
     this.inputHandler();
     this.showAnswerHandler();
     this.deleteButtonHandler();
+    this.difficultyButtonHandler();
   }
 
   static async addCards() {
     const mySwiper = initializeSwiper('.swiper-container');
-    const { wordsPerDay, newWordsPerDay, withTranslation, withExplanation, withExample,
-       withTranscription, withHelpImage, showAnswerButton, showDeleteButton, showHardButton } = store.user.learning;
+    const {
+      wordsPerDay,
+      newWordsPerDay,
+      withTranslation,
+      withExplanation,
+      withExample,
+      withTranscription,
+      withHelpImage,
+      showAnswerButton,
+      showDeleteButton,
+      showHardButton,
+    } = store.user.learning;
     const numToRepeat = wordsPerDay - newWordsPerDay;
     const words = await WordService.getNewWords(newWordsPerDay);
     words.forEach((word) => {
-      const card = new Card(word, withTranslation, withExplanation, withExample,
-        withTranscription, withHelpImage, showAnswerButton, showDeleteButton, showHardButton).render();
+      const card = new Card(
+        word,
+        withTranslation,
+        withExplanation,
+        withExample,
+        withTranscription,
+        withHelpImage,
+        showAnswerButton,
+        showDeleteButton,
+        showHardButton
+      ).render();
       mySwiper.appendSlide(card);
     });
     store.user.wordsToRepeat.slice(0, numToRepeat).forEach((word) => {
-     const slideIndex = getRandomNumber(newWordsPerDay);
-      const card = new Card(word, withTranslation, withExplanation, withExample,
-        withTranscription, withHelpImage, showAnswerButton, true, true).render();
+      const slideIndex = getRandomNumber(newWordsPerDay);
+      const card = new Card(
+        word,
+        withTranslation,
+        withExplanation,
+        withExample,
+        withTranscription,
+        withHelpImage,
+        showAnswerButton,
+        true,
+        true
+      ).render();
       mySwiper.addSlide(slideIndex, card);
     });
   }
@@ -231,4 +263,31 @@ export class LearnWords {
     });
   }
 
+  static difficultyButtonHandler() {
+    const learnPage = document.querySelector('.learn-wrapper');
+    learnPage.addEventListener('click', async (event) => {
+      const activeSlide = document.querySelector('.swiper-slide-active');
+      // const mySwiper = document.querySelector('.swiper-container').swiper;
+      const input = activeSlide.querySelector('.card-input');
+      const target = event.target.closest('.btn-difficulty');
+      if (!target) return;
+      // tippy(target, {
+      //   theme: 'light-border',
+      //   trigger: 'click',
+      //   content: 'Слово добавлено в словарь',
+      // });
+      if (input.dataset.repeat === 'new') {
+        WordService.createUserWord(
+          input.dataset.wordId,
+          input.dataset.word,
+          'hard',
+          'difficult',
+          setWordNextDayRepeat()
+        );
+        input.dataset.repeat = 'repeated';
+      } else {
+        WordService.updateUserWord(input.dataset.wordId, 'hard', { category: 'difficult' });
+      }
+    });
+  }
 }

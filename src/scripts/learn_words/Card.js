@@ -51,7 +51,7 @@ export class Card {
         ['list-group-item', 'card-translate', 'card-translate-hidden'],
         this.word.textExampleTranslate
       );
-    }    
+    }
     if (this.withTranscription) {
       createElement('li', ul, ['list-group-item'], this.word.transcription);
     }
@@ -74,7 +74,7 @@ export class Card {
         ['list-group-item', 'card-translate', 'card-translate-hidden'],
         this.word.textMeaningTranslate
       );
-    }    
+    }
     const footer = createElement('div', card, ['card-body']);
     const controls = createElement('div', footer, ['btn-group'], '', 'role', 'group');
     if (this.withAnswer) {
@@ -84,7 +84,15 @@ export class Card {
       createElement('button', controls, ['btn', 'btn-light', 'btn-delete'], 'Удалить');
     }
     if (this.withDifficulty) {
-      createElement('button', controls, ['btn', 'btn-light', 'btn-difficulty'], 'Сложное слово');
+      controls.insertAdjacentHTML(
+        'beforeend',
+        `<button class='btn btn-light btn-difficulty'
+      data-tippy-content='Слово добавлено в словарь'
+      data-tippy-theme='light-border'
+      data-tippy-trigger='focus'>
+      Сложное слово
+      </button>`
+      );
     }
     word.remove();
     return fragment;
@@ -101,8 +109,20 @@ export class Card {
     if (this.word.userWord) repeat = 'repeated';
     inputContainer.insertAdjacentHTML(
       'beforeend',
-      `<input class='card-input input-group-text' type='text' data-word='${this.word.word}' data-word-id='${this.word._id}' data-repeat='${repeat}' style='width: ${example.offsetWidth}px;' autofocus>`
+      `<input class='card-input input-group-text'
+      type='text'
+      data-word='${this.word.word}'
+      data-word-id='${this.word._id}'
+      data-repeat='${repeat}'
+      style='width: ${example.offsetWidth}px;'
+      autofocus>`
     );
-    createElement('span', inputContainer, ['card-translate', 'card-translate-hidden', 'word-translate'], this.word.wordTranslate);
+
+    createElement(
+      'span',
+      inputContainer,
+      ['card-translate', 'card-translate-hidden', 'word-translate'],
+      this.word.wordTranslate
+    );
   }
 }

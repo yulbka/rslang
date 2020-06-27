@@ -13,19 +13,22 @@ API_USER.getUser({ userId: localStorage.getItem('userId') })
       router.navigate('learn');
     }
   })
-  .finally(async () => {
-    store.user.wordsToRepeat = [];
-    const userWords = await WordService.getAllUserWords();
-    const filteredWords = userWords.filter((word) => word.optional.category !== 'deleted')
+  .finally(() => {
+    PRELOADER.classList.add('preload-wrapper-hidden');
+  });
+
+(async () => {
+  store.user.wordsToRepeat = [];
+  const userWords = await WordService.getAllUserWords();
+  const filteredWords = userWords
+    .filter((word) => word.optional.category !== 'deleted')
     .filter((word) => {
       return new Date() - new Date(word.optional.nextDayRepeat) > 0;
     });
-    await Promise.all(filteredWords.map((word) => WordService.getAggregatedWord(word.wordId)))
-    .then((results) =>
-      results.forEach((word) => store.user.wordsToRepeat.push(word[0]))
-    );
-    PRELOADER.classList.add('preload-wrapper-hidden');
-  });
+  await Promise.all(filteredWords.map((word) => WordService.getAggregatedWord(word.wordId))).then((results) =>
+    results.forEach((word) => store.user.wordsToRepeat.push(word[0]))
+  );
+})();
 
 //example
 
