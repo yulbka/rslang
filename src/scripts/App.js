@@ -8,10 +8,10 @@ import { router } from '../routes'
 export class App {
   static reRender(page) {
     const isAuthPage = ['login', 'registration'].includes(page);
-    const iaAuthorized = !!store.user.auth.token
+    const isAuthorized = !!store.user.auth.token
 
     if (isAuthPage) {
-      if (iaAuthorized) return router.navigate('/');
+      if (isAuthorized) return router.navigate('/');
       SIDEBAR.innerHTML = '';
     } else {
       this.checkSideBar();
