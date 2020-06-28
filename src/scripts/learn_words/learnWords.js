@@ -17,6 +17,12 @@ export class LearnWords {
     ['swiper-button-prev', 'swiper-button-next'].forEach((className) => {
       createElement('div', wrapper, [className]);
     });
+    const footer = createElement('footer', wrapper, ['learn-footer']);
+    const progressWrapper = createElement('div', footer, ['progress-wrapper']);
+    createElement('div', progressWrapper, ['progress-number', 'progress-value', 'text-primary'], '0');
+    const progress = createElement('div', progressWrapper, ['progress']);
+    createElement('div', progress, ['progress-bar'], '', 'role', 'progressbar');
+    createElement('div', progressWrapper, ['progress-number', 'progress-max', 'text-primary'], '100');
     MAIN.append(fragment);
     console.log(store.user.learning);
     await WordService.getAllUserWords();
@@ -45,6 +51,10 @@ export class LearnWords {
       const card = new Card(word, store.user.learning).render();
       mySwiper.addSlide(slideIndex, card);
     });
+    const progressMax = document.querySelector('.progress-max');
+    progressMax.textContent = mySwiper.slides.length;
+    const progressbar = document.querySelector('.progress-bar');
+    progressbar.setAttribute('aria-valuemax', `${mySwiper.slides.length}`);
   }
 
   static inputHandler() {
@@ -184,6 +194,9 @@ export class LearnWords {
           mistakeCount,
           progressCount,
         });
+        if (!store.user.learning.chooseDifficulty) {
+          this.showProgress();
+        }
       }
     }
     if (input.dataset.mistake && !store.user.learning.chooseDifficulty) {
@@ -291,9 +304,19 @@ export class LearnWords {
         const slideIndex = getRandomNumber(mySwiper.slides.length, mySwiper.activeIndex);
         const card = new Card(word, store.user.learning).render();
         mySwiper.addSlide(slideIndex, card);
+      } else {
+        this.showProgress();
       }
       this.goToNextCard();
     });
   }
 
+  static showProgress() {
+    const progressNumElement = document.querySelector('.progress-number');
+    const progressNum = +progressNumElement.textContent + 1;
+    progressNumElement.textContent = progressNum;
+    const progressbar = document.querySelector('.progress-bar');
+    progressbar.setAttribute('aria-valuenow', `${progressNum}`);
+    progressbar.style.width = `${Math.round(progressNum / +progressbar.getAttribute('aria-valuemax') * 100)}%`;
+  }
 }

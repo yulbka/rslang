@@ -69,6 +69,23 @@
   display: none;
 }
 
+.progress-wrapper {
+  margin: 0 auto;
+  max-width: 500px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progress {
+  width: 85%;
+}
+
+.progress-number {
+  width: 25px;
+  text-align: center;
+} 
+
 @media screen and (max-width: 350px) {
   .card-body .btn-group {
     flex-direction: column;
