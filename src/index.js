@@ -4,7 +4,7 @@ import './css/index.scss';
 import { initializeRouter, router } from './routes/index';
 import { store } from './store';
 import { API_USER } from './api/user';
-import { routesMap, PRELOADER } from './scripts/helpers/variables';
+import { routesMap, routeKeys, PRELOADER } from './scripts/helpers/variables';
 
 window.onload = async () => {
   await initRequests();
@@ -13,9 +13,9 @@ window.onload = async () => {
 };
 
 async function initRequests() {
-  const { userId } = store.user.auth
+  const { userId } = store.user.auth;
   if (!userId) {
-    router.navigate(routesMap.get('login').url);
+    router.navigate(routesMap.get(routeKeys.login).url);
   } else {
     const userSettings = await API_USER.getUserSettings({ userId });
     store.user.learning = {
