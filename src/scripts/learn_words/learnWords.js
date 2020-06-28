@@ -3,7 +3,7 @@ import { createElement } from '../helpers/createElement';
 import { initializeSwiper } from './swiper';
 import { WordService } from '../service/Word.Service';
 import { Card } from './Card';
-import { setWordNextDayRepeat } from '../helpers/setWordNextDayRepeat';
+import { setWordDayRepeat } from '../helpers/setWordDayRepeat';
 import { store } from '../../store';
 import { getRandomNumber } from '../helpers/getRandomNumber';
 
@@ -18,59 +18,31 @@ export class LearnWords {
       createElement('div', wrapper, [className]);
     });
     MAIN.append(fragment);
+    console.log(store.user.learning);
     await WordService.getAllUserWords();
-    await WordService.getWordsByCategory('deleted');
+    await WordService.getWordsByCategory('difficult');  
     await this.addCards();
     tippy('[data-tippy-content]');
     this.inputHandler();
     this.showAnswerHandler();
     this.deleteButtonHandler();
-    this.difficultyButtonHandler();
+    this.dictionaryButtonHandler();
+    this.difficultyHandler();
   }
 
   static async addCards() {
     const mySwiper = initializeSwiper('.swiper-container');
-    const {
-      wordsPerDay,
-      newWordsPerDay,
-      withTranslation,
-      withExplanation,
-      withExample,
-      withTranscription,
-      withHelpImage,
-      showAnswerButton,
-      showDeleteButton,
-      showHardButton,
-    } = store.user.learning;
+    const { wordsPerDay, newWordsPerDay } = store.user.learning;
     const numToRepeat = wordsPerDay - newWordsPerDay;
     const words = await WordService.getNewWords(newWordsPerDay);
     words.forEach((word) => {
-      const card = new Card(
-        word,
-        withTranslation,
-        withExplanation,
-        withExample,
-        withTranscription,
-        withHelpImage,
-        showAnswerButton,
-        showDeleteButton,
-        showHardButton
-      ).render();
+      const card = new Card(word, store.user.learning).render();
       mySwiper.appendSlide(card);
     });
+    console.log(store.user.wordsToRepeat);
     store.user.wordsToRepeat.slice(0, numToRepeat).forEach((word) => {
       const slideIndex = getRandomNumber(newWordsPerDay);
-      const card = new Card(
-        word,
-        withTranslation,
-        withExplanation,
-        withExample,
-        withTranscription,
-        withHelpImage,
-        showAnswerButton,
-        true,
-        true
-      ).render();
+      const card = new Card(word, store.user.learning).render();
       mySwiper.addSlide(slideIndex, card);
     });
   }
@@ -116,9 +88,13 @@ export class LearnWords {
     const letters = activeSlide.querySelectorAll('.letter-hidden');
     this.showTranslate();
     if (input.value.toLowerCase() === input.dataset.word.toLowerCase()) {
-      this.showAnswer();
       await this.playAudio();
-      this.goToNextCard();
+      const difficultyBtns = activeSlide.querySelectorAll('.btn-difficulty');
+      difficultyBtns.forEach((btn) => btn.classList.remove('btn-hidden')); 
+      this.showAnswer();
+      if (!store.user.learning.chooseDifficulty) {
+        this.goToNextCard();
+      }
     } else {
       input.dataset.mistake = 'mistake';
       this.hightLightAnswer(input, letters);
@@ -155,11 +131,13 @@ export class LearnWords {
   }
 
   static async showAnswer() {
+    const mySwiper = document.querySelector('.swiper-container').swiper;
     const activeSlide = document.querySelector('.swiper-slide-active');
     const input = activeSlide.querySelector('.card-input');
     const letters = activeSlide.querySelectorAll('.letter-hidden');
     letters.forEach((letter) => letter.classList.remove('letter-hidden'));
     input.setAttribute('readonly', '');
+    let progressCount;
     if (input.dataset.repeat === 'new') {
       if (input.dataset.mistake) {
         WordService.createUserWord(
@@ -167,7 +145,8 @@ export class LearnWords {
           input.dataset.word,
           'weak',
           'learned',
-          setWordNextDayRepeat('weak', true),
+          setWordDayRepeat(),
+          setWordDayRepeat('weak', true),
           '1',
           '0'
         );
@@ -177,7 +156,8 @@ export class LearnWords {
           input.dataset.word,
           'normal',
           'learned',
-          setWordNextDayRepeat('normal'),
+          setWordDayRepeat(),
+          setWordDayRepeat('normal'),
           '0',
           '1'
         );
@@ -187,22 +167,29 @@ export class LearnWords {
       const { optional } = word;
       if (input.dataset.mistake) {
         const mistakeCount = +optional.mistakeCount + 1;
-        let progressCount = +optional.progressCount - 1;
+        progressCount = +optional.progressCount - 1;
         if (progressCount < 0) progressCount = 0;
-        WordService.updateUserWord(input.dataset.currentWord.id, 'weak', {
-          nextDayRepeat: setWordNextDayRepeat('weak', true),
+        WordService.updateUserWord(input.dataset.wordId, 'weak', {
+          lastDayRepeat: setWordDayRepeat(),
+          nextDayRepeat: setWordDayRepeat('weak', true),
           mistakeCount,
           progressCount,
         });
       } else {
-        const progressCount = +optional.progressCount + 1;
+        progressCount = +optional.progressCount + 1;
         const mistakeCount = +optional.mistakeCount;
         WordService.updateUserWord(input.dataset.wordId, 'normal', {
-          nextDayRepeat: setWordNextDayRepeat('normal', false, progressCount),
+          lastDayRepeat: setWordDayRepeat(),
+          nextDayRepeat: setWordDayRepeat('normal', false, progressCount),
           mistakeCount,
           progressCount,
         });
       }
+    }
+    if (input.dataset.mistake && !store.user.learning.chooseDifficulty) {
+        const wordToRepeat = await WordService.getAggregatedWord(input.dataset.wordId);
+        mySwiper.addSlide(getRandomNumber(mySwiper.slides.length, mySwiper.activeIndex), 
+        new Card(wordToRepeat, store.user.learning));
     }
   }
 
@@ -263,26 +250,21 @@ export class LearnWords {
     });
   }
 
-  static difficultyButtonHandler() {
+  static dictionaryButtonHandler() {
     const learnPage = document.querySelector('.learn-wrapper');
     learnPage.addEventListener('click', async (event) => {
       const activeSlide = document.querySelector('.swiper-slide-active');
-      // const mySwiper = document.querySelector('.swiper-container').swiper;
       const input = activeSlide.querySelector('.card-input');
-      const target = event.target.closest('.btn-difficulty');
+      const target = event.target.closest('.btn-dictionary');
       if (!target) return;
-      // tippy(target, {
-      //   theme: 'light-border',
-      //   trigger: 'click',
-      //   content: 'Слово добавлено в словарь',
-      // });
       if (input.dataset.repeat === 'new') {
         WordService.createUserWord(
           input.dataset.wordId,
           input.dataset.word,
           'hard',
           'difficult',
-          setWordNextDayRepeat()
+          setWordDayRepeat(),
+          setWordDayRepeat()
         );
         input.dataset.repeat = 'repeated';
       } else {
@@ -290,4 +272,28 @@ export class LearnWords {
       }
     });
   }
+
+  static difficultyHandler() {
+    if (!store.user.learning.chooseDifficulty) return; 
+    const learnPage = document.querySelector('.learn-wrapper'); 
+    learnPage.addEventListener('click', async (event) => {
+      const mySwiper = document.querySelector('.swiper-container').swiper;
+      const activeSlide = document.querySelector('.swiper-slide-active');
+      const input = activeSlide.querySelector('.card-input');
+      const target = event.target.closest('.btn-difficulty');
+      if (!target) return;
+      const isMistake = input.dataset.mistake === 'mistake';
+      const word = await WordService.getAggregatedWord(input.dataset.wordId);
+      WordService.updateUserWord(input.dataset.wordId, target.dataset.difficulty, {
+        nextDayRepeat: setWordDayRepeat(target.dataset.difficulty, isMistake, word.userWord.optional.progressCount)
+      });
+      if (target.dataset.difficulty === 'weak' || isMistake) { 
+        const slideIndex = getRandomNumber(mySwiper.slides.length, mySwiper.activeIndex);
+        const card = new Card(word, store.user.learning).render();
+        mySwiper.addSlide(slideIndex, card);
+      }
+      this.goToNextCard();
+    });
+  }
+
 }

@@ -111,12 +111,13 @@ export class WordService {
     return word;
   }
 
-  static async createUserWord(wordId, text, difficulty, category, nextDayRepeat, mistakeCount = 0, progressCount = 0) {
+  static async createUserWord(wordId, text, difficulty, category, lastDayRepeat, nextDayRepeat, mistakeCount = 0, progressCount = 0) {
     const word = {
       difficulty, // weak, hard, normal, easy
       optional: {
         word: text,
         category, // learned, deleted, difficult
+        lastDayRepeat,
         nextDayRepeat,
         mistakeCount,
         progressCount, // if mistake -1, if correct +1, >= 0
@@ -162,7 +163,7 @@ export class WordService {
       method: requestCreator.methods.get,
     });
     console.log(word);
-    return word;
+    return word[0];
   }
 
   static async getWordsByCategory(category, wordsPerPage = 50) {

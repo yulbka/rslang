@@ -3,31 +3,37 @@ import { createElement } from '../helpers/createElement';
 export class Card {
   constructor(
     word,
-    withTranslation,
-    withExplanation,
-    withExample,
-    withTranscription,
-    withImage,
-    withAnswer,
-    withDelete,
-    withDifficulty
+    settings,
+    {
+      withTranslation,
+      withExplanation,
+      withExample,
+      withTranscription,
+      withHelpImage,
+      showAnswerButton,
+      showDeleteButton,
+      showDictionaryButton,
+      chooseDifficulty
+    } = settings
   ) {
     this.word = word;
     this.withTranslation = withTranslation;
     this.withExplanation = withExplanation;
     this.withExample = withExample;
     this.withTranscription = withTranscription;
-    this.withImage = withImage;
-    this.withAnswer = withAnswer;
-    this.withDelete = withDelete;
-    this.withDifficulty = withDifficulty;
+    this.withHelpImage = withHelpImage;
+    this.showAnswerButton = showAnswerButton;
+    this.showDeleteButton = showDeleteButton;
+    this.showDictionaryButton = showDictionaryButton;
+    this.chooseDifficulty = chooseDifficulty;
   }
 
   render() {
+    console.log(this.word);
     const API_HOST = 'https://raw.githubusercontent.com/yulbka/rslang-data/master/';
     const fragment = document.createDocumentFragment();
     const card = createElement('div', fragment, ['card', 'swiper-slide']);
-    if (this.withImage) {
+    if (this.withHelpImage) {
       createElement('img', card, ['card-img-top'], '', 'src', `${API_HOST}${this.word.image}`);
     }
     const cardBody = createElement('div', card, ['card-body']);
@@ -44,6 +50,13 @@ export class Card {
       this.renderInputContainer(sentence, word);
     }
     const ul = createElement('ul', card, ['list-group', 'list-group-flush']);
+    if (this.chooseDifficulty) {
+      const difficultyControls = createElement('div', ul, ['btn-group', 'difficulty'], '', 'role', 'group');
+      createElement('button', difficultyControls, ['btn', 'btn-light', 'btn-difficulty', 'btn-hidden'], 'Снова', 'data-difficulty', 'weak');
+      createElement('button', difficultyControls, ['btn', 'btn-light', 'btn-difficulty', 'btn-hidden'], 'Трудно', 'data-difficulty', 'hard')
+      createElement('button', difficultyControls, ['btn', 'btn-light', 'btn-difficulty', 'btn-hidden'], 'Хорошо', 'data-difficulty', 'normal')
+      createElement('button', difficultyControls, ['btn', 'btn-light', 'btn-difficulty', 'btn-hidden'], 'Легко', 'data-difficulty', 'easy')
+    }
     if (this.withExample) {
       createElement(
         'li',
@@ -77,13 +90,13 @@ export class Card {
     }
     const footer = createElement('div', card, ['card-body']);
     const controls = createElement('div', footer, ['btn-group'], '', 'role', 'group');
-    if (this.withAnswer) {
+    if (this.showAnswerButton) {
       createElement('button', controls, ['btn', 'btn-light', 'show-answer'], 'Показать ответ');
     }
-    if (this.withDelete) {
+    if (this.showDeleteButton) {
       createElement('button', controls, ['btn', 'btn-light', 'btn-delete'], 'Удалить');
     }
-    if (this.withDifficulty) {
+    if (this.showDictionaryButton) {
       controls.insertAdjacentHTML(
         'beforeend',
         `<button class='btn btn-light btn-difficulty'
@@ -93,7 +106,7 @@ export class Card {
       Сложное слово
       </button>`
       );
-    }
+    }    
     word.remove();
     return fragment;
   }

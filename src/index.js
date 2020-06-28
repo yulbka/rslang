@@ -10,25 +10,24 @@ import { WordService } from './scripts/service/Word.Service';
 API_USER.getUser({ userId: localStorage.getItem('userId') })
   .then((data) => {
     if (data) {
-      router.navigate('learn');
+      (async () => {
+        store.user.wordsToRepeat = [];
+        const userWords = await WordService.getAllUserWords();
+        const filteredWords = userWords
+          .filter((word) => word.optional.category !== 'deleted')
+          .filter((word) => {
+            return new Date() - new Date(word.optional.nextDayRepeat) > 0;
+          });
+        await Promise.all(filteredWords.map((word) => WordService.getAggregatedWord(word.wordId))).then((results) => 
+          results.forEach((word) => store.user.wordsToRepeat.push(word))
+        );
+      })().then(() => router.navigate('learn'));
     }
   })
   .finally(() => {
     PRELOADER.classList.add('preload-wrapper-hidden');
   });
 
-(async () => {
-  store.user.wordsToRepeat = [];
-  const userWords = await WordService.getAllUserWords();
-  const filteredWords = userWords
-    .filter((word) => word.optional.category !== 'deleted')
-    .filter((word) => {
-      return new Date() - new Date(word.optional.nextDayRepeat) > 0;
-    });
-  await Promise.all(filteredWords.map((word) => WordService.getAggregatedWord(word.wordId))).then((results) =>
-    results.forEach((word) => store.user.wordsToRepeat.push(word[0]))
-  );
-})();
 
 //example
 
@@ -61,7 +60,7 @@ API_USER.getUser({ userId: localStorage.getItem('userId') })
                 "image": false
             }
         }
-    });*/
-
+    });
+*/
   console.log('usr', { ...store });
 })();

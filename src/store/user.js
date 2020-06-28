@@ -22,7 +22,8 @@ export const userSettings = {
     withHelpImage: true,
     showAnswerButton: false,
     showDeleteButton: true,
-    showHardButton: true,
+    showDictionaryButton: true,
+    chooseDifficulty: true,
   },
   // ...userExample,
 };

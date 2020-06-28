@@ -93,6 +93,7 @@ export class Authorization {
       });
       await this.loginUser(email, password);
       const { wordsPerDay, ...restSettings } = store.user.learning;
+      console.log(wordsPerDay);
       await API_USER.setUserSettings({
         userId: localStorage.getItem('userId'),
         userSettings: {
@@ -134,6 +135,7 @@ export class Authorization {
         email: email.value,
         password: password.value,
       };
+      console.log(store.user.learning);
       router.navigate('/');
     } catch (error) {
       const message = document.querySelector('.invalid-feedback-password');
