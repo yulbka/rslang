@@ -1,5 +1,8 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+import 'bootstrap';
+import 'bootstrap-select/dist/js/bootstrap-select.min';
+import 'bootstrap-select/dist/js/i18n/defaults-ru_RU.min';
 import './css/index.scss';
 import { initializeRouter, router } from './routes/index';
 import { store } from './store';

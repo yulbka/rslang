@@ -1,8 +1,10 @@
+import $ from 'jquery';
 import { API_USER } from 'api/user';
 import { store } from 'store';
 import { constants } from 'js/constants';
 import { getFormData, setFormData } from 'components/forms';
-import { gamesMap } from "scripts/helpers/variables";
+import { selectCreate } from 'components/forms/select';
+import { gamesMap } from 'scripts/helpers/variables';
 
 function createSettingsBlock() {
   document.body.classList.add('main-page');
@@ -70,7 +72,19 @@ function createSettingsBlock() {
                 <label for="autoplay" class="sound-button-label custom-control-label">автовоспроизведение звука</label>
             </div>
             </div>
-             
+            <div class="option-block">
+                <h6>Добавить оценку уровня сложности слова:</h6>
+                 ${selectCreate({
+                   name: 'wordEstimation',
+                   multiple: true,
+                   options: [
+                     { value: 'repeatButton', content: 'Снова' },
+                     { value: 'hardButton', content: 'Трудно' },
+                     { value: 'goodButton', content: 'Хорошо' },
+                     { value: 'liteButton', content: 'Легко' },
+                   ],
+                 })}
+            </div> 
             <div class="settings-buttons-block">
                 <button class="btn btn-primary settings-button">Применить настройки</button>
             </div>
@@ -78,6 +92,7 @@ function createSettingsBlock() {
        </section>
       `
   );
+  $('.selectpicker').selectpicker();
 
   const { userSettingsForm } = constants.DOM;
   setFormData({ form: userSettingsForm, formData: store.user.learning });
@@ -85,13 +100,16 @@ function createSettingsBlock() {
   userSettingsForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     validateShowInCards();
-    const { wordsPerDay, ...restFormData } = getFormData({ form: userSettingsForm });
+    const { wordsPerDay, wordEstimation, ...restFormData } = getFormData({ form: userSettingsForm });
     try {
       const newSettings = await API_USER.setUserSettings({
         userId: store.user.auth.userId,
         userSettings: {
           wordsPerDay,
-          optional: restFormData,
+          optional: {
+            ...restFormData,
+            ...wordEstimation.reduce((acc, key) => ({ ...acc, [key]: true }), {}),
+          },
         },
       });
       store.user.learning = {

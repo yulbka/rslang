@@ -24,6 +24,10 @@ export const userSettings = {
     hardWord: false,
     showAnswerButton: false,
     autoplay: false,
+    repeatButton: false,
+    hardButton: false,
+    goodButton: false,
+    liteButton: false
   },
   // ...userExample,
 };
