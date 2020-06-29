@@ -1,3 +1,6 @@
+@import 'select.scss';
+
+
 .rs-form {
   border-radius: $borderRadius5;
   display: flex;
@@ -38,7 +41,7 @@
   }
 }
 
-.block-with-required-field {
+
   .error-message {
     display: none;
 
@@ -46,7 +49,6 @@
       display: block;
       width: 100%;
     }
-  }
 }
 
 .custom-checkbox {

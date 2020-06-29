@@ -13,8 +13,10 @@ export const userSettings = {
     userId: localStorage.getItem('userId'),
   },
   learning: {
-    wordsPerDay: 150,
-    cardsPerDay: 150,
+    wordsPerDay: 20,
+    cardsPerDay: 50,
+    learnNewWords: true,
+    learnOldWords: true,
     withTranslation: true,
     withExplanation: false,
     withExample: false,

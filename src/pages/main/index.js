@@ -5,6 +5,7 @@ import { constants } from 'js/constants';
 import { getFormData, setFormData } from 'components/forms';
 import { selectCreate } from 'components/forms/select';
 import { gamesMap } from 'scripts/helpers/variables';
+import { createPopupNotification } from "components/popup/popup";
 
 function createSettingsBlock() {
   document.body.classList.add('main-page');
@@ -17,18 +18,30 @@ function createSettingsBlock() {
           <form name="userSettings" class="rs-form">
             <div class="option-block">
               <h6>Выберите:</h6>
-                <div class="rs-form-field rs-input rs-label-left">
-                    <label class="rs-field-label" for="wordsPerDay">Количество новых слов в день:</label>
-                    <input class="rs-field-input" type="number" id="wordsPerDay" name="wordsPerDay" min="1" max="1000" autocomplete="off">
+              <div class="alert alert-danger error-message cards-error">Количество новых слов должно быть меньше количества карточек в день!</div>
+              <div class="rs-form-field rs-input rs-label-left">
+                  <label class="rs-field-label" for="wordsPerDay">Количество новых слов в день:</label>
+                  <input class="rs-field-input" type="number" id="wordsPerDay" name="wordsPerDay" min="1" max="100" autocomplete="off">
+              </div>
+              <div class="rs-form-field rs-input rs-label-left">
+                  <label class="rs-field-label" for="wordsPerDay">Количество карточек в день:</label>
+                  <input class="rs-field-input" type="number" id="cardsPerDay" name="cardsPerDay" min="1" max="100" autocomplete="off">
+              </div>
+            </div>
+            <div class="option-block">
+                <h6>Показывать:</h6>
+                <div class="rs-form-field custom-control custom-checkbox">
+                    <input class="custom-control-input is-required-field" type="checkbox" id="learnNewWords" name="learnNewWords">
+                    <label class="custom-control-label" for="learnNewWords">новые слова</label>
                 </div>
-                <div class="rs-form-field rs-input rs-label-left">
-                    <label class="rs-field-label" for="wordsPerDay">Количество карточек в день:</label>
-                    <input class="rs-field-input" type="number" id="cardsPerDay" name="cardsPerDay" min="1" max="1000" autocomplete="off">
+                <div class="rs-form-field custom-control custom-checkbox">
+                    <input class="custom-control-input is-required-field" type="checkbox" id="learnOldWords" name="learnOldWords">
+                    <label class="custom-control-label" for="learnOldWords">изученные слова</label>
                 </div>
             </div>
             <div class="option-block block-with-required-field"> 
                 <h6>Показывать в карточке:</h6>
-                <div class="alert alert-danger error-message">Выберите одну из опций!</div>
+                <div class="alert alert-danger error-message options-error">Выберите одну из опций!</div>
                 <div class="rs-form-field custom-control custom-checkbox">
                     <input type="checkbox" id="withTranslation" name="withTranslation" class="custom-control-input is-required-field">
                     <label for="withTranslation" class="custom-control-label">перевод слова:</label>
@@ -78,10 +91,10 @@ function createSettingsBlock() {
                    name: 'wordEstimation',
                    multiple: true,
                    options: [
-                     { value: 'repeatButton', content: 'Снова' },
-                     { value: 'hardButton', content: 'Трудно' },
-                     { value: 'goodButton', content: 'Хорошо' },
-                     { value: 'liteButton', content: 'Легко' },
+                     { value: 'repeatButton', content: 'снова' },
+                     { value: 'hardButton', content: 'трудно' },
+                     { value: 'goodButton', content: 'хорошо' },
+                     { value: 'liteButton', content: 'легко' },
                    ],
                  })}
             </div> 
@@ -90,17 +103,28 @@ function createSettingsBlock() {
             </div>
           </form>
        </section>
+       ${createPopupNotification()};
       `
   );
   $('.selectpicker').selectpicker();
-
+  $('.rs-notification').toast({autohide: true, delay: 5000})
   const { userSettingsForm } = constants.DOM;
   setFormData({ form: userSettingsForm, formData: store.user.learning });
 
   userSettingsForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    validateShowInCards();
+    let firstFormError = null;
+
     const { wordsPerDay, wordEstimation, ...restFormData } = getFormData({ form: userSettingsForm });
+
+    validateAmountOfWords();
+    validateShowInCards();
+
+    if (firstFormError) {
+      firstFormError.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      throw Error;
+    }
+
     try {
       const newSettings = await API_USER.setUserSettings({
         userId: store.user.auth.userId,
@@ -112,6 +136,7 @@ function createSettingsBlock() {
           },
         },
       });
+      $('.toast').toast('show');
       store.user.learning = {
         ...store.user.learning,
         wordsPerDay: newSettings.wordsPerDay,
@@ -120,6 +145,30 @@ function createSettingsBlock() {
     } catch (error) {
       console.error(error);
     }
+
+    function validateAmountOfWords() {
+      const newWordsAmount = wordsPerDay;
+      const { cardsPerDay: newCardsAmount } = restFormData;
+      const isValidAmounOfWords = +newWordsAmount > +newCardsAmount;
+      if (isValidAmounOfWords){
+        const errorBlock = userSettingsForm.querySelector('.cards-error')
+        errorBlock.classList.add('active');
+        if (!firstFormError) firstFormError = errorBlock
+      } else userSettingsForm.querySelector('.cards-error').classList.remove('active');
+    }
+
+    function validateShowInCards() {
+      const requiredFieldsBlock = userSettingsForm.querySelector('.block-with-required-field');
+      const fields = requiredFieldsBlock.querySelectorAll('.is-required-field');
+      const errorBlock = requiredFieldsBlock.querySelector('.options-error');
+      const hasSomeoneChecked = Array.from(fields).some((el) => el.checked);
+      if (!hasSomeoneChecked) {
+        errorBlock.classList.add('active');
+        if (!firstFormError) firstFormError = errorBlock;
+      } else {
+        errorBlock.classList.remove('active');
+      }
+    };
   });
 }
 
@@ -155,17 +204,5 @@ export function pageHomeCreate() {
   createBlockWithGames({ gamesData: gamesMap });
 }
 
-function validateShowInCards() {
-  const { userSettingsForm } = constants.DOM;
-  const requiredFieldsBlock = userSettingsForm.querySelector('.block-with-required-field');
-  const fields = requiredFieldsBlock.querySelectorAll('.is-required-field');
-  const errorBlock = requiredFieldsBlock.querySelector('.error-message');
-  const hasSomeoneChecked = Array.from(fields).some((el) => el.checked);
-  if (!hasSomeoneChecked) {
-    errorBlock.classList.add('active');
-    errorBlock.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    throw Error;
-  } else {
-    errorBlock.classList.remove('active');
-  }
-};
+
+
