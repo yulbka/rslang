@@ -23,7 +23,6 @@ export const userSettings = {
     withTranscription: true,
     withHelpImage: false,
     deleteWord: true,
-    hardWord: false,
     showAnswerButton: false,
     autoplay: false,
     repeatButton: false,

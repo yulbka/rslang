@@ -76,10 +76,6 @@ function createSettingsBlock() {
                     <input type="checkbox" id="deleteWord" name="deleteWord" class="custom-control-input">
                     <label for="deleteWord" class="custom-control-label">исключать слова из изучения</label>
                 </div>
-                <div class="rs-form-field custom-control custom-checkbox">
-                    <input type="checkbox" id="hardWord" name="hardWord" class="custom-control-input">
-                    <label for="hardWord" class="custom-control-label">добавлять слова в сложные</label>
-                </div>
                 <div class="sound-button-block rs-form-field custom-control custom-checkbox">
                 <input type="checkbox" id="autoplay" name="autoplay" class="sound-button-input custom-control-input" checked>
                 <label for="autoplay" class="sound-button-label custom-control-label">автовоспроизведение звука</label>
