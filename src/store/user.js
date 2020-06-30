@@ -25,10 +25,7 @@ export const userSettings = {
     deleteWord: true,
     showAnswerButton: false,
     autoplay: false,
-    repeatButton: false,
-    hardButton: false,
-    goodButton: false,
-    liteButton: false
+    wordRaiting: true,
   },
   // ...userExample,
 };

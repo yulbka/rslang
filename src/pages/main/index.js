@@ -77,23 +77,14 @@ function createSettingsBlock() {
                     <label for="deleteWord" class="custom-control-label">исключать слова из изучения</label>
                 </div>
                 <div class="sound-button-block rs-form-field custom-control custom-checkbox">
-                <input type="checkbox" id="autoplay" name="autoplay" class="sound-button-input custom-control-input" checked>
-                <label for="autoplay" class="sound-button-label custom-control-label">автовоспроизведение звука</label>
+                    <input type="checkbox" id="autoplay" name="autoplay" class="sound-button-input custom-control-input" checked>
+                    <label for="autoplay" class="sound-button-label custom-control-label">автовоспроизведение звука</label>
+                </div>
+                <div class="sound-button-block rs-form-field custom-control custom-checkbox">
+                    <input type="checkbox" id="wordRaiting" name="wordRaiting" class="sound-button-input custom-control-input" checked>
+                    <label for="wordRaiting" class="sound-button-label custom-control-label">оценить сложность слова</label>
+                </div>
             </div>
-            </div>
-            <div class="option-block">
-                <h6>Добавить оценку уровня сложности слова:</h6>
-                 ${selectCreate({
-                   name: 'wordEstimation',
-                   multiple: true,
-                   options: [
-                     { value: 'repeatButton', content: 'снова' },
-                     { value: 'hardButton', content: 'трудно' },
-                     { value: 'goodButton', content: 'хорошо' },
-                     { value: 'liteButton', content: 'легко' },
-                   ],
-                 })}
-            </div> 
             <div class="settings-buttons-block">
                 <button class="btn btn-primary settings-button">Применить настройки</button>
             </div>
@@ -102,7 +93,6 @@ function createSettingsBlock() {
        ${createPopupNotification()};
       `
   );
-  $('.selectpicker').selectpicker();
   $('.rs-notification').toast({autohide: true, delay: 5000})
   const { userSettingsForm } = constants.DOM;
   setFormData({ form: userSettingsForm, formData: store.user.learning });
