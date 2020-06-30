@@ -21,6 +21,6 @@ export const userSettings = {
     withTranscription: true,
     withHelpImage: true,
     showAnswerButton: false,
-  },
+  },  
   // ...userExample,
 };

@@ -5,6 +5,7 @@ import { router } from '../routes/index';
 import { requestCreator } from '../utils/requests';
 import { API_USER } from '../api/user';
 import { store } from '../store';
+import { Statistics } from './Statistics';
 
 export class Authorization {
   static render(type = 'login') {
@@ -100,7 +101,11 @@ export class Authorization {
           optional: restSettings,
         },
       });
-      // TODO: add initial statistic
+      const { learnedWords, ...restStatistics } = store.mainGame.statistics;
+      await Statistics.set({
+        learnedWords,
+        optional: restStatistics,
+      })
     } catch (error) {
       const emailMessage = document.querySelector('.invalid-feedback-email');
       const passwordMessage = document.querySelector('.invalid-feedback-password');

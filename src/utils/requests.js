@@ -1,6 +1,8 @@
 import { router } from '../routes/index';
 
-const API_HOST = 'https://afternoon-falls-25894.herokuapp.com';
+//const API_HOST = 'https://afternoon-falls-25894.herokuapp.com';
+
+const API_HOST = 'http://pacific-castle-12388.herokuapp.com';
 
 /*
  (required) url: part after host

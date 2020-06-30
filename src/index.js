@@ -6,6 +6,7 @@ import { router } from './routes/index';
 import { store } from './store';
 import { API_USER } from './api/user';
 import { PRELOADER } from './scripts/helpers/variables';
+import { Statistics } from './scripts/Statistics';
 
 API_USER.getUser({ userId: localStorage.getItem('userId') })
   .then((data) => {
@@ -50,3 +51,31 @@ API_USER.getUser({ userId: localStorage.getItem('userId') })
 
   console.log('usr', { ...store });
 })();
+
+
+( async() => {
+  const statistics = await Statistics.set({
+    "learnedWords": 20,
+    "optional": {
+      "short": {
+        "cards": 20,
+        "newWords": 10,
+        "answers": 'WTTWTTTTWWWWW'
+      },
+      "long": {
+        [new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })]: 10,
+        [new Date('07-06-2020').toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })]: 20,
+        [new Date('01-07-2020').toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' })]: 30,
+      },
+    }
+  })
+
+  Object.entries(statistics.optional).forEach(([key, value]) => {
+    store.mainGame.statistics[key] = value;
+  });
+  store.mainGame.statistics.learnedWords = statistics.learnedWords;
+  console.log(store.mainGame);
+})()
+
+
+Statistics.get();

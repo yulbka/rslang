@@ -3,7 +3,19 @@ import { userSettings } from './user';
 export const store = new Proxy(
   {
     user: userSettings,
-    game1: {},
+    mainGame: {
+      statistics: {
+        learnedWords: 0,
+        short: {
+          cards: 0,
+          newWords: 0,
+          answers: '',
+        },
+        long: {
+          
+        },
+      }
+    },
   },
   {
     set(target, name, value) {
