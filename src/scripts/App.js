@@ -1,7 +1,8 @@
-import { SIDEBAR, MAIN } from 'scripts/helpers/variables';
+import { SIDEBAR, MAIN, HEADER } from 'scripts/helpers/variables';
 import { pageHomeCreate } from 'pages/main';
 import { store } from 'store';
 import { createSidebar } from './burger';
+import { Header } from './Header';
 import { Authorization } from './Authorization';
 import { router } from '../routes';
 
@@ -9,12 +10,13 @@ export class App {
   static reRender(page) {
     const isAuthPage = ['login', 'registration'].includes(page);
     const isAuthorized = !!store.user.auth.token;
-
     if (isAuthPage) {
       if (isAuthorized) return router.navigate('/');
       SIDEBAR.innerHTML = '';
+      HEADER.innerHTML = '';
     } else {
       this.checkSideBar();
+      this.checkHeader();
     }
     MAIN.innerHTML = '';
     this.setContent(page);
@@ -22,7 +24,13 @@ export class App {
 
   static checkSideBar() {
     if (!SIDEBAR.innerHTML) {
-      this.setContent('sidebar');
+      createSidebar();
+    }
+  }
+
+  static checkHeader() {
+    if (!HEADER.innerHTML) {
+      Header.render();
     }
   }
 
@@ -35,9 +43,6 @@ export class App {
       case 'login':
       case 'registration':
         Authorization.render(content);
-        break;
-      case 'sidebar':
-        createSidebar();
         break;
       case 'learn':
         MAIN.innerHTML = '<div>learn</div>'; // replace with function that render page learn words

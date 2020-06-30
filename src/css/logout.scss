@@ -1,0 +1,20 @@
+.logout {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: $space-xs;
+  width: $space-md;
+  height: $space-md;
+  background: url('../assets/images/logout.png') no-repeat;
+  background-size: cover;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  opacity: 0.8;
+  &:focus {
+    outline: none;
+  }
+  &:hover {
+    opacity: 1;
+  }
+}

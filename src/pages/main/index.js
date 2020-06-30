@@ -3,7 +3,6 @@ import { API_USER } from 'api/user';
 import { store } from 'store';
 import { constants } from 'js/constants';
 import { getFormData, setFormData } from 'components/forms';
-import { selectCreate } from 'components/forms/select';
 import { gamesMap } from 'scripts/helpers/variables';
 import { createPopupNotification } from 'components/popup/popup';
 

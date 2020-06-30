@@ -4,7 +4,6 @@ img {
 
 .main-page {
   background-color: $colorGrayLight;
-  padding: 80px 0;
 
   &::after {
     background-image: url('~assets/img/content/background.jpg');
@@ -27,6 +26,8 @@ img {
   flex-direction: column;
   justify-content: space-between;
   position: relative;
+  padding-top: 80px;
+  padding-bottom: 80px;
   img {
     width: 100%;
   }
