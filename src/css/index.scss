@@ -1,10 +1,24 @@
 @import 'helpers/postcss-reset/mobile.css';
 @import 'helpers/variables.scss';
 @import 'node_modules/bootstrap/dist/css/bootstrap.min.css';
+@import 'node_modules/bootstrap-select/dist/css/bootstrap-select.min.css';
+
 @import './header.scss';
 @import './logout.scss';
 @import './preloader.scss';
+@import '../../src/components/forms/index.scss';
+@import '../../src/components/popup/popup.scss';
+
 @import './authorization.scss';
+@import '../../src/pages/main/index.scss';
+
+/********* CUSTOM RESET: START **********/
+label {
+  margin-bottom: 0;
+}
+/********* CUSTOM RESET: END **********/
 
 .page-home {
+  display: flex;
+  flex-direction: column;
 }

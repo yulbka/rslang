@@ -14,10 +14,24 @@ module.exports = {
   entry: {
     app: './src/index.js',
   },
-  devtool: 'source-map',
+  devtool: isDev ? 'eval-source-map' : 'none',
   devServer: {
     contentBase: distPath,
     overlay: true,
+  },
+  resolve: {
+    alias: {
+      api: `${root}/src/api`,
+      assets: `${root}/src/assets`,
+      components: `${root}/src/components`,
+      utils: `${root}/src/utils`,
+      store: `${root}/src/store`,
+      pages: `${root}/src/pages`,
+
+      js: `${root}/src/js`,
+      scripts: `${root}/src/scripts`,
+    },
+    extensions: ['.js', '.json'],
   },
   module: {
     rules: [
@@ -43,7 +57,7 @@ module.exports = {
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/,
-        use: ['file-loader'],
+        use: [{ loader: 'file-loader' }],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
@@ -77,9 +91,6 @@ module.exports = {
     }),
     new MiniCssExtractPlugin(),
   ],
-  resolve: {
-    extensions: ['.js'],
-  },
   output: {
     filename: '[name].bundle.js',
     path: distPath,

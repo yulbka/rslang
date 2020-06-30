@@ -1,9 +1,10 @@
-import { SIDEBAR, MAIN, HEADER } from './helpers/variables';
-import { store } from '../store/index';
+import { SIDEBAR, MAIN, HEADER } from 'scripts/helpers/variables';
+import { pageHomeCreate } from 'pages/main';
+import { store } from 'store';
 import { createSidebar } from './burger';
 import { Header } from './Header';
 import { Authorization } from './Authorization';
-import { router } from '../routes/index';
+import { router } from '../routes';
 
 export class App {
   static reRender(page) {
@@ -35,6 +36,10 @@ export class App {
 
   static setContent(content) {
     switch (content) {
+      case '/': {
+        pageHomeCreate()
+        break
+      }
       case 'login':
       case 'registration':
         Authorization.render(content);
@@ -73,7 +78,7 @@ export class App {
         MAIN.innerHTML = '<div>aboutUs</div>'; // replace with function that render aboutUs page
         break;
       default:
-        MAIN.innerHTML = '<div>main</div><button type="button" class="btn btn-primary">Button</button>'; // replace with function that render main page
+        break;
     }
   }
 }

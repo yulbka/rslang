@@ -51,6 +51,7 @@ export async function requestCreator(settings) {
     if (!response.ok) {
       if (response.status === 401) {
         localStorage.removeItem('token');
+        localStorage.removeItem('userId');
         router.navigate('login');
       } else {
         throw Error(response.status);

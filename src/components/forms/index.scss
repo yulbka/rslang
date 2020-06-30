@@ -1,0 +1,78 @@
+@import 'select.scss';
+
+.rs-form {
+  border-radius: $borderRadius5;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.7em;
+  position: relative;
+}
+
+.rs-form-field {
+  align-items: center;
+  background-color: $colorGrayLight;
+  border-radius: $borderRadius5;
+  display: flex;
+  margin: 10px;
+  padding: 10px;
+  width: 100%;
+  @media (min-width: 768px) {
+    width: 45%;
+  }
+}
+
+.option-block {
+  background-color: $colorWhite;
+  border-radius: 5px;
+  box-shadow: 0 0 0.125rem 0 $colorGrayTransparent1, 0 0.125rem 0.25rem 0 $colorGrayTransparent1;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px;
+  width: 100%;
+
+  & > h6 {
+    margin: 10px;
+    width: 100%;
+  }
+
+  & + & {
+    margin-top: 30px;
+  }
+}
+
+.error-message {
+  display: none;
+
+  &.active {
+    display: block;
+    width: 100%;
+  }
+}
+
+.custom-checkbox {
+  .custom-control-label {
+    padding-left: calc(1rem + 10px);
+    &::before,
+    &::after {
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+.rs-input.rs-label-left {
+  .rs-field-label + .rs-field-input {
+    margin-left: 10px;
+  }
+}
+
+.settings-buttons-block {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  width: 100%;
+  @media (min-width: 768px) {
+    justify-content: flex-start;
+  }
+}
