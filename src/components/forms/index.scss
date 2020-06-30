@@ -1,3 +1,5 @@
+@import 'select.scss';
+
 .rs-form {
   border-radius: $borderRadius5;
   display: flex;
@@ -38,14 +40,12 @@
   }
 }
 
-.block-with-required-field {
-  .error-message {
-    display: none;
+.error-message {
+  display: none;
 
-    &.active {
-      display: block;
-      width: 100%;
-    }
+  &.active {
+    display: block;
+    width: 100%;
   }
 }
 

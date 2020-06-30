@@ -1,0 +1,12 @@
+.header {
+  padding: $space-xxs;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  background-color: $colorViolet;
+}
+
+.header-title {
+  margin: 0;
+  font-size: 2rem;
+}

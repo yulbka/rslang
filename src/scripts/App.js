@@ -1,7 +1,8 @@
-import { store } from 'store';
-import { SIDEBAR, MAIN, routesMap, routeKeys } from 'scripts/helpers/variables';
+import { SIDEBAR, MAIN, HEADER, routesMap, routeKeys } from 'scripts/helpers/variables';
 import { pageHomeCreate } from 'pages/main';
+import { store } from 'store';
 import { createSidebar } from './burger';
+import { Header } from './Header';
 import { Authorization } from './Authorization';
 import { router } from '../routes';
 
@@ -9,12 +10,13 @@ export class App {
   static reRender(page) {
     const isAuthPage = [routesMap.get(routeKeys.login).url, routesMap.get(routeKeys.registration).url].includes(page);
     const isAuthorized = !!store.user.auth.token;
-
     if (isAuthPage) {
       if (isAuthorized) return router.navigate(routesMap.get(routeKeys.home).url);
       SIDEBAR.innerHTML = '';
+      HEADER.innerHTML = '';
     } else {
       this.checkSideBar();
+      this.checkHeader();
     }
     MAIN.innerHTML = '';
     this.setContent(page);
@@ -23,6 +25,12 @@ export class App {
   static checkSideBar() {
     if (!SIDEBAR.innerHTML) {
       createSidebar();
+    }
+  }
+
+  static checkHeader() {
+    if (!HEADER.innerHTML) {
+      Header.render();
     }
   }
 

@@ -142,7 +142,7 @@ export class Authorization {
       router.navigate(routesMap.get(routeKeys.home).url);
     } catch (error) {
       const message = document.querySelector('.invalid-feedback-password');
-      switch(error.message) {
+      switch (error.message) {
         case '404':
           message.textContent = 'Пользователь не найден';
           break;
