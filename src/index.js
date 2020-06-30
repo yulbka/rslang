@@ -16,7 +16,7 @@ window.onload = async () => {
 };
 
 async function initRequests() {
-  const { userId } = store.user.auth
+  const { userId } = store.user.auth;
   if (!userId) {
     router.navigate(routesMap.get('login').url);
   } else {

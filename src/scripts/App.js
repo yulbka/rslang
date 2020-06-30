@@ -1,14 +1,14 @@
-import {SIDEBAR, MAIN } from 'scripts/helpers/variables';
+import { SIDEBAR, MAIN } from 'scripts/helpers/variables';
 import { pageHomeCreate } from 'pages/main';
-import { store} from "store";
+import { store } from 'store';
 import { createSidebar } from './burger';
 import { Authorization } from './Authorization';
-import { router } from '../routes'
+import { router } from '../routes';
 
 export class App {
   static reRender(page) {
     const isAuthPage = ['login', 'registration'].includes(page);
-    const isAuthorized = !!store.user.auth.token
+    const isAuthorized = !!store.user.auth.token;
 
     if (isAuthPage) {
       if (isAuthorized) return router.navigate('/');
@@ -72,7 +72,8 @@ export class App {
       case 'aboutUs':
         MAIN.innerHTML = '<div>aboutUs</div>'; // replace with function that render aboutUs page
         break;
-      default: break;
+      default:
+        break;
     }
   }
 }

@@ -1,6 +1,4 @@
-
-
-.rs-notification{
+.rs-notification {
   position: fixed;
   right: 20px;
   bottom: 10px;
@@ -12,7 +10,7 @@
     width: 320px;
     max-width: 90vw;
   }
-  .toast-header img{
+  .toast-header img {
     opacity: 0;
   }
 }

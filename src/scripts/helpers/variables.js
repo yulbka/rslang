@@ -5,7 +5,7 @@ export const PRELOADER = document.querySelector('.preload-wrapper');
 export const routesMap = new Map([
   ['registration', { url: 'registration' }],
   ['login', { url: 'login' }],
-  ['home', { url: '/'}],
+  ['home', { url: '/' }],
   ['game1', { url: '#0', title: 'Учи слова' }],
   ['progress', { url: '#1', title: 'Твой прогресс' }],
   ['vocabulary', { url: '#2', title: 'Твой словарь' }],
@@ -25,10 +25,19 @@ export const routesMap = new Map([
   ['team', { url: '#9', title: 'Наша команда' }],
 ]);
 
-export const sidebarMap = ['game1', 'progress', 'vocabulary', 'speakit', 'englishpuzzle', 'savannah', 'audio', 'sprint', 'promo', 'team'].map((key) =>
-    routesMap.get(key)
-)
+export const sidebarMap = [
+  'game1',
+  'progress',
+  'vocabulary',
+  'speakit',
+  'englishpuzzle',
+  'savannah',
+  'audio',
+  'sprint',
+  'promo',
+  'team',
+].map((key) => routesMap.get(key));
 
 export const gamesMap = ['speakit', 'englishpuzzle', 'savannah', 'audio', 'sprint', 'ourGame'].map((key) =>
-    routesMap.get(key)
+  routesMap.get(key)
 );

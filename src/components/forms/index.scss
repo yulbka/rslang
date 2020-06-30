@@ -1,6 +1,5 @@
 @import 'select.scss';
 
-
 .rs-form {
   border-radius: $borderRadius5;
   display: flex;
@@ -41,14 +40,13 @@
   }
 }
 
+.error-message {
+  display: none;
 
-  .error-message {
-    display: none;
-
-    &.active {
-      display: block;
-      width: 100%;
-    }
+  &.active {
+    display: block;
+    width: 100%;
+  }
 }
 
 .custom-checkbox {

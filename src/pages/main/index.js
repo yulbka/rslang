@@ -5,7 +5,7 @@ import { constants } from 'js/constants';
 import { getFormData, setFormData } from 'components/forms';
 import { selectCreate } from 'components/forms/select';
 import { gamesMap } from 'scripts/helpers/variables';
-import { createPopupNotification } from "components/popup/popup";
+import { createPopupNotification } from 'components/popup/popup';
 
 function createSettingsBlock() {
   document.body.classList.add('main-page');
@@ -93,7 +93,7 @@ function createSettingsBlock() {
        ${createPopupNotification()};
       `
   );
-  $('.rs-notification').toast({autohide: true, delay: 5000})
+  $('.rs-notification').toast({ autohide: true, delay: 5000 });
   const { userSettingsForm } = constants.DOM;
   setFormData({ form: userSettingsForm, formData: store.user.learning });
 
@@ -136,10 +136,10 @@ function createSettingsBlock() {
       const newWordsAmount = wordsPerDay;
       const { cardsPerDay: newCardsAmount } = restFormData;
       const isValidAmounOfWords = +newWordsAmount > +newCardsAmount;
-      if (isValidAmounOfWords){
-        const errorBlock = userSettingsForm.querySelector('.cards-error')
+      if (isValidAmounOfWords) {
+        const errorBlock = userSettingsForm.querySelector('.cards-error');
         errorBlock.classList.add('active');
-        if (!firstFormError) firstFormError = errorBlock
+        if (!firstFormError) firstFormError = errorBlock;
       } else userSettingsForm.querySelector('.cards-error').classList.remove('active');
     }
 
@@ -154,7 +154,7 @@ function createSettingsBlock() {
       } else {
         errorBlock.classList.remove('active');
       }
-    };
+    }
   });
 }
 
@@ -189,6 +189,3 @@ export function pageHomeCreate() {
   createSettingsBlock();
   createBlockWithGames({ gamesData: gamesMap });
 }
-
-
-

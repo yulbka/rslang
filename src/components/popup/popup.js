@@ -1,5 +1,5 @@
 export function createPopupNotification() {
-    return `
+  return `
 <div class="toast rs-notification" role="alert" aria-live="assertive" aria-atomic="true">
   <div class="toast-header">
     <img src="" class="rounded mr-2" alt="...">
@@ -11,5 +11,5 @@ export function createPopupNotification() {
   Настройки применены!
   </div>
 </div>
-`
+`;
 }
