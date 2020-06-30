@@ -58,6 +58,7 @@ API_USER.getUser({ userId: localStorage.getItem('userId') })
     "learnedWords": 20,
     "optional": {
       "short": {
+        "day": new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' }),
         "cards": 20,
         "newWords": 10,
         "answers": 'WTTWTTTTWWWWW'
@@ -75,7 +76,5 @@ API_USER.getUser({ userId: localStorage.getItem('userId') })
   });
   store.mainGame.statistics.learnedWords = statistics.learnedWords;
   console.log(store.mainGame);
+  Statistics.renderShortPage();
 })()
-
-
-Statistics.get();
