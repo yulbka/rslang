@@ -1,0 +1,35 @@
+.audiocall-game {
+  background: linear-gradient(
+                  180deg,
+                  $colorPurple 0%,
+                  $colorPink 50%,
+                  $colorPinkDark 100%
+  );
+  font-size: 1.5em;
+
+  &.start-screen {
+    height: 100%;
+
+    #root, #main {
+      height: 100%;
+    }
+
+    .audiocall-game-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+  }
+
+  .timer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 150px;
+    height: 150px;
+    color: $colorWhite;
+    border: 2px solid $colorWhite;
+    border-radius: 50%;
+  }
+}
