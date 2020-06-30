@@ -42,7 +42,9 @@
     "jquery": "3.5.1",
     "popper.js": "1.16.1",
     "swiper": "^5.4.5",
-    "tippy.js": "^6.2.3"
+    "tippy.js": "^6.2.3",
+    "navigo": "6.0.2",
+    "bootstrap-select": "1.13.18"
   },
   "devDependencies": {
     "@babel/core": "7.10.2",

@@ -1,10 +1,10 @@
-import { MAIN } from './helpers/variables';
-import { createElement } from './helpers/createElement';
-import { validatePassword, validateEmail } from './helpers/validate';
-import { router } from '../routes/index';
-import { requestCreator } from '../utils/requests';
-import { API_USER } from '../api/user';
-import { store } from '../store';
+import { MAIN, routesMap, routeKeys } from 'scripts/helpers/variables';
+import { createElement } from 'scripts/helpers/createElement';
+import { validatePassword, validateEmail } from 'scripts/helpers/validate';
+import { requestCreator } from 'utils/requests';
+import { store } from 'store';
+import { API_USER } from 'api/user';
+import { router } from '../routes';
 
 export class Authorization {
   static render(type = 'login') {
@@ -26,18 +26,18 @@ export class Authorization {
     const submitBtn = createElement('button', form, ['btn', 'btn-primary', 'authorization__submit']);
     const note = createElement('p', wrapper, ['text-muted', 'authorization__text']);
     const linkBtn = createElement('button', wrapper, ['btn', 'btn-outline-secondary', 'btn-sm', 'authorization-link']);
-    if (type === 'login') {
+    if (type === routesMap.get('login').url) {
       submitBtn.textContent = 'Войти';
       submitBtn.dataset.type = 'signIn';
       note.textContent = 'Впервые на RSLang?';
       linkBtn.textContent = 'Регистрация';
-      linkBtn.dataset.type = 'registration';
+      linkBtn.dataset.type = routesMap.get(routeKeys.registration).url;
     } else {
       submitBtn.textContent = 'Зарегистрироваться';
       submitBtn.dataset.type = 'signUp';
       note.textContent = 'Есть аккаунт на RSLang?';
       linkBtn.textContent = 'Авторизация';
-      linkBtn.dataset.type = 'login';
+      linkBtn.dataset.type = routesMap.get(routeKeys.login).url;
     }
     MAIN.append(fragment);
     this.linkHandler();
@@ -135,8 +135,12 @@ export class Authorization {
         email: email.value,
         password: password.value,
       };
-      console.log(store.user.learning);
-      router.navigate('/');
+      const userSettings = await API_USER.getUserSettings({ userId: user.userId });
+      store.user.learning = {
+        ...store.user.learning,
+        ...userSettings,
+      };
+      router.navigate(routesMap.get(routeKeys.home).url);
     } catch (error) {
       const message = document.querySelector('.invalid-feedback-password');
       switch (error.message) {

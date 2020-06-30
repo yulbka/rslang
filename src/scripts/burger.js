@@ -1,6 +1,6 @@
 import '../css/burger.scss';
 import { createElement } from './helpers/createElement';
-import { SIDEBAR, routesMap } from './helpers/variables';
+import { SIDEBAR, sidebarMap } from './helpers/variables';
 
 export function createSidebar() {
   const aside = createElement('aside', SIDEBAR, ['root-sidebar']);
@@ -17,7 +17,7 @@ export function createSidebar() {
     'RS Lang – приложение для изучения иностранных слов с методикой интервального повторения, отслеживанием индивидуального прогресса и мини-играми.'
   );
 
-  for (const value of routesMap.values()) {
+  for (const value of sidebarMap.values()) {
     const li = createElement('li', ul);
     createElement('a', li, undefined, value.title, 'href', value.url);
   }
