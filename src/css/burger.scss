@@ -5,7 +5,7 @@
   height: 50px;
   left: 20px;
   position: fixed;
-  top: 20px;
+  top: -5px;
   width: 50px;
   z-index: 10;
 }
@@ -22,7 +22,7 @@
 .root-sidebar-burger span,
 .root-sidebar-burger span::before,
 .root-sidebar-burger span::after {
-  background-color: $colorViolet;
+  background-color: $colorWhite;
   display: block;
   height: 3px;
   outline: 1px solid transparent;
@@ -68,7 +68,7 @@
   overflow-y: scroll;
   padding: 100px 40px 60px 40px;
   position: fixed;
-  top: 0;
+  top: 2px;
   transition: transform 0.55s cubic-bezier(0.785, 0.135, 0.15, 0.86);
   width: 100%;
   z-index: 9;
@@ -80,7 +80,7 @@
     opacity: 0;
     pointer-events: none;
     position: fixed;
-    top: 20px;
+    top: -5px;
     width: 50px;
     z-index: 10;
   }

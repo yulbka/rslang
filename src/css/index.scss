@@ -1,7 +1,10 @@
 @import 'helpers/postcss-reset/mobile.css';
 @import 'helpers/variables.scss';
 @import 'node_modules/bootstrap/dist/css/bootstrap.min.css';
+@import './header.scss';
+@import './logout.scss';
 @import './preloader.scss';
 @import './authorization.scss';
+
 .page-home {
 }
