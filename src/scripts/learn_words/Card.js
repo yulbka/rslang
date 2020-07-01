@@ -10,10 +10,11 @@ export class Card {
       withExample,
       withTranscription,
       withHelpImage,
+      autoplay,
       showAnswerButton,
-      showDeleteButton,
-      showDictionaryButton,
-      chooseDifficulty
+      deleteWord,
+      hardWord,
+      wordRating,
     } = settings
   ) {
     this.word = word;
@@ -22,14 +23,14 @@ export class Card {
     this.withExample = withExample;
     this.withTranscription = withTranscription;
     this.withHelpImage = withHelpImage;
+    this.autoplay = autoplay;
     this.showAnswerButton = showAnswerButton;
-    this.showDeleteButton = showDeleteButton;
-    this.showDictionaryButton = showDictionaryButton;
-    this.chooseDifficulty = chooseDifficulty;
+    this.deleteWord = deleteWord;
+    this.hardWord = hardWord;
+    this.wordRating = wordRating;
   }
 
   render() {
-    console.log(this.word);
     const API_HOST = 'https://raw.githubusercontent.com/yulbka/rslang-data/master/';
     const fragment = document.createDocumentFragment();
     const card = createElement('div', fragment, ['card', 'swiper-slide']);
@@ -39,23 +40,64 @@ export class Card {
     const cardBody = createElement('div', card, ['card-body']);
     const sentence = createElement('p', cardBody, ['card-text']);
     const word = createElement('span', document.body, ['card-text'], this.word.word);
-    createElement('audio', sentence, ['audio-word'], '', 'src', `${API_HOST}${this.word.audio}`);
+    if (this.autoplay) {
+      createElement('audio', sentence, ['audio-word'], '', 'src', `${API_HOST}${this.word.audio}`);
+    }
     if (this.withExample) {
       const example = this.word.textExample;
       createElement('span', sentence, [], example.slice(0, example.indexOf('<b>')));
       this.renderInputContainer(sentence, word);
       createElement('span', sentence, [], example.slice(example.indexOf('</b>') + 4));
-      createElement('audio', sentence, ['audio-example'], '', 'src', `${API_HOST}${this.word.audioExample}`);
+      if (this.autoplay) {
+        createElement('audio', sentence, ['audio-example'], '', 'src', `${API_HOST}${this.word.audioExample}`);
+      }
     } else {
       this.renderInputContainer(sentence, word);
     }
     const ul = createElement('ul', card, ['list-group', 'list-group-flush']);
-    if (this.chooseDifficulty) {
-      const difficultyControls = createElement('div', ul, ['btn-group', 'difficulty'], '', 'role', 'group');
-      createElement('button', difficultyControls, ['btn', 'btn-light', 'btn-difficulty', 'btn-hidden'], 'Снова', 'data-difficulty', 'weak');
-      createElement('button', difficultyControls, ['btn', 'btn-light', 'btn-difficulty', 'btn-hidden'], 'Трудно', 'data-difficulty', 'hard')
-      createElement('button', difficultyControls, ['btn', 'btn-light', 'btn-difficulty', 'btn-hidden'], 'Хорошо', 'data-difficulty', 'normal')
-      createElement('button', difficultyControls, ['btn', 'btn-light', 'btn-difficulty', 'btn-hidden'], 'Легко', 'data-difficulty', 'easy')
+    if (this.wordRating) {
+      const ratingControls = createElement('div', ul, ['btn-group', 'rating'], '', 'role', 'group');
+      createElement(
+        'button',
+        ratingControls,
+        ['btn', 'btn-light', 'btn-rating', 'btn-hidden'],
+        'Снова',
+        'data-rating',
+        'weak'
+      );
+      createElement(
+        'button',
+        ratingControls,
+        ['btn', 'btn-light', 'btn-rating', 'btn-hidden'],
+        'Трудно',
+        'data-rating',
+        'hard'
+      );
+      createElement(
+        'button',
+        ratingControls,
+        ['btn', 'btn-light', 'btn-rating', 'btn-hidden'],
+        'Хорошо',
+        'data-rating',
+        'normal'
+      );
+      createElement(
+        'button',
+        ratingControls,
+        ['btn', 'btn-light', 'btn-rating', 'btn-hidden'],
+        'Легко',
+        'data-rating',
+        'easy'
+      );
+    }
+    const translation = createElement(
+      'li',
+      ul,
+      ['list-group-item', 'card-translate', 'card-translate-hidden'],
+      this.word.wordTranslate
+    );
+    if (this.withTranslation) {
+      translation.classList.remove('card-translate-hidden');
     }
     if (this.withExample) {
       createElement(
@@ -68,19 +110,18 @@ export class Card {
     if (this.withTranscription) {
       createElement('li', ul, ['list-group-item'], this.word.transcription);
     }
-    if (this.withTranslation) {
-      createElement('li', ul, ['list-group-item'], this.word.wordTranslate);
-    }
     if (this.withExplanation) {
       const meaning = this.word.textMeaning;
-      const delimiter = meaning.indexOf('</i> is ') + '</i> is '.length;
+      const delimiter = meaning.indexOf('</i>') + '</i> '.length;
       createElement(
         'li',
         ul,
         ['list-group-item'],
         `${meaning.slice(delimiter, delimiter + 1).toUpperCase()}${meaning.slice(delimiter + 1)}`
       );
-      createElement('audio', sentence, ['audio-meaning'], '', 'src', `${API_HOST}${this.word.audioMeaning}`);
+      if (this.autoplay) {
+        createElement('audio', sentence, ['audio-meaning'], '', 'src', `${API_HOST}${this.word.audioMeaning}`);
+      }
       createElement(
         'li',
         ul,
@@ -93,10 +134,10 @@ export class Card {
     if (this.showAnswerButton) {
       createElement('button', controls, ['btn', 'btn-light', 'show-answer'], 'Показать ответ');
     }
-    if (this.showDeleteButton) {
+    if (this.deleteWord) {
       createElement('button', controls, ['btn', 'btn-light', 'btn-delete'], 'Удалить');
     }
-    if (this.showDictionaryButton) {
+    if (this.hardWord) {
       controls.insertAdjacentHTML(
         'beforeend',
         `<button class='btn btn-light btn-difficulty'
@@ -106,7 +147,7 @@ export class Card {
       Сложное слово
       </button>`
       );
-    }    
+    }
     word.remove();
     return fragment;
   }
@@ -128,14 +169,7 @@ export class Card {
       data-word-id='${this.word._id}'
       data-repeat='${repeat}'
       style='width: ${example.offsetWidth}px;'
-      autofocus>`
-    );
-
-    createElement(
-      'span',
-      inputContainer,
-      ['card-translate', 'card-translate-hidden', 'word-translate'],
-      this.word.wordTranslate
+      >`
     );
   }
 }

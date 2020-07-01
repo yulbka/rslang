@@ -6,6 +6,14 @@
   background-color: $colorViolet;
 }
 
+.header-link {
+  color: $colorWhite;
+  &:hover {
+    text-decoration: none;
+    color: $colorWhite;
+  }
+}
+
 .header-title {
   margin: 0;
   font-size: 2rem;

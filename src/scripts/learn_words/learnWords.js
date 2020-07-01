@@ -1,4 +1,5 @@
 import tippy from 'tippy.js';
+import { PRELOADER } from '../helpers/variables';
 import { createElement } from '../helpers/createElement';
 import { initializeSwiper } from './swiper';
 import { WordService } from '../service/Word.Service';
@@ -9,13 +10,15 @@ import { getRandomNumber } from '../helpers/getRandomNumber';
 
 export class LearnWords {
   static async render() {
+    PRELOADER.classList.remove('preload-wrapper-hidden');
     const MAIN = document.querySelector('#main');
     const fragment = document.createDocumentFragment();
     const wrapper = createElement('div', fragment, ['learn-wrapper']);
-    const swiperContainer = createElement('div', wrapper, ['swiper-container']);
+    const main = createElement('div', wrapper, ['learn-main']);
+    const swiperContainer = createElement('div', main, ['swiper-container']);
     createElement('div', swiperContainer, ['swiper-wrapper']);
     ['swiper-button-prev', 'swiper-button-next'].forEach((className) => {
-      createElement('div', wrapper, [className]);
+      createElement('div', main, [className]);
     });
     const footer = createElement('footer', wrapper, ['learn-footer']);
     const progressWrapper = createElement('div', footer, ['progress-wrapper']);
@@ -24,37 +27,60 @@ export class LearnWords {
     createElement('div', progress, ['progress-bar'], '', 'role', 'progressbar');
     createElement('div', progressWrapper, ['progress-number', 'progress-max', 'text-primary'], '100');
     MAIN.append(fragment);
-    console.log(store.user.learning);
-    await WordService.getAllUserWords();
-    await WordService.getWordsByCategory('difficult');  
     await this.addCards();
     tippy('[data-tippy-content]');
     this.inputHandler();
     this.showAnswerHandler();
     this.deleteButtonHandler();
-    this.dictionaryButtonHandler();
-    this.difficultyHandler();
+    this.hardButtonHandler();
+    this.ratingHandler();
+    PRELOADER.classList.add('preload-wrapper-hidden');
+    const input = document.querySelector('.card-input');
+    input.focus();
   }
 
   static async addCards() {
     const mySwiper = initializeSwiper('.swiper-container');
-    const { wordsPerDay, newWordsPerDay } = store.user.learning;
-    const numToRepeat = wordsPerDay - newWordsPerDay;
-    const words = await WordService.getNewWords(newWordsPerDay);
-    words.forEach((word) => {
-      const card = new Card(word, store.user.learning).render();
-      mySwiper.appendSlide(card);
-    });
-    console.log(store.user.wordsToRepeat);
-    store.user.wordsToRepeat.slice(0, numToRepeat).forEach((word) => {
-      const slideIndex = getRandomNumber(newWordsPerDay);
-      const card = new Card(word, store.user.learning).render();
-      mySwiper.addSlide(slideIndex, card);
-    });
+    const { wordsPerDay, cardsPerDay, learnNewWords, learnOldWords } = store.user.learning;
+    const numToRepeat = cardsPerDay - wordsPerDay;
+    if (learnNewWords && learnOldWords) {
+      await this.addNewWordsToSlider(mySwiper, wordsPerDay);
+      await this.addWordsToRepeatToSlider(mySwiper, numToRepeat, wordsPerDay);
+    } else if (learnNewWords) {
+      await this.addNewWordsToSlider(mySwiper, wordsPerDay);
+    } else {
+      await this.addWordsToRepeatToSlider(mySwiper, numToRepeat, numToRepeat);
+    }
     const progressMax = document.querySelector('.progress-max');
     progressMax.textContent = mySwiper.slides.length;
-    const progressbar = document.querySelector('.progress-bar');
-    progressbar.setAttribute('aria-valuemax', `${mySwiper.slides.length}`);
+    const progressBar = document.querySelector('.progress-bar');
+    progressBar.setAttribute('aria-valuemax', `${mySwiper.slides.length}`);
+  }
+
+  static async addNewWordsToSlider(slider, wordsNumber) {
+    const words = await WordService.getNewWords(wordsNumber);
+    words.forEach((word) => {
+      const card = new Card(word, store.user.learning).render();
+      slider.appendSlide(card);
+    });
+  }
+
+  static async addWordsToRepeatToSlider(slider, wordsNumber, slidesNumber) {
+    const userWords = await WordService.getAllUserWords();
+    const filteredWords = userWords
+      .filter((word) => word.optional.category !== 'deleted')
+      .filter((word) => {
+        return new Date() - new Date(word.optional.nextDayRepeat) > 0;
+      });
+    store.user.wordsToRepeat = [];
+    await Promise.all(filteredWords.map((word) => WordService.getAggregatedWord(word.wordId))).then((results) =>
+      results.forEach((word) => store.user.wordsToRepeat.push(word))
+    );
+    store.user.wordsToRepeat.slice(0, wordsNumber).forEach((word) => {
+      const slideIndex = getRandomNumber(slidesNumber);
+      const card = new Card(word, store.user.learning).render();
+      slider.addSlide(slideIndex, card);
+    });
   }
 
   static inputHandler() {
@@ -73,7 +99,7 @@ export class LearnWords {
       const activeSlide = document.querySelector('.swiper-slide-active');
       const input = activeSlide.querySelector('.card-input');
       if (input.hasAttribute('readonly')) {
-        mySwiper.allowSlideNext = true;
+        this.goToNextCard();
       } else {
         mySwiper.allowSlideNext = false;
         this.checkAnswer();
@@ -86,6 +112,9 @@ export class LearnWords {
     learnPage.addEventListener('click', async (event) => {
       const target = event.target.closest('.show-answer');
       if (!target) return;
+      const activeSlide = document.querySelector('.swiper-slide-active');
+      const input = activeSlide.querySelector('.card-input');
+      if (input.hasAttribute('readonly')) return;
       this.showAnswer();
       await this.playAudio();
       this.goToNextCard();
@@ -96,14 +125,22 @@ export class LearnWords {
     const activeSlide = document.querySelector('.swiper-slide-active');
     const input = activeSlide.querySelector('.card-input');
     const letters = activeSlide.querySelectorAll('.letter-hidden');
-    this.showTranslate();
+    if (store.user.learning.autoTranslate) {
+      this.showTranslate();
+    }
     if (input.value.toLowerCase() === input.dataset.word.toLowerCase()) {
-      await this.playAudio();
-      const difficultyBtns = activeSlide.querySelectorAll('.btn-difficulty');
-      difficultyBtns.forEach((btn) => btn.classList.remove('btn-hidden')); 
       this.showAnswer();
-      if (!store.user.learning.chooseDifficulty) {
-        this.goToNextCard();
+      const wordContainer = activeSlide.querySelector('.word-container');
+      wordContainer.classList.add('text-success');
+      await this.playAudio();
+      const ratingBtns = activeSlide.querySelectorAll('.btn-rating');
+      ratingBtns.forEach((btn) => btn.classList.remove('btn-hidden'));
+      if (!store.user.learning.wordRating) {
+        if (!store.user.learning.autoplay && store.user.learning.autoTranslate) {
+          setTimeout(() => this.goToNextCard(), 2000);
+        } else {
+          this.goToNextCard();
+        }
       }
     } else {
       input.dataset.mistake = 'mistake';
@@ -144,6 +181,7 @@ export class LearnWords {
     const mySwiper = document.querySelector('.swiper-container').swiper;
     const activeSlide = document.querySelector('.swiper-slide-active');
     const input = activeSlide.querySelector('.card-input');
+    input.value = '';
     const letters = activeSlide.querySelectorAll('.letter-hidden');
     letters.forEach((letter) => letter.classList.remove('letter-hidden'));
     input.setAttribute('readonly', '');
@@ -172,9 +210,10 @@ export class LearnWords {
           '1'
         );
       }
-    } else {
-      const word = await WordService.getUserWord(input.dataset.wordId);
-      const { optional } = word;
+    }
+    if (input.dataset.repeat === 'repeated') {
+      const word = await WordService.getAggregatedWord(input.dataset.wordId);
+      const { optional } = word.userWord;
       if (input.dataset.mistake) {
         const mistakeCount = +optional.mistakeCount + 1;
         progressCount = +optional.progressCount - 1;
@@ -194,15 +233,16 @@ export class LearnWords {
           mistakeCount,
           progressCount,
         });
-        if (!store.user.learning.chooseDifficulty) {
+        if (!store.user.learning.wordRating) {
           this.showProgress();
         }
       }
     }
-    if (input.dataset.mistake && !store.user.learning.chooseDifficulty) {
-        const wordToRepeat = await WordService.getAggregatedWord(input.dataset.wordId);
-        mySwiper.addSlide(getRandomNumber(mySwiper.slides.length, mySwiper.activeIndex), 
-        new Card(wordToRepeat, store.user.learning));
+    if (input.dataset.mistake && !store.user.learning.wordRating) {
+      const wordToRepeat = await WordService.getAggregatedWord(input.dataset.wordId);
+      const slideIndex = getRandomNumber(mySwiper.slides.length, mySwiper.activeIndex);
+      const card = new Card(wordToRepeat, store.user.learning).render();
+      mySwiper.addSlide(slideIndex, card);
     }
   }
 
@@ -214,6 +254,8 @@ export class LearnWords {
   }
 
   static async playAudio() {
+    const { autoplay } = store.user.learning;
+    if (!autoplay) return;
     const activeSlide = document.querySelector('.swiper-slide-active');
     const playList = activeSlide.querySelectorAll('audio');
     return new Promise((resolve) => {
@@ -260,15 +302,19 @@ export class LearnWords {
         WordService.updateUserWord(input.dataset.wordId, 'normal', { category: 'deleted' });
       }
       mySwiper.removeSlide(mySwiper.activeIndex);
+      const progressBar = document.querySelector('.progress-bar');
+      progressBar.setAttribute('aria-valuemax', `${mySwiper.slides.length}`);
+      const progressMax = document.querySelector('.progress-max');
+      progressMax.textContent = mySwiper.slides.length;
     });
   }
 
-  static dictionaryButtonHandler() {
+  static hardButtonHandler() {
     const learnPage = document.querySelector('.learn-wrapper');
     learnPage.addEventListener('click', async (event) => {
       const activeSlide = document.querySelector('.swiper-slide-active');
       const input = activeSlide.querySelector('.card-input');
-      const target = event.target.closest('.btn-dictionary');
+      const target = event.target.closest('.btn-difficulty');
       if (!target) return;
       if (input.dataset.repeat === 'new') {
         WordService.createUserWord(
@@ -286,21 +332,21 @@ export class LearnWords {
     });
   }
 
-  static difficultyHandler() {
-    if (!store.user.learning.chooseDifficulty) return; 
-    const learnPage = document.querySelector('.learn-wrapper'); 
+  static ratingHandler() {
+    if (!store.user.learning.wordRating) return;
+    const learnPage = document.querySelector('.learn-wrapper');
     learnPage.addEventListener('click', async (event) => {
       const mySwiper = document.querySelector('.swiper-container').swiper;
       const activeSlide = document.querySelector('.swiper-slide-active');
       const input = activeSlide.querySelector('.card-input');
-      const target = event.target.closest('.btn-difficulty');
+      const target = event.target.closest('.btn-rating');
       if (!target) return;
       const isMistake = input.dataset.mistake === 'mistake';
       const word = await WordService.getAggregatedWord(input.dataset.wordId);
-      WordService.updateUserWord(input.dataset.wordId, target.dataset.difficulty, {
-        nextDayRepeat: setWordDayRepeat(target.dataset.difficulty, isMistake, word.userWord.optional.progressCount)
+      WordService.updateUserWord(input.dataset.wordId, target.dataset.rating, {
+        nextDayRepeat: setWordDayRepeat(target.dataset.rating, isMistake, word.userWord.optional.progressCount),
       });
-      if (target.dataset.difficulty === 'weak' || isMistake) { 
+      if (target.dataset.rating === 'weak' || isMistake) {
         const slideIndex = getRandomNumber(mySwiper.slides.length, mySwiper.activeIndex);
         const card = new Card(word, store.user.learning).render();
         mySwiper.addSlide(slideIndex, card);
@@ -315,8 +361,8 @@ export class LearnWords {
     const progressNumElement = document.querySelector('.progress-number');
     const progressNum = +progressNumElement.textContent + 1;
     progressNumElement.textContent = progressNum;
-    const progressbar = document.querySelector('.progress-bar');
-    progressbar.setAttribute('aria-valuenow', `${progressNum}`);
-    progressbar.style.width = `${Math.round(progressNum / +progressbar.getAttribute('aria-valuemax') * 100)}%`;
+    const progressBar = document.querySelector('.progress-bar');
+    progressBar.setAttribute('aria-valuenow', `${progressNum}`);
+    progressBar.style.width = `${Math.round((progressNum / +progressBar.getAttribute('aria-valuemax')) * 100)}%`;
   }
 }

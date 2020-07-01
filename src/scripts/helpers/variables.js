@@ -21,8 +21,8 @@ export const routeKeys = {
 };
 
 export const routesMap = new Map([
-  [routeKeys.registration, { url: '#/registration' }],
-  [routeKeys.login, { url: '#/login' }],
+  [routeKeys.registration, { url: '#registration' }],
+  [routeKeys.login, { url: '#login' }],
   [routeKeys.home, { url: '#/' }],
   [routeKeys.game1, { url: '#/games/game1', title: 'Учи слова' }],
   [routeKeys.progress, { url: '#/progress', title: 'Твой прогресс' }],
@@ -60,18 +60,23 @@ export const routesMap = new Map([
 ]);
 
 export const sidebarMap = [
- routeKeys.game1,
- routeKeys.progress,
- routeKeys.vocabulary,
- routeKeys.speakIt,
- routeKeys.englishPuzzle,
- routeKeys.savannah,
- routeKeys.audio,
- routeKeys.sprint,
- routeKeys.promo,
- routeKeys.team,
+  routeKeys.game1,
+  routeKeys.progress,
+  routeKeys.vocabulary,
+  routeKeys.speakIt,
+  routeKeys.englishPuzzle,
+  routeKeys.savannah,
+  routeKeys.audio,
+  routeKeys.sprint,
+  routeKeys.promo,
+  routeKeys.team,
 ].map((key) => routesMap.get(key));
 
-export const gamesMap = [routeKeys.speakIt, routeKeys.englishPuzzle, routeKeys.savannah, routeKeys.audio, routeKeys.sprint,  routeKeys.ourGame].map((key) =>
-  routesMap.get(key)
-);
+export const gamesMap = [
+  routeKeys.speakIt,
+  routeKeys.englishPuzzle,
+  routeKeys.savannah,
+  routeKeys.audio,
+  routeKeys.sprint,
+  routeKeys.ourGame,
+].map((key) => routesMap.get(key));

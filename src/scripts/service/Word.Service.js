@@ -1,4 +1,5 @@
 import { requestCreator } from '../../utils/requests';
+import { store } from '../../store';
 
 export class WordService {
   constructor() {
@@ -33,16 +34,14 @@ export class WordService {
 
   static async getNewWords(wordsPerPage = 50) {
     const words = await requestCreator({
-      url: `/users/${localStorage.getItem(
-        'userId'
-      )}/aggregatedWords/?wordsPerPage=${wordsPerPage}&filter={"userWord":null}`,
+      url: `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsPerPage}&filter={"userWord":null}`,
       method: requestCreator.methods.get,
     });
     console.log(words);
     return words[0].paginatedResults;
   }
 
-  static async getWords(level = 0, page = 0) {
+  static async getWordsByLevelAndPage(level = 0, page = 0) {
     this.level = level;
     this.page = page;
     this.words = [];
@@ -50,15 +49,11 @@ export class WordService {
       url: `/words?page=${page}&group=${level}`,
       method: requestCreator.methods.get,
     });
-    words.map((word) => {
-      const newWord = word;
-      newWord.status = 'new';
-      return this.words.push(newWord);
-    });
-    return this.words;
+    this.words.push(words);
+    return words;
   }
 
-  static async getMoreWords() {
+  static async getMoreWordsByLevelAndPage() {
     this.page += 1;
     let newWords = await requestCreator({
       url: `/words?page=${this.page}&group=${this.level}`,
@@ -84,18 +79,9 @@ export class WordService {
     return newWords;
   }
 
-  static async getWordById(wordId) {
-    const word = await requestCreator({
-      url: `/words/${wordId}`,
-      method: requestCreator.methods.get,
-    });
-    console.log(word);
-    return word;
-  }
-
   static async getAllUserWords() {
     const words = await requestCreator({
-      url: `/users/${localStorage.getItem('userId')}/words`,
+      url: `/users/${store.user.auth.userId}/words`,
       method: requestCreator.methods.get,
     });
     console.log(words);
@@ -104,14 +90,23 @@ export class WordService {
 
   static async getUserWord(wordId) {
     const word = await requestCreator({
-      url: `/users/${localStorage.getItem('userId')}/words/${wordId}`,
+      url: `/users/${store.user.auth.userId}/words/${wordId}`,
       method: requestCreator.methods.get,
     });
     console.log(word);
     return word;
   }
 
-  static async createUserWord(wordId, text, difficulty, category, lastDayRepeat, nextDayRepeat, mistakeCount = 0, progressCount = 0) {
+  static async createUserWord(
+    wordId,
+    text,
+    difficulty,
+    category,
+    lastDayRepeat,
+    nextDayRepeat,
+    mistakeCount = 0,
+    progressCount = 0
+  ) {
     const word = {
       difficulty, // weak, hard, normal, easy
       optional: {
@@ -124,7 +119,7 @@ export class WordService {
       },
     };
     const result = await requestCreator({
-      url: `/users/${localStorage.getItem('userId')}/words/${wordId}`,
+      url: `/users/${store.user.auth.userId}/words/${wordId}`,
       method: requestCreator.methods.post,
       data: word,
     });
@@ -135,7 +130,7 @@ export class WordService {
     const word = await this.getUserWord(wordId);
     const { optional } = word;
     const result = await requestCreator({
-      url: `/users/${localStorage.getItem('userId')}/words/${wordId}`,
+      url: `/users/${store.user.auth.userId}/words/${wordId}`,
       method: requestCreator.methods.put,
       data: {
         difficulty,
@@ -150,7 +145,7 @@ export class WordService {
 
   static async getAllAggregatedWords() {
     const words = await requestCreator({
-      url: `/users/${localStorage.getItem('userId')}/aggregatedWords`,
+      url: `/users/${store.user.auth.userId}/aggregatedWords`,
       method: requestCreator.methods.get,
     });
     console.log(words);
@@ -159,7 +154,7 @@ export class WordService {
 
   static async getAggregatedWord(wordId) {
     const word = await requestCreator({
-      url: `/users/${localStorage.getItem('userId')}/aggregatedWords/${wordId}`,
+      url: `/users/${store.user.auth.userId}/aggregatedWords/${wordId}`,
       method: requestCreator.methods.get,
     });
     console.log(word);
@@ -168,9 +163,7 @@ export class WordService {
 
   static async getWordsByCategory(category, wordsPerPage = 50) {
     const words = await requestCreator({
-      url: `/users/${localStorage.getItem(
-        'userId'
-      )}/aggregatedWords/?wordsPerPage=${wordsPerPage}&filter={"userWord.optional.category":"${category}"}`,
+      url: `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsPerPage}&filter={"userWord.optional.category":"${category}"}`,
       method: requestCreator.methods.get,
     });
     console.log(words);

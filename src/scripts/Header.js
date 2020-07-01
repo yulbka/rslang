@@ -7,17 +7,19 @@ export class Header {
   static render() {
     const fragment = document.createDocumentFragment();
     const header = createElement('header', fragment, ['header', 'text-white']);
-    createElement('h1', header, ['header-title'], 'RSLang');
+    const link = createElement('a', header, ['header-link'], '', 'href', '#/');
+    createElement('h1', link, ['header-title'], 'RSLang');
     createElement('button', header, ['logout']);
     HEADER.append(fragment);
     this.logoutHandler();
   }
-  
+
   static logoutHandler() {
     const logoutBtn = document.querySelector('.logout');
     logoutBtn.addEventListener('click', () => {
-    store.user.auth.token = null;
-    router.navigate('login');
-  });
+      store.user.auth.token = null;
+      store.user.auth.userId = null;
+      router.navigate('login');
+    });
   }
 }

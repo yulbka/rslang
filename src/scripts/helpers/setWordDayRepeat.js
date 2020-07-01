@@ -12,7 +12,7 @@ export function setWordDayRepeat(difficulty = 'normal', mistake = false, progres
   }
   switch (difficulty) {
     case 'hard':
-      today.setDate(day + progressCount * hardMultiplier)
+      today.setDate(day + progressCount * hardMultiplier);
       break;
     case 'normal':
       today.setDate(day + progressCount * normalMultiplier);

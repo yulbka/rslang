@@ -1,7 +1,14 @@
 .learn-wrapper {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100vh - 78px);
   margin: 0 auto;
   max-width: 550px;
+}
+
+.learn-main {
+  position: relative;
 }
 
 .card-img-top {
@@ -46,6 +53,7 @@
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
+  background-color: $colorWhite;
 }
 
 .card-translate-hidden {
@@ -69,6 +77,9 @@
   display: none;
 }
 
+.learn-footer {
+}
+
 .progress-wrapper {
   margin: 0 auto;
   max-width: 500px;
@@ -84,7 +95,7 @@
 .progress-number {
   width: 25px;
   text-align: center;
-} 
+}
 
 @media screen and (max-width: 350px) {
   .card-body .btn-group {
