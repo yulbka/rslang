@@ -1,8 +1,8 @@
-import '../css/style.scss';
 import './mainApp';
 
 export function renderSpeakIt() {
-  document.body.insertAdjacentHTML(
+  document.body.classList.add('speakit');
+  document.getElementById('main').insertAdjacentHTML(
     'beforeend',
     `
     <div class="background">
@@ -30,7 +30,7 @@ export function renderSpeakIt() {
           </section>
           <div class="divider"></div>
           <section class="word">
-            <img class="word__img" src="" alt="" />
+            <img class="word__img" src="https://svgsilh.com/svg/468291-9c27b0.svg" alt="" />
             <p class="word__translation"></p>
             <p class="word__recognition"></p>
             <div class="btns">

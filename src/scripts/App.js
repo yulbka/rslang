@@ -5,6 +5,7 @@ import { createSidebar } from './burger';
 import { Header } from './Header';
 import { Authorization } from './Authorization';
 import { router } from '../routes';
+import { createSpeakItGame } from '../games/speakit/js/mainApp';
 import { renderSpeakIt } from '../games/speakit/js/render';
 
 export class App {
@@ -58,6 +59,7 @@ export class App {
       case routesMap.get(routeKeys.speakIt).url:
         // MAIN.innerHTML = '<div>speakIt</div>'; // replace with function that render speakIt mini-game page
         renderSpeakIt();
+        createSpeakItGame();
         break;
       case routesMap.get(routeKeys.englishPuzzle).url:
         MAIN.innerHTML = '<div>puzzle</div>'; // replace with function that render puzzle mini-game page

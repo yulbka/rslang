@@ -34,7 +34,7 @@ const getImages = async (src) => {
 };
 
 const startImage = async () => {
-  document.querySelector('body > div > main > div.speak > section.word > img').src =
-    'https://svgsilh.com/svg/468291-9c27b0.svg';
+  // document.querySelector('body > div > main > div.speak > section.word > img').src =
+  //   'https://svgsilh.com/svg/468291-9c27b0.svg';
 };
 export { getWords, getImages, getTranslations, startImage };
