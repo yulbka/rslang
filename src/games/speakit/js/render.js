@@ -1,3 +1,6 @@
+import '../css/style.scss';
+import './mainApp';
+
 export function renderSpeakIt() {
   document.body.insertAdjacentHTML(
     'beforeend',
