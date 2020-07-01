@@ -1,9 +1,8 @@
-import {renderSpeakIt} from './render'
+import { renderSpeakIt } from './render';
 import { makeWord, builtHtml } from './htmlHelper';
 import { activeItem, listiner, randomize, audioPlayer, stopRecognition, stopTranslation } from './utils';
 import speechRecognition from './speechRecognition';
 import { getImages, getTranslations, getWords, startImage } from './apis';
-
 
 renderSpeakIt();
 

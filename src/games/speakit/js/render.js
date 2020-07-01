@@ -1,6 +1,5 @@
-
 export function renderSpeakIt() {
-document.body.insertAdjacentHTML(
+  document.body.insertAdjacentHTML(
     'beforeend',
     `
     <div class="background">
@@ -54,5 +53,5 @@ document.body.insertAdjacentHTML(
       </main>
     </div>
     `
-)
-};
+  );
+}
