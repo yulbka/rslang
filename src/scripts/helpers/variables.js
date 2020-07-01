@@ -60,18 +60,23 @@ export const routesMap = new Map([
 ]);
 
 export const sidebarMap = [
- routeKeys.game1,
- routeKeys.progress,
- routeKeys.vocabulary,
- routeKeys.speakIt,
- routeKeys.englishPuzzle,
- routeKeys.savannah,
- routeKeys.audio,
- routeKeys.sprint,
- routeKeys.promo,
- routeKeys.team,
+  routeKeys.game1,
+  routeKeys.progress,
+  routeKeys.vocabulary,
+  routeKeys.speakIt,
+  routeKeys.englishPuzzle,
+  routeKeys.savannah,
+  routeKeys.audio,
+  routeKeys.sprint,
+  routeKeys.promo,
+  routeKeys.team,
 ].map((key) => routesMap.get(key));
 
-export const gamesMap = [routeKeys.speakIt, routeKeys.englishPuzzle, routeKeys.savannah, routeKeys.audio, routeKeys.sprint,  routeKeys.ourGame].map((key) =>
-  routesMap.get(key)
-);
+export const gamesMap = [
+  routeKeys.speakIt,
+  routeKeys.englishPuzzle,
+  routeKeys.savannah,
+  routeKeys.audio,
+  routeKeys.sprint,
+  routeKeys.ourGame,
+].map((key) => routesMap.get(key));

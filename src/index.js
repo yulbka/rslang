@@ -11,8 +11,8 @@ import { routesMap, routeKeys, PRELOADER } from './scripts/helpers/variables';
 
 window.onload = async () => {
   await initRequests();
-  PRELOADER.classList.add('preload-wrapper-hidden')
-  initializeRouter()
+  PRELOADER.classList.add('preload-wrapper-hidden');
+  initializeRouter();
 };
 
 async function initRequests() {

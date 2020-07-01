@@ -12,12 +12,12 @@ export class Header {
     HEADER.append(fragment);
     this.logoutHandler();
   }
-  
+
   static logoutHandler() {
     const logoutBtn = document.querySelector('.logout');
     logoutBtn.addEventListener('click', () => {
-    store.user.auth.token = null;
-    router.navigate('login');
-  });
+      store.user.auth.token = null;
+      router.navigate('login');
+    });
   }
 }
