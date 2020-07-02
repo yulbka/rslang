@@ -3,13 +3,9 @@ import { activeItem, listiner, randomize, audioPlayer, stopRecognition, stopTran
 import speechRecognition from './speechRecognition';
 import { getImages, getTranslations, getWords, startImage } from './apis';
 import { constants } from '../../../js/constants';
-// import {renderSpeakIt} from './render'
-
-// renderSpeakIt();
 
 export function createSpeakItGame() {
   const pasteWords = (items) => {
-    console.log('1');
     const wordsContainer = document.querySelector('.items');
     const wordsFragment = document.createDocumentFragment();
 
@@ -89,10 +85,10 @@ export function createSpeakItGame() {
     if (item) {
       const audioSrc = item.getAttribute('data-audio-src');
       audioPlayer(`https://raw.githubusercontent.com/bobrysh/data/master/data/${audioSrc}`);
-    } else if (event.target.classList.contains('btn__return')) {
+    } else if (event.target.classList.contains('button__return')) {
       event.preventDefault();
       document.querySelector('.results').classList.add('hidden');
-    } else if (event.target.classList.contains('btn__new-game')) {
+    } else if (event.target.classList.contains('button__new-game')) {
       event.preventDefault();
       stopTranslation();
       stopRecognition();
@@ -144,12 +140,16 @@ export function createSpeakItGame() {
   };
 
   const manageGame = (event) => {
-    if (event.target.classList.contains('btn__speak')) {
+    if (event.target.classList.contains('button__speak')) {
       speechRecognition();
       listiner(true);
-    } else if (event.target.classList.contains('btn__restart')) {
+    } else if (event.target.classList.contains('button__restart')) {
+      stopTranslation();
+      stopRecognition();
+      startImage();
       restartGame(event);
-    } else if (event.target.classList.contains('btn__results')) {
+      getWords(randomize(30), 0).then((data) => pasteWords(data.slice(0, 10)));
+    } else if (event.target.classList.contains('button__results')) {
       document.querySelector('.results').classList.remove('hidden');
       resultGame();
     }

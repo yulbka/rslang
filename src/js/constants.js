@@ -22,7 +22,7 @@ export const constants = {
       return this.main.querySelector('.btns');
     },
     get btnStart() {
-      return this.main.querySelector('.btn__start');
+      return this.main.querySelector('.button__start');
     },
     get resultsTable() {
       return this.main.querySelector('.results__table');

@@ -62,10 +62,10 @@ $border-radius: 5px;
   text-align: center;
 }
 
-.btn {
+.button {
   background: $color-light;
   border-radius: $border-radius;
-  color: $color-main-regular;
+  color: $color-main-regular !important;
   cursor: pointer;
   display: inline-block;
   margin: 0.25rem 0.5rem;
@@ -73,16 +73,16 @@ $border-radius: 5px;
   position: relative;
   &__speak {
     background: $color-main-regular;
-    color: $color-light;
+    color: $color-light !important;
     width: 250px;
   }
   &__restart {
     background: $color-main-regular;
-    color: $color-light;
+    color: $color-light !important;
   }
   &__results {
     background: $color-main-regular;
-    color: $color-light;
+    color: $color-light !important;
   }
   &::before {
     border: solid 1px $color-dark;
@@ -240,6 +240,7 @@ $border-radius: 5px;
   &__table {
     background: $color-light;
     border-radius: $border-radius;
+    box-sizing: unset;
     margin: 5% auto;
     max-height: 80vh;
     padding: 20px 40px;
@@ -289,7 +290,7 @@ $border-radius: 5px;
   .items {
     grid-template-columns: repeat(1, 1fr);
   }
-  .btn__speak {
+  .button__speak {
     width: 170px;
   }
   .word__img {

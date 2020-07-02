@@ -43,7 +43,7 @@ const speechRecognition = () => {
   });
 
   recognition.addEventListener('end', () => {
-    const restartBtn = document.querySelector('.btn__restart');
+    const restartBtn = document.querySelector('.button__restart');
     if (restartBtn.classList.contains('restart--active')) {
       recognition.abort();
       restartBtn.classList.remove('restart--active');
@@ -53,7 +53,7 @@ const speechRecognition = () => {
     }
     if (document.getElementsByClassName('item--right').length === 10) {
       stopRecognition();
-      document.querySelector('.btn__results').click();
+      document.querySelector('.button__results').click();
     }
   });
 

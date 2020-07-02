@@ -10,7 +10,7 @@ export function renderSpeakIt() {
         <div class="start">
           <h1 class="start__title">SpeakIt</h1>
           <p class="start__text">You should tell words into microphone</p>
-          <a class="btn btn__start">Start</a>
+          <a class="button button__start">Start</a>
         </div>
         <div class="speak">
           <section class="level level-select">
@@ -34,9 +34,9 @@ export function renderSpeakIt() {
             <p class="word__translation"></p>
             <p class="word__recognition"></p>
             <div class="btns">
-              <a class="btn btn__restart">Restart</a>
-              <a class="btn btn__speak">Speak</a>
-              <a class="btn btn__results">Results</a>
+              <a class="button button__restart">Restart</a>
+              <a class="button button__speak">Speak</a>
+              <a class="button button__results">Results</a>
             </div>
             <div class="word__items items"></div>
           </section>
@@ -48,8 +48,8 @@ export function renderSpeakIt() {
             <p class="wrong__text">Mistake <span class="wrong__count"></span></p>
             <div class="wrong__items"></div>
             <div class="btns">
-              <a class="btn btn__return">Return</a>
-              <a class="btn btn__new-game">New game</a>
+              <a class="button button__return">Return</a>
+              <a class="button button__new-game">New game</a>
             </div>
           </div>
         </div>
