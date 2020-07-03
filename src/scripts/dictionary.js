@@ -114,6 +114,32 @@ export function create_dictionary() {
             return;
         }
         play_audio(element.dataset.audio);
-    });
+    })
+
+    function sortTableByColumn(table, column, asc = true) {
+        const dirMod = asc ? 1 : -1;
+        const rows = Array.from(tBody.querySelectorAll('tr'));
+        const sorted_rows = rows.sort((a, b) => {
+            const aColText = a.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+            const bColText = b.querySelector(`td:nth-child(${column + 1})`).textContent.trim();
+    
+            return aColText > bColText ? (1 * dirMod) : (-1 * dirMod)
+        })
+    
+        tBody.append(... sorted_rows)
+    
+        document.getElementById('word').classList.remove('th-sort-asc', 'th-sort-desc');
+        document.getElementById('word').classList.toggle('th-sort-desc', !asc);
+        document.getElementById('word').classList.toggle('th-sort-asc', asc);
+    }
+    
+    document.getElementById('filter_a').addEventListener('click', () => {
+        const headerCell = document.getElementById('word');
+        const tableElement = headerCell.parentElement.parentElement.parentElement;
+        const headerIndex = Array.prototype.indexOf.call(headerCell.parentElement.children, headerCell);
+        const currentIsAscending = headerCell.classList.contains('th-sort-asc');
+    
+        sortTableByColumn(tableElement, headerIndex, !currentIsAscending);
+    })
 
 }
