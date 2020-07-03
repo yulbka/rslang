@@ -1,6 +1,7 @@
 import { SIDEBAR, MAIN, HEADER, routesMap, routeKeys } from 'scripts/helpers/variables';
 import { pageHomeCreate } from 'pages/main';
 import { store } from 'store';
+import {create_dictionary} from './dictionary'
 import { createSidebar } from './burger';
 import { Header } from './Header';
 import { Authorization } from './Authorization';
@@ -52,7 +53,7 @@ export class App {
         MAIN.innerHTML = '<div>progress</div>'; // replace with function that render progress page
         break;
       case routesMap.get(routeKeys.vocabulary).url:
-        MAIN.innerHTML = '<div>vocabulary</div>'; // replace with function that render dictionary page
+        create_dictionary(); // replace with function that render dictionary page
         break;
       case routesMap.get(routeKeys.speakIt).url:
         MAIN.innerHTML = '<div>speakIt</div>'; // replace with function that render speakIt mini-game page
