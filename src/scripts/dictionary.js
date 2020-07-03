@@ -81,4 +81,25 @@ export function create_dictionary() {
       </tr>`
     }
 
+    function filter_by_a_search() {
+        let input = document.getElementById('search_string');
+        let filter = input.value.toUpperCase();
+        let a
+        let i
+        input = document.getElementById('search_string');
+        filter = input.value.toUpperCase();
+        const tr = tBody.getElementsByTagName('tr');
+
+        for (i = 0; i < tr.length; i++) {
+            a = tr[i];
+            if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
+            }
+        }
+    }
+
+    document.getElementById('search_string').addEventListener('keyup', filter_by_a_search);
+
 }
