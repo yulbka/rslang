@@ -45,12 +45,14 @@ export function create_dictionary() {
     
     create_started_table();
 
+    const tBody = document.getElementById('tBody');
+
     WordService.getWords().then(data => {
         const newData = data[0];
         create_table(newData);
     })
     
-    nextPage.addEventListener('click', () => {
+    document.getElementById('nextPage').addEventListener('click', () => {
         WordService.getMoreWords().then(data => {
           create_table(data);
         })
@@ -101,5 +103,17 @@ export function create_dictionary() {
     }
 
     document.getElementById('search_string').addEventListener('keyup', filter_by_a_search);
+
+    function play_audio(url) {
+        new Audio(url).play();
+    }
+
+    main.addEventListener('click', () =>{
+        const element = event.target.closest('img');
+        if (element == null){
+            return;
+        }
+        play_audio(element.dataset.audio);
+    });
 
 }
