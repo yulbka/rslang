@@ -5,7 +5,7 @@ const getWords = async (page, level) => {
     const json = await res.json();
     return json;
   } catch (e) {
-    return console.log('Сервера не работают, попробуйте позже.');
+    return console.log(e);
   }
 };
 
@@ -17,7 +17,7 @@ const getTranslations = async (engWord) => {
     const data = await res.json();
     return data;
   } catch (e) {
-    return console.log('Перевод временно не доступен, попробуйте позже.');
+    return console.log(e);
   }
 };
 
@@ -29,12 +29,12 @@ const getImages = async (src) => {
     const objectURL = await URL.createObjectURL(img);
     return objectURL;
   } catch (e) {
-    return console.log('Сервера временно не доступны.');
+    return console.log(e);
   }
 };
 
 const startImage = async () => {
-  // document.querySelector('body > div > main > div.speak > section.word > img').src =
-  //   'https://svgsilh.com/svg/468291-9c27b0.svg';
+  document.querySelector('#main > div > main > div.speak > section.word > img').src =
+    'https://svgsilh.com/svg/468291-9c27b0.svg';
 };
 export { getWords, getImages, getTranslations, startImage };
