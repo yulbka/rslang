@@ -5,6 +5,7 @@ import '../css/dictionary.scss';
 
 export function create_dictionary() {
     const main = document.getElementById('main');
+    const base = 'https://raw.githubusercontent.com/irinainina/rslang/rslang-data/data/';
 
     function create_started_table() {
         const main_container = `
@@ -43,5 +44,41 @@ export function create_dictionary() {
     }
     
     create_started_table();
+
+    WordService.getWords().then(data => {
+        const newData = data[0];
+        create_table(newData);
+    })
+    
+    nextPage.addEventListener('click', () => {
+        WordService.getMoreWords().then(data => {
+          create_table(data);
+        })
+    });
+
+    document.getElementById('previousPage').addEventListener('click', () => {
+      WordService.page -= 1;
+      WordService.getWords().then(data => {
+        const newData = data[0];
+        create_table(newData);
+    })
+    });
+    
+    function create_table(data) {
+        tBody.innerHTML = '';
+        data.map(item => 
+            create_one_cell(item.id, item.audio, item.image, item.word, item.transcription, item.wordTranslate)
+            )
+    }
+
+    function create_one_cell(id, audio, image, word, transcription, wordTranslate) {
+        tBody.innerHTML += `<tr id="${id}">
+        <td><img src='https://i.ibb.co/FxW8BS6/321.png' class='small_icon' data-audio='${base}${audio}'></td>
+        <td><img src='${pasha}${image}' class='small_img'></td>
+        <td>${word}</td>
+        <td>${transcription}</td>
+        <td>${wordTranslate}</td>
+      </tr>`
+    }
 
 }
