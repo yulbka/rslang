@@ -1,11 +1,31 @@
 .long-statistics__wrapper {
-  margin: 0 auto;
+  margin: $space-md auto 0;
   max-width: 600px;
   display: flex;
   flex-direction: column;
 }
 
+.long-statistics__header {
+  margin: $space-xxs 0 $space-xxs $space-md;
+}
+
+.graph {
+  position: relative;
+}
+
+.graph-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .custom-range {
+  margin: $space-xs 0; 
   width: 90%;
   align-self: center;
+}
+
+.range-text {
+  text-align: center;
 }

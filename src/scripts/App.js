@@ -6,6 +6,7 @@ import { Header } from './Header';
 import { Authorization } from './Authorization';
 import { LearnWords } from './learn_words/learnWords';
 import { router } from '../routes';
+import { Statistics } from './Statistics';
 
 export class App {
   static reRender(page) {
@@ -50,7 +51,7 @@ export class App {
         LearnWords.render();
         break;
       case routesMap.get(routeKeys.progress).url:
-        MAIN.innerHTML = '<div>progress</div>'; // replace with function that render progress page
+        Statistics.renderLongPage();
         break;
       case routesMap.get(routeKeys.vocabulary).url:
         MAIN.innerHTML = '<div>vocabulary</div>'; // replace with function that render dictionary page
