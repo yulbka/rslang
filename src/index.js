@@ -55,7 +55,7 @@ API_USER.getUser({ userId: localStorage.getItem('userId') })
 
 ( async() => {
   const statistics = await Statistics.set({
-    "learnedWords": 20,
+    "learnedWords": 2034,
     "optional": {
       "short": {
         "day": new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' }),
@@ -76,5 +76,5 @@ API_USER.getUser({ userId: localStorage.getItem('userId') })
   });
   store.mainGame.statistics.learnedWords = statistics.learnedWords;
   console.log(store.mainGame);
-  Statistics.renderShortPage();
+  Statistics.renderLongPage();
 })()
