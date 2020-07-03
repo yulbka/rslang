@@ -46,7 +46,7 @@ export class App {
       case routesMap.get(routeKeys.registration).url:
         Authorization.render(url);
         break;
-      case routesMap.get(routeKeys.game1).url:
+      case routesMap.get(routeKeys.learn).url:
         LearnWords.render();
         break;
       case routesMap.get(routeKeys.progress).url:

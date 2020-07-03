@@ -174,7 +174,7 @@ function createButtonToLearningWords() {
   );
   const buttonLearning = document.querySelector('.button-to-learning');
   buttonLearning.addEventListener('click', () => {
-    router.navigate(routesMap.get(routeKeys.game1).url);
+    router.navigate(routesMap.get(routeKeys.learn).url);
   });
 }
 

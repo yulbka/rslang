@@ -37,7 +37,6 @@ export class WordService {
       url: `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsPerPage}&filter={"userWord":null}`,
       method: requestCreator.methods.get,
     });
-    console.log(words);
     return words[0].paginatedResults;
   }
 
@@ -84,7 +83,6 @@ export class WordService {
       url: `/users/${store.user.auth.userId}/words`,
       method: requestCreator.methods.get,
     });
-    console.log(words);
     return words;
   }
 
@@ -93,7 +91,6 @@ export class WordService {
       url: `/users/${store.user.auth.userId}/words/${wordId}`,
       method: requestCreator.methods.get,
     });
-    console.log(word);
     return word;
   }
 
@@ -123,7 +120,7 @@ export class WordService {
       method: requestCreator.methods.post,
       data: word,
     });
-    console.log(result);
+    return result;
   }
 
   static async updateUserWord(wordId, difficulty, updatedFields) {
@@ -140,7 +137,7 @@ export class WordService {
         },
       },
     });
-    console.log(result);
+    return result;
   }
 
   static async getAllAggregatedWords() {
@@ -148,7 +145,6 @@ export class WordService {
       url: `/users/${store.user.auth.userId}/aggregatedWords`,
       method: requestCreator.methods.get,
     });
-    console.log(words);
     return words;
   }
 
@@ -157,7 +153,6 @@ export class WordService {
       url: `/users/${store.user.auth.userId}/aggregatedWords/${wordId}`,
       method: requestCreator.methods.get,
     });
-    console.log(word);
     return word[0];
   }
 
@@ -166,7 +161,6 @@ export class WordService {
       url: `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsPerPage}&filter={"userWord.optional.category":"${category}"}`,
       method: requestCreator.methods.get,
     });
-    console.log(words);
     return words[0].paginatedResults;
   }
 }
