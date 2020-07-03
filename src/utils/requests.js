@@ -1,4 +1,4 @@
-import {routeKeys, routesMap} from "scripts/helpers/variables";
+import { routeKeys, routesMap } from 'scripts/helpers/variables';
 import { router } from '../routes/index';
 
 const API_HOST = 'https://afternoon-falls-25894.herokuapp.com';

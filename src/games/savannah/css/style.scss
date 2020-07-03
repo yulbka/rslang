@@ -1,0 +1,304 @@
+$color-main-regular: #9c27b0;
+$color-light: #fff;
+$color-dark: #000;
+$color-grey: #ddd;
+$color-right: #0c1;
+$color-wrong: #f60019;
+
+$border-radius: 5px;
+
+@mixin d-flex($justify-content: normal, $align-items: normal, $flex-direction: row) {
+  align-items: $align-items;
+  display: flex;
+  flex-direction: $flex-direction;
+  justify-content: $justify-content;
+}
+
+.speakit {
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+}
+
+.background {
+  background-color: $color-main-regular;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.speak {
+  background-color: $color-light;
+  border: 1px solid;
+  border-radius: $border-radius;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  top: 100px;
+}
+
+.main {
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: 980px;
+}
+
+.divider {
+  background-color: #e0e0e0;
+  height: 1px;
+  overflow: hidden;
+}
+
+.hidden {
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  position: absolute;
+  width: 1px;
+}
+
+.btns {
+  text-align: center;
+}
+
+.button {
+  background: $color-light;
+  border-radius: $border-radius;
+  color: $color-main-regular !important;
+  cursor: pointer;
+  display: inline-block;
+  margin: 0.25rem 0.5rem;
+  padding: 10px 45px;
+  position: relative;
+  &__speak {
+    background: $color-main-regular;
+    color: $color-light !important;
+    width: 250px;
+  }
+  &__restart {
+    background: $color-main-regular;
+    color: $color-light !important;
+  }
+  &__results {
+    background: $color-main-regular;
+    color: $color-light !important;
+  }
+  &::before {
+    border: solid 1px $color-dark;
+    border-radius: $border-radius;
+    bottom: 0;
+    content: '';
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.02);
+    transition: transform 0.3s;
+  }
+}
+
+.start {
+  background: $color-main-regular;
+  color: $color-light;
+  height: 100vh;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  z-index: 10;
+  @include d-flex(center, center, column);
+  &__title {
+    font-size: 2.5rem;
+  }
+  &__text {
+    margin: 10px 0 20px;
+  }
+}
+
+.level-select {
+  @include d-flex(center, center);
+  .level__text {
+    font-size: 1.5rem;
+    margin-right: 10px;
+  }
+  input[type='radio'] {
+    display: none;
+  }
+  .level__label {
+    background: $color-grey;
+    border-radius: 50px;
+    cursor: pointer;
+    display: inline-block;
+    height: 20px;
+    margin: 5px;
+    padding: 5px 10px;
+    text-align: center;
+    width: 10px;
+  }
+  input[type='radio']:checked + .level__label {
+    background-color: $color-main-regular;
+    color: $color-light;
+  }
+  input[type='radio'] + .level__label:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s;
+  }
+}
+
+.word {
+  padding: 20px 0 10px;
+  @include d-flex(space-around, center, column);
+  & > * {
+    margin: 10px 0;
+  }
+  &__img {
+    display: block;
+    height: 250px;
+    margin: 0;
+    width: 350px;
+  }
+  &__translation,
+  &__recognition {
+    border-bottom: 2px solid $color-light;
+    border-bottom-style: outset;
+    font-size: 1.2rem;
+    min-height: 25px;
+    min-width: 200px;
+    padding: 0 20px;
+    position: relative;
+    text-align: center;
+    &::before {
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      content: '';
+      display: inline-block;
+      height: 25px;
+      left: -30px;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 25px;
+    }
+  }
+  .microphone--active {
+    border-color: $color-main-regular;
+  }
+}
+
+.items {
+  display: grid;
+  grid-gap: 15px;
+  grid-template-columns: repeat(5, 1fr);
+  min-height: 100px;
+  width: 100%;
+}
+
+.item {
+  border: 1px solid $color-grey;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  padding: 5px 5px 5px 40px;
+  position: relative;
+  @include d-flex(normal, start, column);
+  &__icon {
+    height: 20px;
+    left: 10px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+  }
+  &__transcription {
+    color: $color-main-regular;
+  }
+  &--active {
+    border-color: $color-main-regular;
+  }
+  &--right {
+    background-color: #bff3bf;
+    border-color: $color-right;
+    color: $color-right;
+  }
+  &:hover {
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.24), 0 1px 10px 0 rgba(0, 0, 0, 0.22), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.main-page-container img {
+  width: auto;
+}
+
+.results {
+  background: $color-main-regular;
+  height: 100vh;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100vw;
+  z-index: 10;
+  &__table {
+    background: $color-light;
+    border-radius: $border-radius;
+    box-sizing: unset;
+    margin: 5% auto;
+    max-height: 80vh;
+    padding: 20px 40px;
+    width: 80%;
+    .right__count,
+    .wrong__count {
+      background: $color-right;
+      border-radius: 30px;
+      color: white;
+      font-size: 0.7rem;
+      padding: 0 7px;
+    }
+    .wrong__count {
+      background: $color-wrong;
+    }
+  }
+  .item {
+    background-color: transparent;
+    border-bottom: 1px solid $color-wrong;
+    border-radius: 0;
+    margin: 5px 0;
+    @include d-flex(start, center, row);
+    &__transcription {
+      color: $color-main-regular;
+      margin: 0 10px;
+    }
+    &--right {
+      border-color: $color-right;
+      color: $color-dark;
+    }
+  }
+}
+
+@media screen and (max-width: 980px) {
+  .speak {
+    width: 500px;
+  }
+  .items {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 540px) {
+  .speak {
+    width: 270px;
+  }
+  .items {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .button__speak {
+    width: 170px;
+  }
+  .word__img {
+    height: 150px;
+    width: 200px;
+  }
+}
