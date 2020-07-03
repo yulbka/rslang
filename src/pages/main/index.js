@@ -3,13 +3,15 @@ import { API_USER } from 'api/user';
 import { store } from 'store';
 import { constants } from 'js/constants';
 import { getFormData, setFormData } from 'components/forms';
-import { gamesMap } from 'scripts/helpers/variables';
+import { gamesMap, routeKeys, routesMap } from 'scripts/helpers/variables';
 import { createPopupNotification } from 'components/popup/popup';
+import { createElement } from '../../scripts/helpers/createElement';
+import { router } from '../../routes/index';
 
 function createSettingsBlock() {
   document.body.classList.add('main-page');
-  constants.DOM.main.classList.add('container', 'main-page-container');
-  constants.DOM.main.insertAdjacentHTML(
+  const mainPageContainer = createElement('div', constants.DOM.main, ['container', 'main-page-container']);
+  mainPageContainer.insertAdjacentHTML(
     'beforeend',
     `
       <section class="settings-block">
@@ -66,7 +68,7 @@ function createSettingsBlock() {
                 </div>
                 <div class="rs-form-field custom-control custom-checkbox">
                     <input type="checkbox" id="showAnswerButton" name="showAnswerButton"  class="custom-control-input" checked>
-                    <label for="showAnswerButton" class="custom-control-label">кнопку перевода:</label>
+                    <label for="showAnswerButton" class="custom-control-label">кнопку "Показать ответ":</label>
                 </div>
             </div>
             <div class="option-block"> 
@@ -75,13 +77,21 @@ function createSettingsBlock() {
                     <input type="checkbox" id="deleteWord" name="deleteWord" class="custom-control-input">
                     <label for="deleteWord" class="custom-control-label">исключать слова из изучения</label>
                 </div>
+                <div class="rs-form-field custom-control custom-checkbox">	
+                    <input type="checkbox" id="hardWord" name="hardWord" class="custom-control-input">	
+                    <label for="hardWord" class="custom-control-label">добавлять слова в сложные</label>	
+                </div>
                 <div class="sound-button-block rs-form-field custom-control custom-checkbox">
                     <input type="checkbox" id="autoplay" name="autoplay" class="sound-button-input custom-control-input" checked>
                     <label for="autoplay" class="sound-button-label custom-control-label">автовоспроизведение звука</label>
                 </div>
                 <div class="sound-button-block rs-form-field custom-control custom-checkbox">
-                    <input type="checkbox" id="wordRaiting" name="wordRaiting" class="sound-button-input custom-control-input" checked>
-                    <label for="wordRaiting" class="sound-button-label custom-control-label">оценить сложность слова</label>
+                    <input type="checkbox" id="wordRating" name="wordRating" class="custom-control-input" checked>
+                    <label for="wordRating" class="custom-control-label">оценить сложность слова</label>
+                </div>
+                <div class="sound-button-block rs-form-field custom-control custom-checkbox">
+                    <input type="checkbox" id="autoTranslate" name="autoTranslate" class="custom-control-input">
+                    <label for="autoTranslate" class="custom-control-label">показать перевод отгаданного слова</label>
                 </div>
             </div>
             <div class="settings-buttons-block">
@@ -100,7 +110,7 @@ function createSettingsBlock() {
     event.preventDefault();
     let firstFormError = null;
 
-    const { wordsPerDay, wordEstimation, ...restFormData } = getFormData({ form: userSettingsForm });
+    const { wordsPerDay, ...restFormData } = getFormData({ form: userSettingsForm });
 
     validateAmountOfWords();
     validateShowInCards();
@@ -117,7 +127,6 @@ function createSettingsBlock() {
           wordsPerDay,
           optional: {
             ...restFormData,
-            ...wordEstimation.reduce((acc, key) => ({ ...acc, [key]: true }), {}),
           },
         },
       });
@@ -158,14 +167,20 @@ function createSettingsBlock() {
 }
 
 function createButtonToLearningWords() {
-  constants.DOM.main.insertAdjacentHTML(
-    'beforeend',
+  const mainPageContainer = document.querySelector('.main-page-container');
+  mainPageContainer.insertAdjacentHTML(
+    'afterbegin',
     `<button class="btn btn-info button-to-learning">Перейти к изучению слов</button>`
   );
+  const buttonLearning = document.querySelector('.button-to-learning');
+  buttonLearning.addEventListener('click', () => {
+    router.navigate(routesMap.get(routeKeys.learn).url);
+  });
 }
 
 function createBlockWithGames({ gamesData }) {
-  constants.DOM.main.insertAdjacentHTML(
+  const mainPageContainer = document.querySelector('.main-page-container');
+  mainPageContainer.insertAdjacentHTML(
     'afterbegin',
     `
         <section class="previews-container">
@@ -184,7 +199,7 @@ function createBlockWithGames({ gamesData }) {
 }
 
 export function pageHomeCreate() {
-  createButtonToLearningWords();
   createSettingsBlock();
+  createButtonToLearningWords();
   createBlockWithGames({ gamesData: gamesMap });
 }

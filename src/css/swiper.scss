@@ -1,0 +1,21 @@
+.swiper-container {
+  width: 85%;
+  margin: $space-md auto $space-xxs;
+}
+
+.swiper-slide {
+  text-align: center;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  outline: none;
+}
+
+.swiper-button-prev {
+  left: 0;
+}
+
+.swiper-button-next {
+  right: 0;
+}
