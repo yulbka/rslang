@@ -1,57 +1,33 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
+import 'bootstrap';
+import 'bootstrap-select/dist/js/bootstrap-select.min';
+import 'bootstrap-select/dist/js/i18n/defaults-ru_RU.min';
 import './css/index.scss';
-
-import { router } from './routes/index';
+import { initializeRouter, router } from './routes/index';
 import { store } from './store';
 import { API_USER } from './api/user';
-import { PRELOADER } from './scripts/helpers/variables';
 import { Statistics } from './scripts/Statistics';
+import { routesMap, routeKeys, PRELOADER } from './scripts/helpers/variables';
 
-API_USER.getUser({ userId: localStorage.getItem('userId') })
-  .then((data) => {
-    if (data) {
-      router.navigate('/');
-    }
-  })
-  .finally(() => PRELOADER.classList.add('preload-wrapper-hidden'));
+window.onload = async () => {
+  await initRequests();
+  PRELOADER.classList.add('preload-wrapper-hidden');
+  initializeRouter();
+};
 
-//example
-
-(async () => {
-  const [user, userSettings] = await Promise.all([
-    API_USER.getUser({ userId: store.user.auth.userId }),
-    API_USER.getUserSettings({
-      userId: store.user.auth.userId,
-    }),
-  ]);
-  console.log(user);
-
-  Object.entries(user).forEach(([key, value]) => {
-    store.user.auth[key] = value;
-  });
-
-  Object.entries(userSettings).forEach(([key, value]) => {
-    store.user.learning[key] = value;
-  });
-
-  /*API_USER.setUserSettings({
-        userId: '5eea492edffad00017faa81c',
-        userSettings: {
-            "wordsPerDay": 551,  // must be less than or equal to 1000
-            "optional": {
-                "translation": true,
-                "withExplanation": false,
-                "withExample": false,
-                "transcription": true,
-                "image": false
-            }
-        }
-    });*/
-
-  console.log('usr', { ...store });
-})();
-
+export async function initRequests() {
+  const { userId } = store.user.auth;
+  if (!userId) {
+    router.navigate(routesMap.get(routeKeys.login).url);
+  } else {
+    const userSettings = await API_USER.getUserSettings({ userId });
+    store.user.learning = {
+      ...store.user.learning,
+      ...userSettings,
+    };
+  }
+}
 
 ( async() => {
   const statistics = await Statistics.set({
@@ -75,6 +51,4 @@ API_USER.getUser({ userId: localStorage.getItem('userId') })
     store.mainGame.statistics[key] = value;
   });
   store.mainGame.statistics.learnedWords = statistics.learnedWords;
-  console.log(store.mainGame);
-  Statistics.renderLongPage();
 })()

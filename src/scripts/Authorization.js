@@ -1,14 +1,15 @@
-import { MAIN } from './helpers/variables';
-import { createElement } from './helpers/createElement';
-import { validatePassword, validateEmail } from './helpers/validate';
-import { router } from '../routes/index';
-import { requestCreator } from '../utils/requests';
-import { API_USER } from '../api/user';
-import { store } from '../store';
-import { Statistics } from './Statistics';
 
+import { MAIN, routesMap, routeKeys } from 'scripts/helpers/variables';
+import { createElement } from 'scripts/helpers/createElement';
+import { validatePassword, validateEmail } from 'scripts/helpers/validate';
+import { requestCreator } from 'utils/requests';
+import { store } from 'store';
+import { API_USER } from 'api/user';
+import { router } from '../routes';
+import { initRequests } from '../index';
+import { Statistics } from './Statistics';
 export class Authorization {
-  static render(type = 'login') {
+  static render(type = '#login') {
     const fragment = document.createDocumentFragment();
     const wrapper = createElement('div', fragment, ['authorization__wrapper']);
     const form = createElement('form', wrapper, ['authorization__form']);
@@ -27,18 +28,18 @@ export class Authorization {
     const submitBtn = createElement('button', form, ['btn', 'btn-primary', 'authorization__submit']);
     const note = createElement('p', wrapper, ['text-muted', 'authorization__text']);
     const linkBtn = createElement('button', wrapper, ['btn', 'btn-outline-secondary', 'btn-sm', 'authorization-link']);
-    if (type === 'login') {
+    if (type === routesMap.get('login').url) {
       submitBtn.textContent = 'Войти';
       submitBtn.dataset.type = 'signIn';
       note.textContent = 'Впервые на RSLang?';
       linkBtn.textContent = 'Регистрация';
-      linkBtn.dataset.type = 'registration';
+      linkBtn.dataset.type = routesMap.get(routeKeys.registration).url;
     } else {
       submitBtn.textContent = 'Зарегистрироваться';
       submitBtn.dataset.type = 'signUp';
       note.textContent = 'Есть аккаунт на RSLang?';
       linkBtn.textContent = 'Авторизация';
-      linkBtn.dataset.type = 'login';
+      linkBtn.dataset.type = routesMap.get(routeKeys.login).url;
     }
     MAIN.append(fragment);
     this.linkHandler();
@@ -69,15 +70,15 @@ export class Authorization {
         email.classList.remove('is-invalid');
         password.classList.remove('is-invalid');
         if (!validateEmail(email.value) || !validatePassword(password.value)) {
-          if (!validatePassword(password.value)) {          
+          if (!validatePassword(password.value)) {
             passwordMessage.textContent =
               'Пароль должен содержать не менее 8 символов, как минимум 1 прописную букву, 1 заглавную букву, 1 цифру и 1 спецсимвол +-_@$!%*?&#.,;:[]{}';
             password.classList.add('is-invalid');
           }
-          if (!validateEmail(email.value)) {          
+          if (!validateEmail(email.value)) {
             emailMessage.textContent = 'Необходимо ввести валидный e-mai';
             email.classList.add('is-invalid');
-          }        
+          }
         } else {
           this.registerUser(email, password);
         }
@@ -131,18 +132,14 @@ export class Authorization {
         url: '/signin',
         method: requestCreator.methods.post,
         data: { email: email.value, password: password.value },
-      });      
+      });
       localStorage.setItem('token', user.token);
       localStorage.setItem('userId', user.userId);
-      store.user.auth = {
-        ...store.user.auth,
-        email: email.value,
-        password: password.value,
-      };
-      router.navigate('/');
+      await initRequests();
+      router.navigate(routesMap.get(routeKeys.home).url);
     } catch (error) {
       const message = document.querySelector('.invalid-feedback-password');
-      switch(error.message) {
+      switch (error.message) {
         case '404':
           message.textContent = 'Пользователь не найден';
           break;

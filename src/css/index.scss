@@ -1,9 +1,29 @@
 @import 'helpers/postcss-reset/mobile.css';
 @import 'helpers/variables.scss';
 @import 'node_modules/bootstrap/dist/css/bootstrap.min.css';
+@import 'node_modules/swiper/css/swiper.min.css';
+@import 'node_modules/bootstrap-select/dist/css/bootstrap-select.min.css';
+@import 'node_modules/tippy.js/dist/tippy.css';
+@import 'node_modules/tippy.js/themes/light-border.css';
+@import './swiper.scss';
+@import './learn-words.scss';
+@import './header.scss';
+@import './logout.scss';
 @import './preloader.scss';
+@import '../../src/components/forms/index.scss';
+@import '../../src/components/popup/popup.scss';
 @import './authorization.scss';
 @import './statistics/shortStatistics.scss';
 @import './statistics/longStatistics.scss';
+@import '../../src/pages/main/index.scss';
+
+/********* CUSTOM RESET: START **********/
+label {
+  margin-bottom: 0;
+}
+/********* CUSTOM RESET: END **********/
+
 .page-home {
+  display: flex;
+  flex-direction: column;
 }
