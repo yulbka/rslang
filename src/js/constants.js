@@ -29,5 +29,6 @@ export const constants = {
     },
     get startScreen() {
       return this.main.querySelector('.start');
-    },  },
+    },
+  },
 };
