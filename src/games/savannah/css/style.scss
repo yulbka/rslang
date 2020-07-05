@@ -14,7 +14,7 @@ $border-radius: 5px;
   justify-content: $justify-content;
 }
 
-.speakit {
+.savannah {
   font-family: 'Open Sans', Helvetica, Arial, sans-serif;
   font-size: 18px;
   margin: 0;
@@ -192,7 +192,15 @@ $border-radius: 5px;
 .items {
   display: grid;
   grid-gap: 15px;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  min-height: 100px;
+  width: 100%;
+}
+
+.mainItem {
+  display: grid;
+  grid-gap: 15px;
+  grid-template-columns: repeat(1, 1fr);
   min-height: 100px;
   width: 100%;
 }

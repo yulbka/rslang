@@ -1,15 +1,15 @@
 import './mainApp';
 
 export function renderSavannah() {
-  document.body.classList.add('speakit');
+  document.body.classList.add('savannah');
   document.getElementById('main').insertAdjacentHTML(
     'beforeend',
     `
     <div class="background">
       <main class="main">
         <div class="start">
-          <h1 class="start__title">SpeakIt</h1>
-          <p class="start__text">You should tell words into microphone</p>
+          <h1 class="start__title">Savannah</h1>
+          <p class="start__text">Choose correct translation</p>
           <a class="button button__start">Start</a>
         </div>
         <div class="speak">
@@ -30,14 +30,7 @@ export function renderSavannah() {
           </section>
           <div class="divider"></div>
           <section class="word">
-            <img class="word__img" src="https://svgsilh.com/svg/468291-9c27b0.svg" alt="" />
-            <p class="word__translation"></p>
-            <p class="word__recognition"></p>
-            <div class="btns">
-              <a class="button button__restart">Restart</a>
-              <a class="button button__speak">Speak</a>
-              <a class="button button__results">Results</a>
-            </div>
+            <div class="word__items mainItem"></div>
             <div class="word__items items"></div>
           </section>
         </div>

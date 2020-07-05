@@ -16,11 +16,27 @@ const makeWord = (info) => {
     },
   });
   word.innerHTML = `
-      <img class="item__icon" src="https://cdn.onlinewebfonts.com/svg/img_314105.png" alt="">
       <p class="item__word">${info.word}</p>
       <p class="item__transcription">${info.transcription}</p>
+      <p class="item__translation">${info.wordTranslate}</p>
   `;
   return word;
 };
 
-export { builtHtml, makeWord };
+const makeMainWord = (info) => {
+  const word = builtHtml({
+    tagName: 'div',
+    classList: ['item'],
+    attrs: {
+      'data-word': info.word,
+    },
+  });
+  word.innerHTML = `
+      <p class="item__word">${info.word}</p>
+      <p class="item__transcription">${info.transcription}</p>
+      <p class="item__translation">${info.wordTranslate}</p>
+  `;
+  return word;
+};
+
+export { builtHtml, makeWord, makeMainWord };
