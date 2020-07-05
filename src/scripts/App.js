@@ -5,6 +5,7 @@ import {create_dictionary} from './dictionary'
 import { createSidebar } from './burger';
 import { Header } from './Header';
 import { Authorization } from './Authorization';
+import { LearnWords } from './learn_words/learnWords';
 import { router } from '../routes';
 
 export class App {
@@ -46,8 +47,8 @@ export class App {
       case routesMap.get(routeKeys.registration).url:
         Authorization.render(url);
         break;
-      case routesMap.get(routeKeys.game1).url:
-        MAIN.innerHTML = '<div>learn</div>'; // replace with function that render page learn words
+      case routesMap.get(routeKeys.learn).url:
+        LearnWords.render();
         break;
       case routesMap.get(routeKeys.progress).url:
         MAIN.innerHTML = '<div>progress</div>'; // replace with function that render progress page

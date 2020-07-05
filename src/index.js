@@ -11,11 +11,11 @@ import { routesMap, routeKeys, PRELOADER } from './scripts/helpers/variables';
 
 window.onload = async () => {
   await initRequests();
-  PRELOADER.classList.add('preload-wrapper-hidden')
-  initializeRouter()
+  PRELOADER.classList.add('preload-wrapper-hidden');
+  initializeRouter();
 };
 
-async function initRequests() {
+export async function initRequests() {
   const { userId } = store.user.auth;
   if (!userId) {
     router.navigate(routesMap.get(routeKeys.login).url);
