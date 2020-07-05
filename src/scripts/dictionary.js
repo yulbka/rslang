@@ -1,7 +1,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import '../css/dictionary.scss';
-
+import {WordService} from './service/Word.Service';
 
 export function create_dictionary() {
     const main = document.getElementById('main');
@@ -76,7 +76,7 @@ export function create_dictionary() {
     function create_one_cell(id, audio, image, word, transcription, wordTranslate) {
         tBody.innerHTML += `<tr id="${id}">
         <td><img src='https://i.ibb.co/FxW8BS6/321.png' class='small_icon' data-audio='${base}${audio}'></td>
-        <td><img src='${pasha}${image}' class='small_img'></td>
+        <td><img src='${base}${image}' class='small_img'></td>
         <td>${word}</td>
         <td>${transcription}</td>
         <td>${wordTranslate}</td>
@@ -116,7 +116,7 @@ export function create_dictionary() {
         play_audio(element.dataset.audio);
     })
 
-    function sortTableByColumn(table, column, asc = true) {
+    function sort_table_by_column(table, column, asc = true) {
         const dirMod = asc ? 1 : -1;
         const rows = Array.from(tBody.querySelectorAll('tr'));
         const sorted_rows = rows.sort((a, b) => {
@@ -139,7 +139,8 @@ export function create_dictionary() {
         const headerIndex = Array.prototype.indexOf.call(headerCell.parentElement.children, headerCell);
         const currentIsAscending = headerCell.classList.contains('th-sort-asc');
     
-        sortTableByColumn(tableElement, headerIndex, !currentIsAscending);
+        sort_table_by_column(tableElement, headerIndex, !currentIsAscending);
     })
+
 
 }
