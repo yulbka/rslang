@@ -6,6 +6,7 @@ import { Header } from './Header';
 import { Authorization } from './Authorization';
 import { LearnWords } from './learn_words/learnWords';
 import { router } from '../routes';
+import { PuzzleStartPage } from '../pages/puzzle/StartPage';
 
 export class App {
   static reRender(page) {
@@ -59,7 +60,7 @@ export class App {
         MAIN.innerHTML = '<div>speakIt</div>'; // replace with function that render speakIt mini-game page
         break;
       case routesMap.get(routeKeys.englishPuzzle).url:
-        MAIN.innerHTML = '<div>puzzle</div>'; // replace with function that render puzzle mini-game page
+        PuzzleStartPage.render();
         break;
       case routesMap.get(routeKeys.savannah).url:
         MAIN.innerHTML = '<div>savannah</div>'; // replace with function that render savannah mini-game page

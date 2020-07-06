@@ -1,0 +1,30 @@
+.start__wrapper {
+  display: flex;
+  flex-direction: column;
+  background: url('../assets/images/puzzle/puzzle.jpg') no-repeat center;
+  background-size: cover;
+  width: 100%;
+  height: 100vh;
+}
+
+.start__title {
+  margin: $space-md 0;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 2.3rem;
+}
+
+.start__description {
+  margin: 0;
+  text-align: center;
+  font-weight: 600;
+  &:last-of-type {
+    margin-bottom: $space-md;
+  }
+}
+
+button.start__button {
+  align-self: center;
+  width: 200px;
+  font-weight: 600;
+}
