@@ -6,7 +6,31 @@
 }
 
 .long-statistics__header {
-  margin: $space-xxs 0 $space-xxs $space-md;
+  margin: $space-xxs $space-md;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @media screen and (max-width: 350px) {
+    margin: $space-xxs;
+  }
+}
+
+.long-statistics__title {
+  margin: 0;
+}
+
+.long-statistics__detail {
+  width: 130px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-ico {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  background-image: url('../assets/images/details.png');
 }
 
 .graph {

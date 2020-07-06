@@ -1,13 +1,13 @@
 
-import { MAIN, routesMap, routeKeys } from 'scripts/helpers/variables';
+import { MAIN, routesMap, routeKeys, PRELOADER} from 'scripts/helpers/variables';
 import { createElement } from 'scripts/helpers/createElement';
 import { validatePassword, validateEmail } from 'scripts/helpers/validate';
 import { requestCreator } from 'utils/requests';
 import { store } from 'store';
 import { API_USER } from 'api/user';
 import { router } from '../routes';
-import { initRequests } from '../index';
 import { Statistics } from './Statistics';
+import { initRequests } from '..';
 export class Authorization {
   static render(type = '#login') {
     const fragment = document.createDocumentFragment();
@@ -28,7 +28,7 @@ export class Authorization {
     const submitBtn = createElement('button', form, ['btn', 'btn-primary', 'authorization__submit']);
     const note = createElement('p', wrapper, ['text-muted', 'authorization__text']);
     const linkBtn = createElement('button', wrapper, ['btn', 'btn-outline-secondary', 'btn-sm', 'authorization-link']);
-    if (type === routesMap.get('login').url) {
+    if (type === routesMap.get(routeKeys.login).url) {
       submitBtn.textContent = 'Войти';
       submitBtn.dataset.type = 'signIn';
       note.textContent = 'Впервые на RSLang?';
@@ -44,6 +44,7 @@ export class Authorization {
     MAIN.append(fragment);
     this.linkHandler();
     this.submitHandler();
+    PRELOADER.classList.add('preload-wrapper-hidden');
   }
 
   static linkHandler() {
@@ -93,20 +94,50 @@ export class Authorization {
         method: requestCreator.methods.post,
         data: { email: email.value, password: password.value },
       });
-      await this.loginUser(email, password);
-      const { wordsPerDay, ...restSettings } = store.user.learning;
+      await this.loginUser(email, password, true);
       await API_USER.setUserSettings({
         userId: localStorage.getItem('userId'),
         userSettings: {
-          wordsPerDay,
-          optional: restSettings,
+          "wordsPerDay": 20,
+          "optional": {
+            cardsPerDay: 50,
+            learnNewWords: true,
+            learnOldWords: true,
+            withTranslation: true,
+            withExplanation: false,
+            withExample: false,
+            withTranscription: false,
+            withHelpImage: true,
+            deleteWord: true,
+            hardWord: false,
+            showAnswerButton: false,
+            autoplay: false,
+            wordRating: true,
+            autoTranslate: false,
+          }
         },
       });
-      const { learnedWords, ...restStatistics } = store.mainGame.statistics;
+      const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
       await Statistics.set({
-        learnedWords,
-        optional: restStatistics,
-      })
+        "learnedWords": 0,
+        "optional": {
+          "short": {
+            "day": today,
+            "cards": 0,
+            "newWords": 0,
+            "answers": '',
+          },
+          "long": {
+            [today]: {
+              "cards": 0,
+              "newWords": 0,
+              "mistakes": 0,
+            }
+          },
+        }
+      });
+      await initRequests();
+      router.navigate(routesMap.get(routeKeys.home).url);
     } catch (error) {
       const emailMessage = document.querySelector('.invalid-feedback-email');
       const passwordMessage = document.querySelector('.invalid-feedback-password');
@@ -126,7 +157,7 @@ export class Authorization {
     }
   }
 
-  static async loginUser(email, password) {
+  static async loginUser(email, password, isInitial = false) {
     try {
       const user = await requestCreator({
         url: '/signin',
@@ -135,8 +166,16 @@ export class Authorization {
       });
       localStorage.setItem('token', user.token);
       localStorage.setItem('userId', user.userId);
-      await initRequests();
-      router.navigate(routesMap.get(routeKeys.home).url);
+      store.user.auth = {
+        email: email.value,
+        password: password.value,
+        token: localStorage.getItem('token'),
+        userId: localStorage.getItem('userId'),
+      };
+      if (!isInitial) {
+        await initRequests();
+        router.navigate(routesMap.get(routeKeys.home).url);
+      }
     } catch (error) {
       const message = document.querySelector('.invalid-feedback-password');
       switch (error.message) {

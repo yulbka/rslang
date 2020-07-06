@@ -1,9 +1,7 @@
 import { routeKeys, routesMap } from 'scripts/helpers/variables';
 import { router } from '../routes/index';
 
-//const API_HOST = 'https://afternoon-falls-25894.herokuapp.com';
-
-const API_HOST = 'http://pacific-castle-12388.herokuapp.com';
+const API_HOST = 'https://afternoon-falls-25894.herokuapp.com';
 
 /*
  (required) url: part after host
@@ -55,7 +53,7 @@ export async function requestCreator(settings) {
       if (response.status === 401) {
         localStorage.removeItem('token');
         localStorage.removeItem('userId');
-        router.navigate(routesMap.get(routeKeys.login));
+        router.navigate(routesMap.get(routeKeys.login).url);
       } else {
         throw Error(response.status);
       }

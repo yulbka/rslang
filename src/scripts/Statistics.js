@@ -1,17 +1,22 @@
 import { requestCreator } from '../utils/requests';
-import { MAIN, coords } from './helpers/variables';
+import { MAIN, coords, routesMap, routeKeys } from './helpers/variables';
 import { createElement } from './helpers/createElement';
 import { store } from '../store/index';
 import { findLongestSeries } from './helpers/findLongestSeries';
+import { router } from '../routes';
 
 export class Statistics {
   static async get() {
-    const statistics = await requestCreator({
-      url: `/users/${localStorage.getItem('userId')}/statistics`,
-      method: requestCreator.methods.get
-    });
-    console.log(statistics);
-    return statistics;
+    try {
+      const statistics = await requestCreator({
+        url: `/users/${localStorage.getItem('userId')}/statistics`,
+        method: requestCreator.methods.get
+      });
+      return statistics;
+    }
+    catch(e) {
+      console.log(e);
+    }
   }
 
   static async set(statData) {
@@ -20,7 +25,6 @@ export class Statistics {
       method: requestCreator.methods.put,
       data: statData
     });
-    console.log(statistics);
     return statistics;
   }
   
@@ -50,15 +54,46 @@ export class Statistics {
     createElement('span', seriesData, [], `${series}`);
     createElement('button', wrapper, ['btn', 'btn-primary', 'btn-lg', 'short-statistics__btn'], 'Продолжить');
     MAIN.append(fragment);
+    this.continueHandler();
   }
 
-  static renderLongPage() {
+  static continueHandler() {
+    const continueBtn = document.querySelector('.short-statistics__btn');
+    continueBtn.addEventListener('click', async () => {
+      const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
+      store.mainGame.statistics.short = {
+        day: today,
+        cards: 0,
+        newWords: 0,
+        answers: ''
+      };
+      const { learnedWords, ...restStatistics } = store.mainGame.statistics;
+      await Statistics.set({
+      learnedWords,
+      optional: restStatistics,
+      });
+      router.navigate(routesMap.get(routeKeys.home).url);
+    });
+  }
+
+  static async renderLongPage() {
+    const statistics = await this.get();
+    store.mainGame.statistics = {
+      learnedWords: statistics.learnedWords,
+      ...statistics.optional
+    }
     const fragment = document.createDocumentFragment();
-    const { learnedWords } = store.mainGame.statistics;
+    const { learnedWords } = statistics;
     const wrapper = createElement('div', fragment, ['long-statistics__wrapper']);
     const header = createElement('div', wrapper, ['long-statistics__header']);
-    createElement('span', header, ['long-statistics__title', 'text-info'], 'Всего слов: ');
-    createElement('span', header, ['long-statistics__title', 'text-info'], `${learnedWords}`);
+    const info = createElement('p', header, ['long-statistics__title']);
+    createElement('span', info, ['text-info'], 'Всего слов: ');
+    createElement('span', info, ['text-info'], `${learnedWords}`);
+    const detail = createElement('a', header, ['long-statistics__detail'], '', 'data-toggle', 'modal');
+    detail.setAttribute('data-target', '#exampleModalLong');
+    this.renderModal(wrapper);
+    createElement('span', detail, ['detail-ico']);
+    createElement('span', detail, ['detail-text', 'text-info'], 'Подробнее');
     const graph = createElement('div', wrapper, ['graph']);
     const graphText = createElement('p', graph, ['graph-text']);
     createElement('span', graphText, [], 'Слов: ');
@@ -75,6 +110,7 @@ export class Statistics {
     this.buildGraph(graph, learnedWords);
     this.rangeHandler();
     this.resizeHandler();
+    this.detailsHandler();
   }
 
   static buildGraph(element, wordsCount) {
@@ -137,6 +173,7 @@ export class Statistics {
 
   static rebuiltGraph = () => {
     const graph = document.querySelector('.graph');
+    if (!graph) return;
     const range = document.querySelector('.graph__range');
     const rangePercent = document.querySelector('.range-percent');
     graph.innerHTML = '';
@@ -155,6 +192,35 @@ export class Statistics {
 
   static resizeHandler() {
     window.addEventListener('resize', this.rebuiltGraph);
-  }    
-}
+  }
+  
+  static detailsHandler() {
+    const details = document.querySelector('.long-statistics__detail');
+    details.addEventListener('click', () => {
+      console.log(store.mainGame.statistics.long);
+    });
+  }
 
+  static renderModal(element) {
+    const fragment = document.createDocumentFragment();
+    const modal = createElement('div', fragment, ['modal', 'fade'], '', 'role', 'dialog');
+    modal.id = 'exampleModalLong';
+    const dialog = createElement('div', modal, ['modal-dialog'], '', 'role', 'dialog');
+    const content = createElement('div', dialog, ['modal-content']);
+    const body = createElement('div', content, ['modal-body']);
+    const statistics = store.mainGame.statistics.long;
+    for (const [date, value] of Object.entries(statistics)) {
+      const p = createElement('p', body, []);
+      createElement('span', p, ['text-info'], `${date}: `);
+      createElement('span', p, [], 'просмотрено карточек: ');
+      createElement('span', p, ['text-primary'], `${value.cards}, `);
+      createElement('span', p, [], 'изучено новых слов: ');
+      createElement('span', p, ['text-success'], `${value.newWords}, `);
+      createElement('span', p, [], 'допущено ошибок: ');
+      createElement('span', p, ['text-danger'], `${value.mistakes}`);
+    }
+    const footer = createElement('div', content, ['modal-footer']);
+    createElement('button', footer, ['btn', 'btn-secondary'], 'Закрыть', 'data-dismiss', 'modal');
+    element.append(fragment);
+  }  
+}

@@ -9,7 +9,7 @@ import { router } from '../routes';
 import { Statistics } from './Statistics';
 
 export class App {
-  static reRender(page) {
+  static async reRender(page) {
     const isAuthPage = [routesMap.get(routeKeys.login).url, routesMap.get(routeKeys.registration).url].includes(page);
     const isAuthorized = !!store.user.auth.token;
     if (isAuthPage) {
@@ -21,6 +21,7 @@ export class App {
       this.checkHeader();
     }
     MAIN.innerHTML = '';
+    document.body.classList.remove('main-page');
     this.setContent(page);
   }
 
@@ -48,7 +49,7 @@ export class App {
         Authorization.render(url);
         break;
       case routesMap.get(routeKeys.learn).url:
-        LearnWords.render();
+        LearnWords.init();
         break;
       case routesMap.get(routeKeys.progress).url:
         Statistics.renderLongPage();
