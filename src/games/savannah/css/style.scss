@@ -14,24 +14,35 @@ $border-radius: 5px;
   justify-content: $justify-content;
 }
 
-.savannah {
+.mainItem {
+  background: white;
+  /* transition: left 10s ease-in-out; */
+  display: grid;
+  grid-gap: 15px;
+  grid-template-columns: repeat(1, 1fr);
+  left: -1180px;
+  min-height: 100px;
+  position: relative;
+  width: 100%;
+}
+
+.moveToRight {
+  left: 1180px;
+}
+
+.savannahGame {
   font-family: 'Open Sans', Helvetica, Arial, sans-serif;
   font-size: 18px;
   margin: 0;
+  overflow: hidden;
   padding: 0;
 }
 
 .background {
-  background-color: $color-main-regular;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
 }
 
-.speak {
+.savannah {
   background-color: $color-light;
-  border: 1px solid;
-  border-radius: $border-radius;
   margin: 0 auto;
   padding: 20px;
   position: relative;
@@ -197,22 +208,14 @@ $border-radius: 5px;
   width: 100%;
 }
 
-.mainItem {
-  display: grid;
-  grid-gap: 15px;
-  grid-template-columns: repeat(1, 1fr);
-  min-height: 100px;
-  width: 100%;
-}
-
 .item {
   border: 1px solid $color-grey;
   border-radius: $border-radius;
   box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  padding: 5px 5px 5px 40px;
+  padding: 20px;
   position: relative;
-  @include d-flex(normal, start, column);
+  @include d-flex(center, center, column);
   &__icon {
     height: 20px;
     left: 10px;
@@ -235,10 +238,6 @@ $border-radius: 5px;
   &:hover {
     box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.24), 0 1px 10px 0 rgba(0, 0, 0, 0.22), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
   }
-}
-
-.main-page-container img {
-  width: auto;
 }
 
 .results {

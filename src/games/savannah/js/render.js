@@ -1,7 +1,7 @@
 import './mainApp';
 
 export function renderSavannah() {
-  document.body.classList.add('savannah');
+  document.body.classList.add('savannahGame');
   document.getElementById('main').insertAdjacentHTML(
     'beforeend',
     `
@@ -12,7 +12,7 @@ export function renderSavannah() {
           <p class="start__text">Choose correct translation</p>
           <a class="button button__start">Start</a>
         </div>
-        <div class="speak">
+        <div class="savannah">
           <section class="level level-select">
             <p class="level__text"></p>
             <input type="radio" id="level0" name="levels" value="0" checked />

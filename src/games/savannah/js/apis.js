@@ -21,20 +21,4 @@ const getTranslations = async (engWord) => {
   }
 };
 
-// const getImages = async (src) => {
-//   try {
-//     const url = `https://raw.githubusercontent.com/bobrysh/data/master/data/${src}`;
-//     const res = await fetch(url);
-//     const img = await res.blob();
-//     const objectURL = await URL.createObjectURL(img);
-//     return objectURL;
-//   } catch (e) {
-//     return console.log(e);
-//   }
-// };
-
-// const startImage = async () => {
-//   document.querySelector('#main > div > main > div.speak > section.word > img').src =
-//     'https://svgsilh.com/svg/468291-9c27b0.svg';
-// };
 export { getWords, getTranslations };

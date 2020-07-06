@@ -5,4 +5,9 @@ const activeItem = (currentItem, items) => {
 
 const randomize = (max) => Math.floor(Math.random() * max);
 
-export { randomize, activeItem };
+const arrayRandElement = (arr) => {
+  const rand = Math.floor(Math.random() * arr.length);
+  return arr[rand];
+};
+
+export { randomize, activeItem, arrayRandElement };

@@ -1,17 +1,20 @@
 import { makeWord } from './htmlHelper';
-import { randomize } from './utils';
+import { randomize, arrayRandElement } from './utils';
 import { getTranslations, getWords } from './apis';
 import { constants } from '../../../js/constants';
 
 export function createSavannahGame() {
-  const pasteMainWord = (items) => {
+  const startAnimation = () => {
+    const movingWord = document.querySelector('.mainItem');
+    movingWord.classList.add('moveToRight');
+  };
+
+  const pasteMainWord = (item) => {
     const wordsContainer = document.querySelector('.mainItem');
     const wordsFragment = document.createDocumentFragment();
 
-    items.forEach((item) => {
-      const word = makeWord(item);
-      wordsFragment.appendChild(word);
-    });
+    const word = makeWord(item);
+    wordsFragment.appendChild(word);
 
     wordsContainer.innerHTML = '';
     wordsContainer.appendChild(wordsFragment);
@@ -33,8 +36,19 @@ export function createSavannahGame() {
   const startGame = () => {
     const { startScreen } = constants.DOM;
     startScreen.classList.add('hidden');
-    getWords(randomize(30), 0).then((data) => pasteMainWord(data.slice(0, 1)));
-    getWords(randomize(30), 0).then((data) => pasteWords(data.slice(0, 4)));
+    startAnimation();
+  };
+
+  const currLvl = localStorage.getItem('level') || 0;
+
+  const getInitialWords = () => {
+    getWords(randomize(30), currLvl).then((data) => {
+      const savedWords = data.slice(0, 4);
+      pasteWords(savedWords);
+      const mainWord = arrayRandElement(savedWords);
+      pasteMainWord(mainWord);
+    });
+    startGame();
   };
 
   const changeLvl = (event) => {
@@ -43,10 +57,8 @@ export function createSavannahGame() {
     }
 
     localStorage.setItem('level', event.target.innerText);
-    const currLvl = localStorage.getItem('level') || 0;
 
-    getWords(randomize(30), 0).then((data) => pasteMainWord(data.slice(0, 1)));
-    getWords(randomize(30), currLvl).then((data) => pasteWords(data.slice(0, 4)));
+    getInitialWords();
   };
 
   const selectWord = () => {
@@ -73,5 +85,5 @@ export function createSavannahGame() {
   level.addEventListener('mousedown', (e) => changeLvl(e));
 
   const { btnStart } = constants.DOM;
-  btnStart.addEventListener('click', startGame);
+  btnStart.addEventListener('click', getInitialWords);
 }

@@ -10,8 +10,6 @@ const makeWord = (info) => {
     tagName: 'div',
     classList: ['item'],
     attrs: {
-      'data-image-src': info.image.slice(6),
-      'data-audio-src': info.audio.slice(6),
       'data-word': info.word,
     },
   });
