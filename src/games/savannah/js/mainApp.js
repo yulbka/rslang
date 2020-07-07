@@ -1,9 +1,20 @@
 import { makeWord } from './htmlHelper';
 import { randomize, arrayRandElement } from './utils';
-import { getTranslations, getWords } from './apis';
+import { getWords } from './apis';
 import { constants } from '../../../js/constants';
 
 export function createSavannahGame() {
+  const makeHearts = () => {
+    const lifes = 5;
+    const lifeBar = document.querySelector('.lifes');
+    for (let i = 0; i < lifes; i++) {
+      const life = document.createElement('i');
+      life.classList.add('pulsingheart');
+      lifeBar.append(life);
+    }
+  };
+  makeHearts();
+
   const startAnimation = () => {
     const movingWord = document.querySelector('.mainItem');
     movingWord.classList.add('moveToRight');
@@ -36,8 +47,12 @@ export function createSavannahGame() {
   const startGame = () => {
     const { startScreen } = constants.DOM;
     startScreen.classList.add('hidden');
-    startAnimation();
+    setTimeout(() => startAnimation(), 2000);
   };
+
+  // const restartGame = () => {
+
+  // };
 
   const currLvl = localStorage.getItem('level') || 0;
 
@@ -49,6 +64,23 @@ export function createSavannahGame() {
       pasteMainWord(mainWord);
     });
     startGame();
+  };
+
+  const rightScenario = () => {
+    // const movingWord = document.querySelector('.mainItem');
+    // const wrongWords = document.querySelector('.item--wrong');
+    // movingWord.classList.remove('moveToRight');
+    // wrongWords.classList.remove('item--wrong');
+  };
+
+  const wrongScenario = () => {
+    const movingWord = document.querySelector('.mainItem');
+    const wrongWords = document.querySelector('.item--wrong');
+    const lifeBar = document.querySelector('.lifes');
+    movingWord.classList.remove('moveToRight');
+    wrongWords.classList.remove('item--wrong');
+    lifeBar.removeChild(lifeBar.lastElementChild);
+    setTimeout(() => getInitialWords(), 4000);
   };
 
   const changeLvl = (event) => {
@@ -63,19 +95,24 @@ export function createSavannahGame() {
 
   const selectWord = () => {
     const wordContainers = event.target.closest('.item');
+    const wordMainContainers = document.querySelector(
+      '#main > div > main > div.savannah > section.word > div.word__items.mainItem.moveToRight > div'
+    );
 
     if (!wordContainers) {
       return;
     }
 
-    const wordTranslation = document.querySelector('.item__translation');
-
+    const englishMainWord = wordMainContainers.getAttribute('data-word');
     const englishWord = wordContainers.getAttribute('data-word');
 
-    getTranslations(englishWord).then((data) => {
-      wordTranslation.textContent = data.text;
-      return undefined;
-    });
+    if (englishWord === englishMainWord) {
+      wordContainers.classList.add('item--right');
+      setTimeout(rightScenario(), 1000);
+    } else {
+      wordContainers.classList.add('item--wrong');
+      setTimeout(() => wrongScenario(), 1000);
+    }
   };
 
   const { word } = constants.DOM;

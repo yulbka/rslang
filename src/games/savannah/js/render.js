@@ -13,6 +13,7 @@ export function renderSavannah() {
           <a class="button button__start">Start</a>
         </div>
         <div class="savannah">
+          <div class="lifes"></div>
           <section class="level level-select">
             <p class="level__text"></p>
             <input type="radio" id="level0" name="levels" value="0" checked />

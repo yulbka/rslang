@@ -3,9 +3,11 @@ $color-light: #fff;
 $color-dark: #000;
 $color-grey: #ddd;
 $color-right: #0c1;
-$color-wrong: #f60019;
+$color-wrong: #f600195c;
 
 $border-radius: 5px;
+
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
 
 @mixin d-flex($justify-content: normal, $align-items: normal, $flex-direction: row) {
   align-items: $align-items;
@@ -14,9 +16,48 @@ $border-radius: 5px;
   justify-content: $justify-content;
 }
 
+.lifes {
+  display: inline-block;
+  height: 40px;
+  left: 670px;
+  margin: 10px auto;
+  position: relative;
+  top: -100px;
+}
+
+.pulsingheart {
+  height: 90px;
+  margin-right: 55px;
+  position: relative;
+  width: 100px;
+}
+
+.pulsingheart::before,
+.pulsingheart::after {
+  animation: pulsecolor 1s infinite;
+  background: #9c27b0;
+  border-radius: 50px 50px 0 0;
+  content: '';
+  height: 37px;
+  left: 21px;
+  position: absolute;
+  top: 0;
+  transform: rotate(-45deg);
+  transform-origin: 0 100%;
+  width: 23px;
+}
+
+.pulsingheart::after {
+  animation: pulsecolor 1s infinite;
+  left: 0;
+  transform: rotate(45deg);
+  transform-origin: 100% 100%;
+}
+
 .mainItem {
   background: white;
-  /* transition: left 10s ease-in-out; */
+  /*transition: all 3000ms cubic-bezier(0.000, 1.005, 1.000, 0.010);
+  transition-timing-function: cubic-bezier(0.000, 1.005, 1.000, 0.010);*/
   display: grid;
   grid-gap: 15px;
   grid-template-columns: repeat(1, 1fr);
@@ -235,8 +276,12 @@ $border-radius: 5px;
     border-color: $color-right;
     color: $color-right;
   }
+  &--wrong {
+    background-color: $color-wrong;
+    border-color: $color-wrong;
+  }
   &:hover {
-    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.24), 0 1px 10px 0 rgba(0, 0, 0, 0.22), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.24), 0 1px 10px 0 rgba(0, 0, 0, 0.42), 0 2px 4px -1px rgba(0, 0, 0, 0.9);
   }
 }
 
@@ -308,4 +353,14 @@ $border-radius: 5px;
     height: 150px;
     width: 200px;
   }
+}
+
+@keyframes pulse {
+  10% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes pulsecolor {
+  /*10% {background: #e25bf9;}*/
 }
