@@ -15,6 +15,12 @@ $border-radius: 5px;
   flex-direction: $flex-direction;
   justify-content: $justify-content;
 }
+#main > div > main > div.results.hidden > div > div.right__items {
+  width: 500px;
+}
+#main > div > main > div.results.hidden > div > div.wrong__items {
+  width: 500px;
+}
 
 .lifes {
   display: inline-block;
@@ -56,14 +62,15 @@ $border-radius: 5px;
 
 .mainItem {
   background: white;
-  /*transition: all 3000ms cubic-bezier(0.000, 1.005, 1.000, 0.010);
-  transition-timing-function: cubic-bezier(0.000, 1.005, 1.000, 0.010);*/
   display: grid;
   grid-gap: 15px;
   grid-template-columns: repeat(1, 1fr);
   left: -1180px;
   min-height: 100px;
+  pointer-events: none;
   position: relative;
+  /*transition: left 2500ms cubic-bezier(0, 1.005, 1, 0.01);*/
+  transition-timing-function: cubic-bezier(0, 1.005, 1, 0.01);
   width: 100%;
 }
 
@@ -77,9 +84,6 @@ $border-radius: 5px;
   margin: 0;
   overflow: hidden;
   padding: 0;
-}
-
-.background {
 }
 
 .savannah {
@@ -108,6 +112,10 @@ $border-radius: 5px;
   margin: -1px;
   position: absolute;
   width: 1px;
+}
+
+.invisible {
+  opacity: 0;
 }
 
 .btns {
@@ -337,6 +345,10 @@ $border-radius: 5px;
   .items {
     grid-template-columns: repeat(2, 1fr);
   }
+  .lifes {
+    left: 50%;
+    transform: translateX(-50%);
+  }
 }
 
 @media screen and (max-width: 540px) {
@@ -362,5 +374,7 @@ $border-radius: 5px;
 }
 
 @keyframes pulsecolor {
-  /*10% {background: #e25bf9;}*/
+  10% {
+    /*background: #e25bf9;*/
+  }
 }

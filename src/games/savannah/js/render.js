@@ -37,9 +37,9 @@ export function renderSavannah() {
         </div>
         <div class="results hidden">
           <div class="results__table">
-            <p class="right__text">Correct <span class="right__count"></span></p>
+            <p class="right__text">Correct</span></p>
             <div class="right__items"></div>
-            <p class="wrong__text">Mistake <span class="wrong__count"></span></p>
+            <p class="wrong__text">Mistake</span></p>
             <div class="wrong__items"></div>
             <div class="btns">
               <a class="button button__return">Return</a>

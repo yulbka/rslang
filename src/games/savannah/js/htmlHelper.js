@@ -14,8 +14,6 @@ const makeWord = (info) => {
     },
   });
   word.innerHTML = `
-      <p class="item__word">${info.word}</p>
-      <p class="item__transcription">${info.transcription}</p>
       <p class="item__translation">${info.wordTranslate}</p>
   `;
   return word;
@@ -31,8 +29,6 @@ const makeMainWord = (info) => {
   });
   word.innerHTML = `
       <p class="item__word">${info.word}</p>
-      <p class="item__transcription">${info.transcription}</p>
-      <p class="item__translation">${info.wordTranslate}</p>
   `;
   return word;
 };

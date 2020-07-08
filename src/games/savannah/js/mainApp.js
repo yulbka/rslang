@@ -1,9 +1,10 @@
-import { makeWord } from './htmlHelper';
+import { makeWord, makeMainWord } from './htmlHelper';
 import { randomize, arrayRandElement } from './utils';
 import { getWords } from './apis';
 import { constants } from '../../../js/constants';
 
 export function createSavannahGame() {
+  let rightAnswers = 0;
   const makeHearts = () => {
     const lifes = 5;
     const lifeBar = document.querySelector('.lifes');
@@ -24,7 +25,7 @@ export function createSavannahGame() {
     const wordsContainer = document.querySelector('.mainItem');
     const wordsFragment = document.createDocumentFragment();
 
-    const word = makeWord(item);
+    const word = makeMainWord(item);
     wordsFragment.appendChild(word);
 
     wordsContainer.innerHTML = '';
@@ -44,15 +45,19 @@ export function createSavannahGame() {
     wordsContainer.appendChild(wordsFragment);
   };
 
+  const lifesCheck = () => {
+    const lifeBar = document.querySelector('.lifes');
+    if (lifeBar.childNodes.length === 0) {
+      gameOver();
+    }
+  };
+
   const startGame = () => {
     const { startScreen } = constants.DOM;
     startScreen.classList.add('hidden');
-    setTimeout(() => startAnimation(), 2000);
+    lifesCheck();
+    setTimeout(() => startAnimation(), 2500);
   };
-
-  // const restartGame = () => {
-
-  // };
 
   const currLvl = localStorage.getItem('level') || 0;
 
@@ -63,24 +68,35 @@ export function createSavannahGame() {
       const mainWord = arrayRandElement(savedWords);
       pasteMainWord(mainWord);
     });
+    const movingWord = document.querySelector('.mainItem');
+    movingWord.classList.remove('invisible');
     startGame();
   };
 
   const rightScenario = () => {
-    // const movingWord = document.querySelector('.mainItem');
-    // const wrongWords = document.querySelector('.item--wrong');
-    // movingWord.classList.remove('moveToRight');
-    // wrongWords.classList.remove('item--wrong');
+    console.log('1');
+    resultGame();
+    const movingWord = document.querySelector('.mainItem');
+    movingWord.classList.add('invisible');
+    movingWord.classList.remove('moveToRight');
+    rightAnswers++;
+    if (rightAnswers === 10) {
+      gameOver();
+    } else {
+      setTimeout(() => getInitialWords(), 2000);
+    }
   };
 
   const wrongScenario = () => {
+    resultGame();
     const movingWord = document.querySelector('.mainItem');
     const wrongWords = document.querySelector('.item--wrong');
     const lifeBar = document.querySelector('.lifes');
+    movingWord.classList.add('invisible');
     movingWord.classList.remove('moveToRight');
     wrongWords.classList.remove('item--wrong');
     lifeBar.removeChild(lifeBar.lastElementChild);
-    setTimeout(() => getInitialWords(), 4000);
+    setTimeout(() => getInitialWords(), 3000);
   };
 
   const changeLvl = (event) => {
@@ -107,12 +123,37 @@ export function createSavannahGame() {
     const englishWord = wordContainers.getAttribute('data-word');
 
     if (englishWord === englishMainWord) {
-      wordContainers.classList.add('item--right');
+      wordContainers.classList.add('item--right', 'selected');
       setTimeout(rightScenario(), 1000);
     } else {
-      wordContainers.classList.add('item--wrong');
+      wordContainers.classList.add('item--wrong', 'selected');
       setTimeout(() => wrongScenario(), 1000);
     }
+  };
+
+  const resultGame = () => {
+    const wordsClone = document.querySelector('.selected').cloneNode(true);
+    const errorContainer = document.querySelector('.wrong__items');
+    const correctContainer = document.querySelector('.right__items');
+
+    const correctFragment = document.createDocumentFragment();
+    const errorFragment = document.createDocumentFragment();
+
+    if (wordsClone.classList.contains('item--right')) {
+      correctFragment.appendChild(wordsClone);
+    } else {
+      errorFragment.appendChild(wordsClone);
+    }
+
+    // correctContainer.innerHTML = '';
+    // errorContainer.innerHTML = '';
+
+    correctContainer.appendChild(correctFragment);
+    errorContainer.appendChild(errorFragment);
+  };
+
+  const gameOver = () => {
+    setTimeout(() => resultGame(), 2000);
   };
 
   const { word } = constants.DOM;
