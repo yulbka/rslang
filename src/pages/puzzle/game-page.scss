@@ -1,0 +1,150 @@
+.control {
+  margin: $space-xs auto $space-xxs;
+  display: flex;
+  justify-content: space-between;
+}
+
+.round {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  width: 280px;
+}
+
+.level__droplist, .page__droplist {
+  width: 50px;
+}
+
+.option {
+  text-align: center;
+}
+
+.level__text, .page__text {
+  margin-right: $space-xxs;
+}
+
+.prompt {
+  position: relative;
+}
+
+.prompt__button {
+  position: absolute;
+  bottom: 50px;
+  left: 48%;
+  width: 44px;
+  height: 40px;
+  align-self: center;
+  cursor: pointer;
+  & img {
+    width: 44px;
+    height: 40px;
+  }
+  &_active {
+    & img {
+      -webkit-filter: invert(41%) sepia(94%) saturate(334%) hue-rotate(109deg) brightness(92%) contrast(89%);
+      filter: invert(41%) sepia(94%) saturate(334%) hue-rotate(109deg) brightness(92%) contrast(89%);
+    }  
+  }
+}
+
+.prompt__text {
+  margin: 0;
+  height: 40px;
+  text-align: center;
+}
+
+.result-container {
+  margin: 0 auto $space-xs;
+  display: flex;
+}
+
+.result {
+  background-color: $colorField;
+  width: 90%;
+  height: 500px;
+}
+
+.row {
+  height: 50px;
+  &_active {
+    background-color: #53e18738;
+  }
+}
+
+.prompt-buttons {
+  display: flex;
+}
+
+.prompt-btn {
+  margin-right: $space-xxs;
+  width: 44px;
+  height: 40px;
+  background-color: $colorPuzzle;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: $borderRadius5;
+  cursor: pointer;
+  &:hover {
+    background-color: $colorPuzzleHover;
+  }
+}
+
+.voice {
+  background-image: url('../assets/images/puzzle/voice.png');
+}
+
+.text {
+  background-image: url('../assets/images/puzzle/doc.png');
+}
+
+.note {
+  background-image: url('../assets/images/puzzle/note.png');
+}
+
+.picture {
+  background-image: url('../assets/images/puzzle/landscape.png');
+}
+
+.btn_hidden {
+  display: none;
+}
+
+.puzzle-btn {
+  background-color: $colorPuzzle;
+  border-color: $colorPuzzle;
+  &:hover {
+    background-color: $colorPuzzleHover;
+    border-color: $colorPuzzleHover;
+  }
+}
+
+.count {
+  width: 50px;
+}
+
+.count__number {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 5px 15px;
+  border: 2px solid $colorGrayLight;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+
+.data {
+  margin: 0 0 $space-xxs $space-md;
+  width: 90%;
+  height: 50px;
+  background-color: $colorField;
+}
+
+.check-container {
+  margin: $space-xs 0;
+  display: flex;
+  justify-content: center;
+  & button {
+    margin-left: $space-xxs;
+  }
+}

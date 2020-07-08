@@ -1,5 +1,6 @@
 import { MAIN } from '../../scripts/helpers/variables';
 import { createElement } from '../../scripts/helpers/createElement';
+import { GamePage } from './GamePage';
 
 export class PuzzleStartPage {
   static render() {
@@ -10,7 +11,7 @@ export class PuzzleStartPage {
       'Выбирай подсказки'].forEach((sentence) => {
       createElement('p', wrapper, ['start__description', 'text-dark'], `${sentence}`);
     });
-    createElement('button', wrapper, ['btn', 'btn-info', 'start__button'], 'Начать');
+    createElement('button', wrapper, ['btn', 'btn-primary', 'start__button'], 'Начать');
     MAIN.append(fragment);
     this.startHandler();
   }
@@ -18,7 +19,8 @@ export class PuzzleStartPage {
   static startHandler() {
     const startBtn = document.querySelector('.start__button');
     startBtn.addEventListener('click', () => {
-      console.log('go to puzzle game');
+      MAIN.innerHTML = '';
+      GamePage.render();
     });
   }
 }
