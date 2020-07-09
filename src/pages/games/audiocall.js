@@ -6,8 +6,29 @@ import { WordService } from 'scripts/service/Word.Service';
 export const audiocallGameSettings = {
   currentGame: {
     currentWord: 0,
+    setCurrentWord() {
+      const isEndGame = this.statistics.learned.size + this.statistics.errors.size === 3;
+      if (isEndGame) {
+        createGameStatistics();
+        return;
+      }
+
+      let newWordIndex;
+      let newWord;
+
+      do {
+        newWordIndex = getRandomInt(audiocallGameSettings.wordsArray.length);
+        newWord = audiocallGameSettings.wordsArray[newWordIndex].word;
+      } while (this.statistics.learned.has(newWord) || this.statistics.errors.has(newWord));
+
+      this.currentWord = newWordIndex;
+    },
     max: 10,
     variants: 5,
+    statistics: {
+      learned: new Map(),
+      errors: new Map(),
+    },
   },
   get currentLevel() {
     return localStorage.getItem('levelAudiocallGame') ? +localStorage.getItem('levelAudiocallGame') : 1;
@@ -41,9 +62,8 @@ export async function audioCallGameCreate() {
         `
   );
 
-  /*   createStartScreen();*/
+  createStartScreen();
   await audiocallGameSettings.getWords();
-  playAudiocallGame();
 }
 
 function createStartScreen() {
@@ -93,7 +113,7 @@ function createButtonStart() {
 function playAudiocallGame() {
   const { currentGame } = audiocallGameSettings;
   const allWords = audiocallGameSettings.wordsArray;
-
+  currentGame.setCurrentWord();
   const { body } = constants.DOM;
   body.classList.remove('start-screen');
   body.classList.add('play-mode');
@@ -112,9 +132,11 @@ function playAudiocallGame() {
         </div>
         `
   );
+  audioButtonHandler();
+  playAudio();
 
   function renderContent() {
-    const guessWord = allWords[currentGame.currentWord]; //TODO: random
+    const guessWord = audiocallGameSettings.wordsArray[currentGame.currentWord];
     const answers = (() => {
       const answersMap = { [guessWord.word]: guessWord };
       let needAnswers = currentGame.variants - 1;
@@ -127,16 +149,31 @@ function playAudiocallGame() {
         }
       }
 
-      return Object.values(answersMap); //TODO: random sort
+      return randomSort({ arr: Object.values(answersMap) });
+
+      function randomSort({ arr }) {
+        const result = [];
+        const resultMap = {};
+        do {
+          const currentItem = arr[getRandomInt(arr.length)];
+          if (!(currentItem.word in resultMap)) {
+            resultMap[currentItem.word] = true;
+            result.push(currentItem);
+          }
+        } while (result.length !== arr.length);
+        return result;
+      }
     })();
 
     return `
-            <img class="card-img" src='https://raw.githubusercontent.com/MariannaV/rslang-data/master/${
-              guessWord.image
-            }' />
-            <div class="word-description">
-              <img class="sound-img" src=${require('assets/img/icons/sound.svg').default} />
-              <p class="hidden-word">${guessWord.word}</p>
+            <div class="card-preview inactive">
+              <img class="card-img" src='https://raw.githubusercontent.com/MariannaV/rslang-data/master/${
+                guessWord.image
+              }' />
+              <div class="word-description">
+                <img class="sound-img" src=${require('assets/img/icons/sound.svg').default} />
+                <p class="hidden-word">${guessWord.word}</p>
+             </div>
            </div>
            <div class="block-with-words">
             ${answers
@@ -153,39 +190,94 @@ function playAudiocallGame() {
     const content = audioCallGameSection.querySelector('.audiocall-game-top');
     content.innerHTML = '';
     content.insertAdjacentHTML('afterbegin', renderContent());
-    //run audio
+    playAudio();
+    audioButtonHandler();
     answersHandler();
+  }
+
+  async function playAudio() {
+    const guessWord = allWords[currentGame.currentWord];
+    const audioWord = new Audio(`https://raw.githubusercontent.com/MariannaV/rslang-data/master/${guessWord.audio}`);
+    await audioWord.play();
   }
 
   levelsBlockHandler();
   gameButtonHandler();
   answersHandler();
 
-  function gameButtonHandler() {
-    const notKnowButton = audioCallGameSection.querySelector('.button-not-know');
-    notKnowButton.addEventListener('click', () => {
-      if (notKnowButton.classList.contains('button-not-know')) {
-        audiocallGameSettings.currentGame.currentWord++;
-        //set class to right answer
-      } else updateContent();
+  function audioButtonHandler() {
+    document.querySelector('.sound-img').addEventListener('click', playAudio);
+  }
 
+  function gameButtonHandler() {
+    const { errors } = currentGame.statistics;
+    const notKnowButton = audioCallGameSection.querySelector('.audiocall-button');
+    notKnowButton.addEventListener('click', () => {
+      const isNotKnow = notKnowButton.classList.contains('button-not-know');
+      const isNext = notKnowButton.classList.contains('button-next');
+      if (isNotKnow) {
+        const correctAnswer = document.querySelector(`.answer-word[data-id=${allWords[currentGame.currentWord].word}]`);
+        correctAnswer.classList.add('is-right');
+        audioCallGameSection.querySelector('.card-preview').classList.remove('inactive');
+        errors.set(allWords[currentGame.currentWord].word, {
+          wordTranslate: allWords[currentGame.currentWord].wordTranslate,
+        });
+        markRestAnswersAsIncorrect();
+      } else if (isNext) {
+        currentGame.setCurrentWord();
+        updateContent();
+      }
       notKnowButton.classList.toggle('button-not-know');
       notKnowButton.classList.toggle('button-next');
     });
   }
 
   function answersHandler() {
+    const { errors } = audiocallGameSettings.currentGame.statistics;
+    const { learned } = audiocallGameSettings.currentGame.statistics;
     const optionsBlock = audioCallGameSection.querySelector('.block-with-words');
+    let errorsCounter = 0;
     optionsBlock.addEventListener('click', (event) => {
       const guessWord = allWords[currentGame.currentWord];
       const button = event.target;
       const isRightAnswer = button.dataset.id === guessWord.word;
       button.classList.add(isRightAnswer ? 'is-right' : 'is-wrong');
       if (isRightAnswer) {
-        audiocallGameSettings.currentGame.currentWord++;
-        setTimeout(updateContent, 500);
+        audioCallGameSection.querySelector('.audiocall-button').classList.remove('button-not-know');
+        audioCallGameSection.querySelector('.audiocall-button').classList.add('button-next');
+        audioCallGameSection.querySelector('.card-preview').classList.remove('inactive');
+        markRestAnswersAsIncorrect();
+
+        if (errorsCounter === 0) learned.set(guessWord.word, { wordTranslate: guessWord.wordTranslate });
+        errorsCounter = 0;
+      } else {
+        errorsCounter += 1;
+        errors.set(guessWord.word, { wordTranslate: guessWord.wordTranslate });
       }
     });
+  }
+
+  function levelsBlockHandler() {
+    const levelsBlock = document.querySelector('.levels-block');
+    levelsBlock.addEventListener('click', async (event) => {
+      const container = event.currentTarget;
+      const gameLevelBlock = event.target;
+      const currentLevel = gameLevelBlock.dataset.level;
+      if (gameLevelBlock.tagName !== 'INPUT') return;
+      if (container.dataset.level !== currentLevel) {
+        container.dataset.level = currentLevel;
+        localStorage.setItem('levelAudiocallGame', currentLevel);
+        await audiocallGameSettings.getWords();
+        updateContent();
+      }
+    });
+  }
+
+  function markRestAnswersAsIncorrect() {
+    const optionsBlock = audioCallGameSection.querySelector('.block-with-words');
+    optionsBlock.children.forEach(
+      (answer) => answer.classList.contains('is-right') || answer.classList.add('is-wrong')
+    );
   }
 }
 
@@ -207,18 +299,6 @@ function createLevelsBlock() {
     </div>
   </div>
   `;
-}
-
-function levelsBlockHandler() {
-  const levelsBlock = document.querySelector('.levels-block');
-  levelsBlock.addEventListener('click', (event) => {
-    const container = event.currentTarget;
-    const gameLevelBlock = event.target;
-    const currentLevel = gameLevelBlock.dataset.level;
-    container.dataset.level = '';
-    container.dataset.level = currentLevel;
-    localStorage.setItem('levelAudiocallGame', currentLevel);
-  });
 }
 
 async function getWordsByPartOfSpeech(word) {
