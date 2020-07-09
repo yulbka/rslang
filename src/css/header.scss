@@ -6,6 +6,14 @@
   position: relative;
 }
 
+.header-link {
+  color: $colorWhite;
+  &:hover {
+    text-decoration: none;
+    color: $colorWhite;
+  }
+}
+
 .header-title {
   font-size: 2rem;
   margin: 0;

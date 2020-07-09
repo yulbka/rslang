@@ -4,9 +4,12 @@ import { store } from 'store';
 import { createSidebar } from './burger';
 import { Header } from './Header';
 import { Authorization } from './Authorization';
+import { LearnWords } from './learn_words/learnWords';
 import { router } from '../routes';
 import { createSavannahGame } from '../games/savannah/js/mainApp';
 import { renderSavannah } from '../games/savannah/js/render';
+import { createSpeakItGame } from '../games/speakit/js/mainApp';
+import { renderSpeakIt } from '../games/speakit/js/render';
 
 export class App {
   static reRender(page) {
@@ -47,8 +50,8 @@ export class App {
       case routesMap.get(routeKeys.registration).url:
         Authorization.render(url);
         break;
-      case routesMap.get(routeKeys.game1).url:
-        MAIN.innerHTML = '<div>learn</div>'; // replace with function that render page learn words
+      case routesMap.get(routeKeys.learn).url:
+        LearnWords.render();
         break;
       case routesMap.get(routeKeys.progress).url:
         MAIN.innerHTML = '<div>progress</div>'; // replace with function that render progress page
@@ -57,7 +60,9 @@ export class App {
         MAIN.innerHTML = '<div>vocabulary</div>'; // replace with function that render dictionary page
         break;
       case routesMap.get(routeKeys.speakIt).url:
-        MAIN.innerHTML = '<div>speakIt</div>'; // replace with function that render speakIt mini-game page
+        // MAIN.innerHTML = '<div>speakIt</div>'; // replace with function that render speakIt mini-game page
+        renderSpeakIt();
+        createSpeakItGame();
         break;
       case routesMap.get(routeKeys.englishPuzzle).url:
         MAIN.innerHTML = '<div>puzzle</div>'; // replace with function that render puzzle mini-game page

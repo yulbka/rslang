@@ -5,9 +5,10 @@ import { requestCreator } from 'utils/requests';
 import { store } from 'store';
 import { API_USER } from 'api/user';
 import { router } from '../routes';
+import { initRequests } from '../index';
 
 export class Authorization {
-  static render(type = 'login') {
+  static render(type = '#login') {
     const fragment = document.createDocumentFragment();
     const wrapper = createElement('div', fragment, ['authorization__wrapper']);
     const form = createElement('form', wrapper, ['authorization__form']);
@@ -129,16 +130,7 @@ export class Authorization {
       });
       localStorage.setItem('token', user.token);
       localStorage.setItem('userId', user.userId);
-      store.user.auth = {
-        ...store.user.auth,
-        email: email.value,
-        password: password.value,
-      };
-      const userSettings = await API_USER.getUserSettings({ userId: user.userId });
-      store.user.learning = {
-        ...store.user.learning,
-        ...userSettings,
-      };
+      await initRequests();
       router.navigate(routesMap.get(routeKeys.home).url);
     } catch (error) {
       const message = document.querySelector('.invalid-feedback-password');

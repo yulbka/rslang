@@ -7,7 +7,7 @@ export const routeKeys = {
   registration: 'registration',
   login: 'login',
   home: 'home',
-  game1: 'game1',
+  learn: 'learn',
   progress: 'progress',
   vocabulary: 'vocabulary',
   speakIt: 'speakIt',
@@ -21,10 +21,10 @@ export const routeKeys = {
 };
 
 export const routesMap = new Map([
-  [routeKeys.registration, { url: '#/registration' }],
-  [routeKeys.login, { url: '#/login' }],
+  [routeKeys.registration, { url: '#registration' }],
+  [routeKeys.login, { url: '#login' }],
   [routeKeys.home, { url: '#/' }],
-  [routeKeys.game1, { url: '#/games/game1', title: 'Учи слова' }],
+  [routeKeys.learn, { url: '#/learn', title: 'Учи слова' }],
   [routeKeys.progress, { url: '#/progress', title: 'Твой прогресс' }],
   [routeKeys.vocabulary, { url: '#/vocabulary', title: 'Твой словарь' }],
   [
@@ -60,7 +60,7 @@ export const routesMap = new Map([
 ]);
 
 export const sidebarMap = [
-  routeKeys.game1,
+  routeKeys.learn,
   routeKeys.progress,
   routeKeys.vocabulary,
   routeKeys.speakIt,

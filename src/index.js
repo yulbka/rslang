@@ -15,7 +15,7 @@ window.onload = async () => {
   initializeRouter();
 };
 
-async function initRequests() {
+export async function initRequests() {
   const { userId } = store.user.auth;
   if (!userId) {
     router.navigate(routesMap.get(routeKeys.login).url);
