@@ -320,3 +320,41 @@ async function getWordsByPartOfSpeech(word) {
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
+
+function createGameStatistics() {
+  const { body } = constants.DOM;
+  const { errors } = audiocallGameSettings.currentGame.statistics;
+  const { learned } = audiocallGameSettings.currentGame.statistics;
+  errors.set('alcohol1', { wordTranslate: 'алкоголь1' });
+  learned.set('boat', { wordTranslate: 'лодка' });
+  body.classList.remove('play-mode');
+  body.classList.add('game-statistics');
+  body.querySelector('.audiocall-game-section').innerHTML = '';
+  body.querySelector('.audiocall-game-section').insertAdjacentHTML(
+    'afterbegin',
+    `
+      <div>
+      <h2>Статистика игры:</h2>
+      <p>Ошибок:</p>
+      <div class="errors-words">
+      ${Array.from(errors)
+        .map(
+          (error) =>
+            `<div>${error[0]}</div><span>—</span>
+        <div>${error[1].wordTranslate}</div>`
+        )
+        .join('')}
+      </div>
+      <p>Знаю:</p>
+      <div class="learned-words">
+      ${Array.from(learned)
+        .map(
+          (learnedWord) =>
+            `<div>${learnedWord[0]}</div><span>—</span>
+        <div>${learnedWord[1].wordTranslate}</div>`
+        )
+        .join('')}
+      </div>
+      `
+  );
+}
