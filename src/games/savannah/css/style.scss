@@ -25,7 +25,7 @@ $border-radius: 5px;
 .lifes {
   display: inline-block;
   height: 40px;
-  left: 670px;
+  left: 73%;
   margin: 10px auto;
   position: relative;
   top: -100px;
@@ -65,17 +65,19 @@ $border-radius: 5px;
   display: grid;
   grid-gap: 15px;
   grid-template-columns: repeat(1, 1fr);
-  left: -1180px;
+  left: -1480px;
   min-height: 100px;
+  opacity: 0;
   pointer-events: none;
   position: relative;
-  /*transition: left 2500ms cubic-bezier(0, 1.005, 1, 0.01);*/
+  transition: left 2500ms cubic-bezier(0, 1.005, 1, 0.01);
   transition-timing-function: cubic-bezier(0, 1.005, 1, 0.01);
   width: 100%;
 }
 
 .moveToRight {
-  left: 1180px;
+  left: 1480px;
+  opacity: 1;
 }
 
 .savannahGame {
@@ -325,6 +327,7 @@ $border-radius: 5px;
     background-color: transparent;
     border-bottom: 1px solid $color-wrong;
     border-radius: 0;
+    height: 20px;
     margin: 5px 0;
     @include d-flex(start, center, row);
     &__transcription {
@@ -375,6 +378,22 @@ $border-radius: 5px;
 
 @keyframes pulsecolor {
   10% {
-    /*background: #e25bf9;*/
+    background: #e25bf9;
   }
+}
+
+.progressWrapper {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  pointer-events: none;
+  position: relative;
+  top: 220px;
+}
+.fit-picture {
+  position: relative;
+  top: 20px;
+  transition: width 1s;
+  width: 75px;
 }

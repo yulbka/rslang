@@ -42,10 +42,15 @@ export function renderSavannah() {
             <p class="wrong__text">Mistake</span></p>
             <div class="wrong__items"></div>
             <div class="btns">
-              <a class="button button__return">Return</a>
-              <a class="button button__new-game">New game</a>
+              <a class="button button__new-game">Новая игра</a>
             </div>
           </div>
+        </div>
+        <div class="progressWrapper">
+        <div class="progressBar"></div>
+        <img class="fit-picture"
+          src="https://img.icons8.com/clouds/2x/brain.png"
+          alt="brain">
         </div>
       </main>
     </div>

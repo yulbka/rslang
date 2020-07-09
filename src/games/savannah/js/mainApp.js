@@ -18,6 +18,7 @@ export function createSavannahGame() {
 
   const startAnimation = () => {
     const movingWord = document.querySelector('.mainItem');
+    movingWord.classList.remove('invisible');
     movingWord.classList.add('moveToRight');
   };
 
@@ -45,6 +46,48 @@ export function createSavannahGame() {
     wordsContainer.appendChild(wordsFragment);
   };
 
+  const progressCheck = () => {
+    const progress = document.querySelector('.progressBar');
+    const image = document.querySelector('.fit-picture');
+
+    progress.textContent = `${rightAnswers}/10`;
+    switch (rightAnswers) {
+      case 1:
+        image.style.width = '80px';
+        break;
+      case 2:
+        image.style.width = '85px';
+        break;
+      case 3:
+        image.style.width = '90px';
+        break;
+      case 4:
+        image.style.width = '95px';
+        break;
+      case 5:
+        image.style.width = '100px';
+        break;
+      case 6:
+        image.style.width = '105px';
+        break;
+      case 7:
+        image.style.width = '110px';
+        break;
+      case 8:
+        image.style.width = '115px';
+        break;
+      case 9:
+        image.style.width = '120px';
+        break;
+      case 10:
+        image.style.width = '125px';
+        break;
+      default:
+        image.style.width = '75px';
+        break;
+    }
+  };
+
   const lifesCheck = () => {
     const lifeBar = document.querySelector('.lifes');
     if (lifeBar.childNodes.length === 0) {
@@ -55,7 +98,9 @@ export function createSavannahGame() {
   const startGame = () => {
     const { startScreen } = constants.DOM;
     startScreen.classList.add('hidden');
+    progressCheck();
     lifesCheck();
+
     setTimeout(() => startAnimation(), 2500);
   };
 
@@ -68,13 +113,11 @@ export function createSavannahGame() {
       const mainWord = arrayRandElement(savedWords);
       pasteMainWord(mainWord);
     });
-    const movingWord = document.querySelector('.mainItem');
-    movingWord.classList.remove('invisible');
+
     startGame();
   };
 
   const rightScenario = () => {
-    console.log('1');
     resultGame();
     const movingWord = document.querySelector('.mainItem');
     movingWord.classList.add('invisible');
@@ -103,10 +146,17 @@ export function createSavannahGame() {
     if (!event.target.classList.contains('level__label')) {
       return;
     }
-
+    const movingWord = document.querySelector('.mainItem');
+    movingWord.classList.remove('moveToRight');
     localStorage.setItem('level', event.target.innerText);
-
+    const hearts = document.querySelectorAll('.pulsingheart');
+    hearts.forEach((item) => {
+      item.remove();
+    });
+    rightAnswers = 0;
+    makeHearts();
     getInitialWords();
+    startGame();
   };
 
   const selectWord = () => {
@@ -145,16 +195,30 @@ export function createSavannahGame() {
       errorFragment.appendChild(wordsClone);
     }
 
-    // correctContainer.innerHTML = '';
-    // errorContainer.innerHTML = '';
-
     correctContainer.appendChild(correctFragment);
     errorContainer.appendChild(errorFragment);
   };
 
   const gameOver = () => {
-    setTimeout(() => resultGame(), 2000);
+    document.querySelector('.results').classList.remove('hidden');
   };
+
+  const manageGame = (event) => {
+    if (event.target.classList.contains('button__new-game')) {
+      document.querySelector('.results').classList.add('hidden');
+      const hearts = document.querySelectorAll('.pulsingheart');
+      hearts.forEach((item) => {
+        item.remove();
+      });
+      rightAnswers = 0;
+      makeHearts();
+      getInitialWords();
+      startGame();
+    }
+  };
+
+  const { btns } = constants.DOM;
+  btns.addEventListener('click', (e) => manageGame(e));
 
   const { word } = constants.DOM;
   word.addEventListener('mousedown', (e) => selectWord(e));
