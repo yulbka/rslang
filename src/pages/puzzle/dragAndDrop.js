@@ -96,6 +96,6 @@ function findElementRelations() {
 function showCheckButton() {
   const check = document.querySelector('.puzzle-btn_check');
   const help = document.querySelector('.puzzle-btn_help');
-  check.classList.remove('button_hidden');
-  help.classList.add('button_hidden');
+  check.classList.remove('btn_hidden');
+  help.classList.add('btn_hidden');
 }

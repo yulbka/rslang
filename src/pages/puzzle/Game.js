@@ -5,6 +5,8 @@ import { Puzzle, paintings } from './Puzzle';
 import { createElement } from '../../scripts/helpers/createElement';
 import { store } from '../../store';
 import { API_USER } from '../../api/user';
+import { MAIN } from '../../scripts/helpers/variables';
+import { ResultsPage } from './ResultsPage';
 
 export class Game {  
   constructor() {
@@ -39,12 +41,11 @@ export class Game {
 
   static async init() {
     const { page, level } = await this.getSettings();
-    GamePage.refreshPageDropList(book[level].length / 10);
-    this.loadPage(page, level);
+    await this.loadPage(page, level);
     this.checkHandler();
     this.answerHandler();
     this.continueHandler();
-    // this.resultsHandler();
+    this.resultsHandler();
     this.pageHandler();
     this.levelHandler();
     this.autoPlay();
@@ -68,7 +69,7 @@ export class Game {
           countWrongs += 1;
         }
       });
-      countWrongs ? answerBtn.classList.remove('button_hidden'):
+      countWrongs ? answerBtn.classList.remove('btn_hidden'):
       this.sentenceCollected();
     });
   }
@@ -76,9 +77,10 @@ export class Game {
   static answerHandler() {
     const answerBtn = document.querySelector('.puzzle-btn_help');
     answerBtn.addEventListener('click', () => {
+      const checkBtn = document.querySelector('.puzzle-btn_check');
       const data = document.querySelector('.data');
       if (!data.children.length &&
-        this.check.classList.contains('button_hidden')) return;
+        checkBtn.classList.contains('btn_hidden')) return;
       const puzzles = document.querySelectorAll('.new');
       puzzles.forEach((puzzle) => {
         puzzle.classList.add('settled');
@@ -92,43 +94,47 @@ export class Game {
   static continueHandler() {
     const continueBtn = document.querySelector('.puzzle-btn_continue');
     const answerBtn = document.querySelector('.puzzle-btn_help');
+    const resultsBtn = document.querySelector('.puzzle-btn_results');
     continueBtn.addEventListener('click', async () => {
       this.checkAudioPrompt();
-      if (!(this.results.classList.contains('button_hidden'))) {
-        const { page, level } = store.user.englishPuzzle;
-        this.loadPage(page, level);
+      if (!(resultsBtn.classList.contains('btn_hidden'))) {
+        const page = +document.querySelector('.page__droplist').value;
+        const level = +document.querySelector('.level__droplist').value;
+        this.loadPage(page + 1, level);
       } else {
         this.finishRow();
         const translate = document.querySelector('.prompt__text');
         translate.textContent = '';
-        continueBtn.classList.add('button_hidden');
-        answerBtn.classList.remove('button_hidden');
+        continueBtn.classList.add('btn_hidden');
+        answerBtn.classList.remove('btn_hidden');
         await this.goToNextRow();
       }
     });
   }
 
-  // resultsHandler() {
-  //   const resultsBtn =
-  //   document.querySelector('.button_results');
-  //   resultsBtn.addEventListener('click', () => {
-  //     GAME_CONTAINER.innerHTML = '';
-  //     new ResultsPage(this.levelDropList.value, this.pageDropList.value).init();
-  //   });
-  // }
+  static resultsHandler() {
+    const resultsBtn =
+    document.querySelector('.puzzle-btn_results');
+    resultsBtn.addEventListener('click', () => {
+      const level = +document.querySelector('.level__droplist').value;
+      const page = +document.querySelector('.page__droplist').value;
+      MAIN.innerHTML = '';
+      new ResultsPage(level, page).init();
+    });
+  }
 
   static pageHandler() {
     const pageDropList = document.querySelector('.page__droplist');
     const levelDropList = document.querySelector('.level__droplist');
     pageDropList.addEventListener('change', async () => {
-      this.loadPage(pageDropList.value, levelDropList.value);
+      this.loadPage(+pageDropList.value, +levelDropList.value);
     });
   }
 
   static levelHandler() {
     const levelDropList = document.querySelector('.level__droplist');
     levelDropList.addEventListener('change', async () => {
-      this.loadPage(1, levelDropList.value);
+      this.loadPage(1, +levelDropList.value);
     });
   }
 
@@ -136,8 +142,8 @@ export class Game {
     const picturePrompt = document.querySelector('.picture');
     if (!picturePrompt) return;
     picturePrompt.addEventListener('click', async () => {
-      const page = document.querySelector('.page__droplist').value;
-      const level = document.querySelector('.level__droplist').value;
+      const page = +document.querySelector('.page__droplist').value;
+      const level = +document.querySelector('.level__droplist').value;
       picturePrompt.classList.toggle('prompt-btn_active');
       picturePrompt.classList.contains('prompt-btn_active') ?
       await this.updateSettings({ background: true }):
@@ -173,8 +179,9 @@ export class Game {
 
   static checkAudioPrompt() {
     const audioPrompt = document.querySelector('.note');
+    const playButton = document.querySelector('.prompt__button');
     if (!audioPrompt.classList.contains('prompt-btn_active')) {
-      this.playButton.removeEventListener('click', this.audioPlay);
+      playButton.removeEventListener('click', this.audioPlay);
     }
   }
 
@@ -185,8 +192,8 @@ export class Game {
       const prompt = document.querySelector('.prompt__text');
       translatePrompt.classList.toggle('prompt-btn_active');
       translatePrompt.classList.contains('prompt-btn_active') ?
-      await this.updateSettings({ translate: true }):
-      await this.updateSettings({ translate: false });
+      await this.updateSettings({ translation: true }):
+      await this.updateSettings({ translation: false });
       prompt.textContent = '';
       if (translatePrompt.classList.contains('prompt-btn_active')) {
         const level = document.querySelector('.level__droplist').value;
@@ -204,19 +211,25 @@ export class Game {
     autoPlayPrompt.addEventListener('click', async () => {
       autoPlayPrompt.classList.toggle('prompt-btn_active');
       autoPlayPrompt.classList.contains('prompt-btn_active') ?
-      await this.updateSettings({ auto: true }):
-      await this.updateSettings({ auto: false });
+      await this.updateSettings({ autoplay: true }):
+      await this.updateSettings({ autoplay: false });
     });
   }
 
   static checkAutoPlay() {
     const autoPlay = document.querySelector('.voice');
-    if (autoPlay.classList.contains('btn_active')) {
-      this.audio.play();
+    if (autoPlay.classList.contains('prompt-btn_active')) {
+      this.audioPlay();
     }
   }
 
-  static async loadPage(page, level) {
+  static async loadPage(round, difficulty) {
+    let level = +difficulty;
+    let page = +round;
+    if (page > book[level].length / 10) {
+      page = 1;
+      level += 1;
+    }
     GamePage.refreshPageDropList(book[level].length / 10);
     await this.updateSettings({ page, level });
     clearGameField();
@@ -278,22 +291,26 @@ export class Game {
     const rowIndex = Number(count.lastChild.textContent);
     const row =
       document.querySelector(`[data-row='${rowIndex}']`);
+    const page = +document.querySelector('.page__droplist').value;
+    const level = +document.querySelector('.level__droplist').value;
     const puzzles = Array.from(document.querySelectorAll('.settled'));
     puzzles.sort((a, b) => +a.dataset.position - +b.dataset.position);
     const fragment = document.createDocumentFragment();
     puzzles.forEach((puzzle) => {
       fragment.append(puzzle);
-      Puzzle.showPicture(puzzle, puzzle.dataset.position, rowIndex - 1,
-          this.levelDropList.value, this.pageDropList.value, 'green');
+      Puzzle.showPicture(puzzle, puzzle.dataset.position, rowIndex - 1, level, page, 'green');
     });
     row.append(fragment);
     this.checkAutoPlay();
-    Sentence.translateSentence(this.levelDropList.value,
-        this.pageDropList.value, rowIndex);
-    this.playButton.addEventListener('click', this.play);
-    this.check.classList.add('button_hidden');
-    this.answer.classList.add('button_hidden');
-    this.continue.classList.remove('button_hidden');
+    Sentence.translateSentence(level, page, rowIndex);
+    const playBtn = document.querySelector('.prompt__button');
+    playBtn.addEventListener('click', this.audioPlay);
+    const checkBtn = document.querySelector('.puzzle-btn_check');
+    checkBtn.classList.add('btn_hidden');
+    const answerBtn = document.querySelector('.puzzle-btn_help');
+    answerBtn.classList.add('btn_hidden');
+    const continueBtn = document.querySelector('.puzzle-btn_continue');
+    continueBtn.classList.remove('btn_hidden');
   }
 
   static finishRow() {
@@ -309,7 +326,8 @@ export class Game {
   }
 
   static async goToNextRow() {
-    let { page, level } = store.user.englishPuzzle;
+    let page = +document.querySelector('.page__droplist').value;
+    let level = +document.querySelector('.level__droplist').value;
     const rowIndex = findCurrentRow();
     if (rowIndex === 10) {
       // this.setStatistic();
@@ -322,9 +340,12 @@ export class Game {
         page += 1;
         await this.updateSettings({ page });
       }
-      this.answer.classList.add('button_hidden');
-      this.results.classList.remove('button_hidden');
-      this.continue.classList.remove('button_hidden');
+      const answerBtn = document.querySelector('.puzzle-btn_help');
+      answerBtn.classList.add('btn_hidden');
+      const resultsBtn = document.querySelector('.puzzle-btn_results');
+      resultsBtn.classList.remove('btn_hidden');
+      const continueBtn = document.querySelector('.puzzle-btn_continue');
+      continueBtn.classList.remove('btn_hidden');
     } else {
       const count = document.querySelector('.count');
       const numbers = count.querySelectorAll('.count__number');
@@ -349,11 +370,11 @@ export class Game {
     const checkBtn = document.querySelector('.puzzle-btn_check');
     const answerBtn = document.querySelector('.puzzle-btn_help');
     const playBtn = document.querySelector('.prompt__button');
-    continueBtn.classList.add('button_hidden');
-    resultsBtn.classList.add('button_hidden');
-    checkBtn.classList.add('button_hidden');
-    answerBtn.classList.remove('button_hidden');
-    playBtn.classList.remove('button_hidden');
+    continueBtn.classList.add('btn_hidden');
+    resultsBtn.classList.add('btn_hidden');
+    checkBtn.classList.add('btn_hidden');
+    answerBtn.classList.remove('btn_hidden');
+    playBtn.classList.remove('btn_hidden');
   }
 
   static showPictureData(level, page) {
@@ -362,7 +383,8 @@ export class Game {
     const container =
         document.querySelector('.result');
     container.innerHTML = '';
-    this.playButton.classList.add('button_hidden');
+    const playBtn = document.querySelector('.prompt__button');
+    playBtn.classList.add('btn_hidden');
     const picture = paintings[level][page - 1];
     const img = new Image(container.offsetWidth, container.offsetHeight);
     const src = picture.cutSrc;
@@ -371,14 +393,14 @@ export class Game {
     const pictureDescription =
     `${picture.author} - ${picture.name} (${picture.year})`;
     const data = document.querySelector('.data');
-    createElement('p', data, ['picture-description'], pictureDescription);
+    createElement('p', data, ['picture-description', 'text-center', 'text-dark'], pictureDescription);
   }
 
   static audioPlay = () => this.audio.play();
 
 }
 
-export function findCurrentRow() {
+function findCurrentRow() {
   const count = document.querySelector('.count');
   let rowIndex = 1;
   if (count.lastChild) {
@@ -387,7 +409,7 @@ export function findCurrentRow() {
   return rowIndex;
 }
 
-export function clearGameField() {
+function clearGameField() {
   const container =
     document.querySelector('.result-container');
   if (!container) return;

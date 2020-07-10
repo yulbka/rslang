@@ -12,7 +12,7 @@
 }
 
 .level__droplist, .page__droplist {
-  width: 50px;
+  width: 70px;
 }
 
 .option {
@@ -123,6 +123,10 @@
     background-color: $colorPuzzleHover;
     border-color: $colorPuzzleHover;
   }
+  &:active {
+    background-color: $colorPuzzleHover;
+    border-color: $colorPuzzleHover;
+  }
 }
 
 .count {
@@ -133,7 +137,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 10px 5px 15px;
+  margin: 10px 5px 20px;
   border: 2px solid $colorGrayLight;
   border-radius: 50%;
   width: 30px;
