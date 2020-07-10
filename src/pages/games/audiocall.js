@@ -64,6 +64,7 @@ export async function audioCallGameCreate() {
         `
   );
 
+  backgroundColorsHandler();
   createStartScreen();
   await audiocallGameSettings.getWords();
 }
@@ -228,6 +229,7 @@ function playAudiocallGame() {
       } else if (isNext) {
         currentGame.setCurrentWord();
         updateContent();
+        backgroundColorsHandler();
       }
       notKnowButton.classList.toggle('button-not-know');
       notKnowButton.classList.toggle('button-next');
@@ -368,4 +370,17 @@ function createGameStatistics() {
       </div>
       `
   );
+  buttonPlayNextHandler();
+  function buttonPlayNextHandler() {
+    gameSection.querySelector('button-play-next').addEventListener('click', playAudiocallGame);
+  }
+}
+
+function backgroundColorsHandler() {
+  const { body } = document;
+  const { maxWordsLength } = audiocallGameSettings.currentGame;
+  const currentHue = +body.style.getPropertyValue('--background-hue');
+  const finishHueValue = 90;
+  const step = finishHueValue / maxWordsLength;
+  body.style.setProperty('--background-hue', currentHue ? currentHue + step : 20);
 }
