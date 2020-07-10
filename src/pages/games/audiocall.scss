@@ -178,6 +178,7 @@
       & > span {
         background-image: url('~assets/img/icons/correct-answer.svg');
         background-position: center;
+        background-repeat: no-repeat;
         background-size: contain;
         display: inline-block;
         font-size: 0;
@@ -205,5 +206,47 @@
       height: 25px;
       width: 25px;
     }
+  }
+}
+/* Statistics mode*/
+
+.audiocall-game.game-statistics {
+  .statistics-block {
+    background-color: white;
+    border-radius: 5px;
+    padding: 30px;
+    width: 100%;
+    @media (min-width: 1024px) {
+      width: 60%;
+    }
+    .translation {
+      color: #a5a4a1;
+    }
+  }
+  .word-in-statistics {
+    display: flex;
+    @media (max-width: 767px) {
+      flex-wrap: wrap;
+    }
+    span {
+      margin: 0 10px;
+    }
+  }
+  .errors-amount,
+  .learned-amount {
+    border: 1px solid;
+    border-radius: 15px;
+    color: $colorWhite;
+    font-size: 0.8em;
+    margin-left: 20px;
+    padding: 1px 15px;
+  }
+  .errors-amount {
+    background-color: red;
+    border-color: red;
+  }
+  .learned-amount {
+    background-color: green;
+    border-color: green;
   }
 }

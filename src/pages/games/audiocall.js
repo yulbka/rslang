@@ -2,12 +2,13 @@ import { constants } from 'js/constants';
 import { requestCreator } from 'utils/requests';
 import { store } from 'store/index';
 import { WordService } from 'scripts/service/Word.Service';
+import { routesMap, routeKeys } from 'scripts/helpers/variables';
 
 export const audiocallGameSettings = {
   currentGame: {
     currentWord: 0,
     setCurrentWord() {
-      const isEndGame = this.statistics.learned.size + this.statistics.errors.size === 3;
+      const isEndGame = this.statistics.learned.size + this.statistics.errors.size === this.maxWordsLength;
       if (isEndGame) {
         createGameStatistics();
         return;
@@ -23,7 +24,7 @@ export const audiocallGameSettings = {
 
       this.currentWord = newWordIndex;
     },
-    max: 10,
+    maxWordsLength: 10,
     variants: 5,
     statistics: {
       learned: new Map(),
@@ -54,6 +55,7 @@ export const audiocallGameSettings = {
 export async function audioCallGameCreate() {
   const { main } = constants.DOM;
   const { body } = constants.DOM;
+  body.classList.remove('main-page');
   body.classList.add('audiocall-game', 'start-screen');
   main.insertAdjacentHTML(
     'afterbegin',
@@ -323,37 +325,46 @@ function getRandomInt(max) {
 
 function createGameStatistics() {
   const { body } = constants.DOM;
-  const { errors } = audiocallGameSettings.currentGame.statistics;
-  const { learned } = audiocallGameSettings.currentGame.statistics;
-  errors.set('alcohol1', { wordTranslate: 'алкоголь1' });
-  learned.set('boat', { wordTranslate: 'лодка' });
+  const { errors, learned } = audiocallGameSettings.currentGame.statistics;
+  const gameSection = body.querySelector('.audiocall-game-section');
   body.classList.remove('play-mode');
   body.classList.add('game-statistics');
-  body.querySelector('.audiocall-game-section').innerHTML = '';
-  body.querySelector('.audiocall-game-section').insertAdjacentHTML(
+  gameSection.innerHTML = '';
+  gameSection.insertAdjacentHTML(
     'afterbegin',
     `
-      <div>
+      <div class="statistics-block">
       <h2>Статистика игры:</h2>
-      <p>Ошибок:</p>
+      ${
+        errors.size > 0
+          ? `<p>Ошибок<span class="errors-amount">${errors.size}</span></p>
       <div class="errors-words">
       ${Array.from(errors)
         .map(
           (error) =>
-            `<div>${error[0]}</div><span>—</span>
-        <div>${error[1].wordTranslate}</div>`
+            `<div class="word-in-statistics"><div>${error[0]}</div><span>—</span>
+        <div class="translation">${error[1].wordTranslate}</div></div>`
         )
-        .join('')}
-      </div>
-      <p>Знаю:</p>
+        .join('')}`
+          : ''
+      }
+      ${
+        learned.size > 0
+          ? `<p>Знаю<span class="learned-amount">${learned.size}</span></p>
       <div class="learned-words">
       ${Array.from(learned)
         .map(
           (learnedWord) =>
-            `<div>${learnedWord[0]}</div><span>—</span>
-        <div>${learnedWord[1].wordTranslate}</div>`
+            `<div class="word-in-statistics"><div>${learnedWord[0]}</div>
+        <div class="translation"><span>—</span>${learnedWord[1].wordTranslate}</div></div>`
         )
-        .join('')}
+        .join('')}`
+          : ''
+      }
+       <div class="buttons-block">
+      <a type="button" class="btn btn-info button-play-next">Играть дальше</a>
+      <a type="button" class="btn btn-info" href="${routesMap.get(routeKeys.home).url}">Ко всем играм</a>
+        </div>
       </div>
       `
   );
