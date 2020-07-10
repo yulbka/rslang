@@ -1,5 +1,6 @@
 import { MAIN } from '../../scripts/helpers/variables';
 import { createElement } from '../../scripts/helpers/createElement';
+import { Game } from './Game';
 import { GamePage } from './GamePage';
 
 export class PuzzleStartPage {
@@ -21,6 +22,7 @@ export class PuzzleStartPage {
     startBtn.addEventListener('click', () => {
       MAIN.innerHTML = '';
       GamePage.render();
+      Game.init();
     });
   }
 }

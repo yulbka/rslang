@@ -126,7 +126,8 @@ function createSettingsBlock() {
         userSettings: {
           wordsPerDay,
           optional: {
-            ...restFormData,
+            learning: restFormData,
+            englishPuzzle: store.user.englishPuzzle,
           },
         },
       });

@@ -2,7 +2,6 @@ import { MAIN, routesMap, routeKeys } from 'scripts/helpers/variables';
 import { createElement } from 'scripts/helpers/createElement';
 import { validatePassword, validateEmail } from 'scripts/helpers/validate';
 import { requestCreator } from 'utils/requests';
-import { store } from 'store';
 import { API_USER } from 'api/user';
 import { router } from '../routes';
 import { initRequests } from '../index';
@@ -93,12 +92,35 @@ export class Authorization {
         data: { email: email.value, password: password.value },
       });
       await this.loginUser(email, password);
-      const { wordsPerDay, ...restSettings } = store.user.learning;
-      await API_USER.setUserSettings({
-        userId: localStorage.getItem('userId'),
+      await API_USER.setUserSettings({ userId: localStorage.getItem('userId'),
         userSettings: {
-          wordsPerDay,
-          optional: restSettings,
+          "wordsPerDay": 20,
+          "optional": {
+            "learning": {
+              cardsPerDay: 50,
+              learnNewWords: true,
+              learnOldWords: true,
+              withTranslation: true,
+              withExplanation: false,
+              withExample: false,
+              withTranscription: false,
+              withHelpImage: true,
+              deleteWord: true,
+              hardWord: false,
+              showAnswerButton: false,
+              autoplay: false,
+              wordRating: true,
+              autoTranslate: false,
+            },
+            "englishPuzzle": {
+              level: 1,
+              page: 1,
+              autoplay: true,
+              translation: true,
+              audio: true,
+              background: false,
+            }
+          }
         },
       });
       // TODO: add initial statistic

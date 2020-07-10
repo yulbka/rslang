@@ -64,7 +64,7 @@
   height: 500px;
 }
 
-.row {
+.puzzle-row {
   height: 50px;
   &_active {
     background-color: #53e18738;
@@ -79,13 +79,16 @@
   margin-right: $space-xxs;
   width: 44px;
   height: 40px;
-  background-color: $colorPuzzle;
+  background-color: $colorPrompt;
   background-repeat: no-repeat;
   background-position: center;
   border-radius: $borderRadius5;
   cursor: pointer;
   &:hover {
     background-color: $colorPuzzleHover;
+  }
+  &_active:not(:hover) {
+    background-color: $colorPuzzle;
   }
 }
 
@@ -116,6 +119,10 @@
     background-color: $colorPuzzleHover;
     border-color: $colorPuzzleHover;
   }
+  &_active {
+    background-color: $colorPuzzleHover;
+    border-color: $colorPuzzleHover;
+  }
 }
 
 .count {
@@ -138,6 +145,28 @@
   width: 90%;
   height: 50px;
   background-color: $colorField;
+}
+
+.puzzle-wrapper {
+  position: relative;  
+  display: inline-block;
+  height: 50px;
+  cursor: pointer;
+}
+
+.puzzle__text {
+  position: absolute;
+  top: 15px;
+  -webkit-text-stroke-width: 0.5px;
+  -webkit-text-stroke-color: $colorGrayLight;
+}
+
+.right {
+  outline: 1px solid green;
+}
+
+.wrong {
+  outline: 1px solid red;
 }
 
 .check-container {

@@ -4,11 +4,11 @@ import { createElement } from '../../scripts/helpers/createElement';
 
 export class GamePage {
   static render() {
-    const wrapper = createElement('div', MAIN, ['puzzle-wrapper', 'container']);
-    GamePage.renderControlPanel(wrapper);
-    createElement('div', wrapper, ['result-container']);
+    const container = createElement('div', MAIN, ['puzzle-container', 'container']);
+    GamePage.renderControlPanel(container);
+    createElement('div', container, ['result-container']);
     GamePage.renderResultBlock();
-    GamePage.renderCheckBlock(wrapper);
+    GamePage.renderCheckBlock(container);
   }
 
   static renderControlPanel(element) {
@@ -35,7 +35,7 @@ export class GamePage {
     createElement('div', count, ['count__number', 'count__number_active'], '1');
     const result = createElement('div', fragment, ['result']);
     [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach((number) => {
-      createElement('div', result, ['row'], undefined, 'data-row', `${number}`);
+      createElement('div', result, ['puzzle-row'], '', 'data-row', `${number}`);
     });
     const container =
     document.querySelector('.result-container', 'container');

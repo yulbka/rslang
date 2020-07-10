@@ -37,6 +37,7 @@
     "extends": "./configs/linters/.stylelintrc.js"
   },
   "dependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@popperjs/core": "^2.4.2",
     "bootstrap": "4.5.0",
     "bootstrap-select": "1.13.18",

@@ -29,5 +29,13 @@ export const userSettings = {
     wordRating: true,
     autoTranslate: false,
   },
+  englishPuzzle: {
+    level: 1,
+    page: 1,
+    autoplay: true,
+    translation: true,
+    audio: true,
+    background: false,
+  }
   // ...userExample,
 };

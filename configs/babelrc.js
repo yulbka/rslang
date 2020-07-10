@@ -21,5 +21,6 @@ module.exports = {
         debug: false,
       },
     ],
-  ],
+  ],  
+    plugins: ["@babel/plugin-proposal-class-properties"],  
 };
