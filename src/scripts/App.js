@@ -6,13 +6,14 @@ import { Header } from './Header';
 import { Authorization } from './Authorization';
 import { LearnWords } from './learn_words/learnWords';
 import { router } from '../routes';
+import { Statistics } from './Statistics';
 import { createSavannahGame } from '../games/savannah/js/mainApp';
 import { renderSavannah } from '../games/savannah/js/render';
 import { createSpeakItGame } from '../games/speakit/js/mainApp';
 import { renderSpeakIt } from '../games/speakit/js/render';
 
 export class App {
-  static reRender(page) {
+  static async reRender(page) {
     const isAuthPage = [routesMap.get(routeKeys.login).url, routesMap.get(routeKeys.registration).url].includes(page);
     const isAuthorized = !!store.user.auth.token;
     if (isAuthPage) {
@@ -24,6 +25,7 @@ export class App {
       this.checkHeader();
     }
     MAIN.innerHTML = '';
+    document.body.classList.remove('main-page');
     this.setContent(page);
   }
 
@@ -51,24 +53,22 @@ export class App {
         Authorization.render(url);
         break;
       case routesMap.get(routeKeys.learn).url:
-        LearnWords.render();
+        LearnWords.init();
         break;
       case routesMap.get(routeKeys.progress).url:
-        MAIN.innerHTML = '<div>progress</div>'; // replace with function that render progress page
+        Statistics.renderLongPage();
         break;
       case routesMap.get(routeKeys.vocabulary).url:
         MAIN.innerHTML = '<div>vocabulary</div>'; // replace with function that render dictionary page
         break;
-      case routesMap.get(routeKeys.speakIt).url:
-        // MAIN.innerHTML = '<div>speakIt</div>'; // replace with function that render speakIt mini-game page
+      case routesMap.get(routeKeys.speakIt).url:        
         renderSpeakIt();
         createSpeakItGame();
         break;
       case routesMap.get(routeKeys.englishPuzzle).url:
         MAIN.innerHTML = '<div>puzzle</div>'; // replace with function that render puzzle mini-game page
         break;
-      case routesMap.get(routeKeys.savannah).url:
-        // MAIN.innerHTML = '<div>savannah</div>'; // replace with function that render savannah mini-game page
+      case routesMap.get(routeKeys.savannah).url:        
         renderSavannah();
         createSavannahGame();
         break;

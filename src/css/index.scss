@@ -13,6 +13,8 @@
 @import '../../src/components/forms/index.scss';
 @import '../../src/components/popup/popup.scss';
 @import './authorization.scss';
+@import './statistics/shortStatistics.scss';
+@import './statistics/longStatistics.scss';
 @import '../../src/pages/main/index.scss';
 @import '../games/savannah/css/style.scss';
 
@@ -26,5 +28,5 @@ label {
 
 .page-home {
   display: flex;
-  flex-direction: column;
+  flex-direction: column;  
 }

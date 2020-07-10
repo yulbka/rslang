@@ -120,6 +120,7 @@ export class WordService {
       method: requestCreator.methods.post,
       data: word,
     });
+    console.log(result);
     return result;
   }
 
@@ -137,6 +138,7 @@ export class WordService {
         },
       },
     });
+    console.log(result);
     return result;
   }
 

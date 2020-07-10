@@ -53,7 +53,7 @@ export async function requestCreator(settings) {
       if (response.status === 401) {
         localStorage.removeItem('token');
         localStorage.removeItem('userId');
-        router.navigate(routesMap.get(routeKeys.login));
+        router.navigate(routesMap.get(routeKeys.login).url);
       } else {
         throw Error(response.status);
       }
