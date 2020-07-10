@@ -10,6 +10,7 @@
 .swiper-button-prev,
 .swiper-button-next {
   outline: none;
+  z-index: 2;
 }
 
 .swiper-button-prev {

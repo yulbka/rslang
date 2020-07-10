@@ -7,8 +7,9 @@ export function setWordDayRepeat(difficulty = 'normal', mistake = false, progres
   if (mistake) {
     return today.toJSON();
   }
-  if (progressCount === '0') {
-    return today.setDate(day + 1);
+  if (progressCount === 0) {
+    today.setDate(day + 1);
+    return today.toJSON();
   }
   switch (difficulty) {
     case 'hard':

@@ -13,9 +13,13 @@
 @import '../../src/components/forms/index.scss';
 @import '../../src/components/popup/popup.scss';
 @import './authorization.scss';
+@import './statistics/shortStatistics.scss';
+@import './statistics/longStatistics.scss';
 @import '../../src/pages/main/index.scss';
 @import '../../src/pages/puzzle/start-page.scss';
 @import '../../src/pages/puzzle/game-page.scss';
+@import '../games/savannah/css/style.scss';
+@import '../games/speakit/css/style.scss';
 
 /********* CUSTOM RESET: START **********/
 label {
@@ -25,5 +29,5 @@ label {
 
 .page-home {
   display: flex;
-  flex-direction: column;
+  flex-direction: column;  
 }
