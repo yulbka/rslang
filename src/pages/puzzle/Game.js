@@ -7,6 +7,7 @@ import { store } from '../../store';
 import { API_USER } from '../../api/user';
 import { MAIN } from '../../scripts/helpers/variables';
 import { ResultsPage } from './ResultsPage';
+import { WordService } from '../../scripts/service/Word.Service';
 
 export class Game {  
   constructor() {
@@ -41,6 +42,7 @@ export class Game {
 
   static async init() {
     const { page, level } = await this.getSettings();
+    await WordService.getWordsForGames(10, '"wordsPerExampleSentence":{"$lte": 10}');
     await this.loadPage(page, level);
     this.checkHandler();
     this.answerHandler();
