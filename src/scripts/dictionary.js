@@ -9,35 +9,41 @@ export function create_dictionary() {
 
     function create_started_table() {
         const main_container = `
-        <div class="container">
+        <div class="container" id="container">
         <div class='buttons'>
-            <div>
-                <button type="button" class="btn btn-primary filter_button" id="filter_a">Фильтровать по убыванию и возрастанию</button>
+            <div class='button_div'>
+                <button type="button" class="btn btn-primary filter_button" id="filter_a">Фильтровать</button>
             </div>
-            <div>
-                <button type="button" class="btn btn-success filter_button" id="filter_a">Изучаемые слова</button>
-                <button type="button" class="btn btn-warning filter_button" id="filter_a">Сложные слова</button>
-                <button type="button" class="btn btn-danger filter_button" id="filter_a">Удалённые слова</button>
+            <div class='button_div'>
+                <button type="button" class="btn btn-info filter_button" id="filter_all">Все слова</button>
+                <button type="button" class="btn btn-success filter_button" id="filter_learn">Изучаемые слова</button>
+                <button type="button" class="btn btn-warning filter_button" id="filter_hard">Сложные слова</button>
+                <button type="button" class="btn btn-danger filter_button" id="filter_delete">Удалённые слова</button>
             </div>
         </div>
-        <div><input type='text' class='main_input_area' id='search_string' placeholder="Search for words"></div>
-        <table class="table table-sortable" id='table_id'>
-          <thead>
-            <tr>
-              <th>Audio</th>
-              <th>Image</th>
-              <th class="th-sort-asc" id='word'>Word</th>
-              <th>Transcription</th>
-              <th>Translate</th>
-            </tr>
-          </thead>
-            <tbody id="tBody">
-            </tbody>
-        </table>
+        <div>
+            <input type='text' class='main_input_area' id='search_string' placeholder="Search for words">
+        </div>
+        <div class="table-responsive">
+            <table class="table table-sortable" id='table_id'>
+            <thead>
+                <tr>
+                <th>Audio</th>
+                <th>Image</th>
+                <th class="th-sort-asc" id='word'>Word</th>
+                <th>Transcription</th>
+                <th>Translate</th>
+                <th>Total count</th>
+                </tr>
+            </thead>
+                <tbody id="tBody">
+                </tbody>
+            </table>
+        </div>
         <div class="bottom_buttons">
             <button type="button" class="btn btn-primary" id="previousPage">Previous page</button>
             <button type="button" class="btn btn-primary" id="nextPage">Next page</button>
-        </div>
+        </div>  
         </>
         `;
         main.innerHTML += main_container;
@@ -47,41 +53,111 @@ export function create_dictionary() {
 
     const tBody = document.getElementById('tBody');
 
-    WordService.getWords().then(data => {
-        const newData = data[0];
-        create_table(newData);
+    WordService.getWordsByLevelAndPage().then(data => {
+        create_table(data);
     })
+
+
+    // function create_default_dictionary(){
+    //     const bottom_buttons = `
+    //     <div class="bottom_buttons">
+    //         <button type="button" class="btn btn-primary" id="previousPage">Previous page</button>
+    //         <button type="button" class="btn btn-primary" id="nextPage">Next page</button>
+    //     </div>       
+    //     `;
+    //     document.getElementById('container').innerHTML += bottom_buttons;
+    // }
+
+
     
+    // document.getElementById('nextPage').addEventListener('click', () => {
+    //     WordService.getMoreWords().then(data => {
+    //       create_table(data);
+    //     })
+    // });
+    document.getElementById('filter_all').addEventListener('click', () => {
+        WordService.getWordsByLevelAndPage().then(data => {
+            create_table(data);
+        })  
+    })
+
     document.getElementById('nextPage').addEventListener('click', () => {
-        WordService.getMoreWords().then(data => {
+        WordService.getMoreWordsByLevelAndPage().then(data => {
           create_table(data);
         })
     });
 
     document.getElementById('previousPage').addEventListener('click', () => {
       WordService.page -= 1;
-      WordService.getWords().then(data => {
-        const newData = data[0];
-        create_table(newData);
+      WordService.getWordsByLevelAndPage().then(data => {
+        create_table(data);
     })
     });
+
+    let final_count;
+    // let amount;
     
     function create_table(data) {
         tBody.innerHTML = '';
-        data.map(item => 
-            create_one_cell(item.id, item.audio, item.image, item.word, item.transcription, item.wordTranslate)
-            )
+        data.map(item => WordService.getAggregatedWord(item.id).then(newdata => {
+            console.log(newdata)
+            final_count = Number(newdata.userWord.optional.mistakeCount) + Number(newdata.userWord.optional.progressCount);
+            create_one_cell(item._id, item.audio, item.image, item.word, item.transcription, item.wordTranslate, final_count) 
+        }
+        )
+        )
+    };
+
+    function create_unusual_table(data) {
+        tBody.innerHTML = '';
+        data.map( item => create_one_unusual_cell(item._id, item.audio, item.image, item.word, item.transcription, item.wordTranslate))
     }
 
-    function create_one_cell(id, audio, image, word, transcription, wordTranslate) {
+    function create_current_words_table(data) {  
+        tBody.innerHTML = '';
+        data.map(item => 
+            create_one_cell(item._id, item.audio, item.image, item.word, item.transcription, item.wordTranslate, final_count) 
+        )
+    }
+
+    // function recover(wordId) {
+    //     WordService.updateUserWord(wordId, 'normal', {category: 'learned'})
+    //     // WordService.updateUserWord(input.dataset.wordId, 'hard', { category: 'difficult' })
+    // }
+
+    function create_one_cell(id, audio, image, word, transcription, wordTranslate, total) {
         tBody.innerHTML += `<tr id="${id}">
         <td><img src='https://i.ibb.co/FxW8BS6/321.png' class='small_icon' data-audio='${base}${audio}'></td>
         <td><img src='${base}${image}' class='small_img'></td>
         <td>${word}</td>
         <td>${transcription}</td>
         <td>${wordTranslate}</td>
+        <td>${total}</td>
       </tr>`
     }
+
+    function create_one_unusual_cell(id, audio, image, word, transcription, wordTranslate) {
+        tBody.innerHTML += `<tr id="${id}">
+        <td><img src='https://i.ibb.co/FxW8BS6/321.png' class='small_icon' data-audio='${base}${audio}'></td>
+        <td><img src='${base}${image}' class='small_img'></td>
+        <td>${word}</td>
+        <td>${transcription}</td>
+        <td>${wordTranslate}</td>
+        <td><button type="button" class="btn btn-danger" id="filter_recover_word" data-word='${id}'>Восстановить</button></td>
+      </tr>`
+    }
+
+    tBody.addEventListener('click', () => {
+        const element = event.target.closest('button');
+        console.log()
+        if (element == null){
+            return
+        }
+        console.log('tut')
+        // recover(element.dataset.word);
+        element.parentElement.parentElement.style.display = 'none';
+
+    })
 
     function filter_by_a_search() {
         let input = document.getElementById('search_string');
@@ -142,5 +218,21 @@ export function create_dictionary() {
         sort_table_by_column(tableElement, headerIndex, !currentIsAscending);
     })
 
+    document.getElementById('filter_learn').addEventListener('click', () => {
+        WordService.getWordsByCategory('learned').then(data => {
+            create_current_words_table(data)
+        });
+    })
 
+    document.getElementById('filter_hard').addEventListener('click', () => {
+        WordService.getWordsByCategory('difficult').then(data => {
+            create_unusual_table(data)
+        });
+    })
+
+    document.getElementById('filter_delete').addEventListener('click', () => {
+        WordService.getWordsByCategory('deleted').then(data => {
+            create_unusual_table(data)
+        });
+    })
 }

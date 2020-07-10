@@ -297,7 +297,7 @@ export class LearnWords {
       const target = event.target.closest('.btn-delete');
       if (!target) return;
       if (input.dataset.repeat === 'new') {
-        WordService.createUserWord(input.dataset.wordId, input.dataset.word, 'normal', 'deleted', '');
+        WordService.createUserWord(input.dataset.wordId, input.dataset.word, 'normal', 'deleted', setWordDayRepeat(), setWordDayRepeat());
       } else {
         WordService.updateUserWord(input.dataset.wordId, 'normal', { category: 'deleted' });
       }

@@ -24,10 +24,34 @@
 .buttons{
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .small_img{
     width: 60px;
     height: 60px;
     object-fit: cover;  
+}
+
+@media all and (max-width: 640px) {
+
+.button_div{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.buttons{
+  justify-content: center;
+  align-items: center;
+}
+  .btn {
+    width: 70vw;
+
+  }
+
+  .bottom_buttons{
+width: auto;
+  }
 }
