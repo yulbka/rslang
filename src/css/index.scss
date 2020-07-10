@@ -1,7 +1,12 @@
 @import 'helpers/postcss-reset/mobile.css';
 @import 'helpers/variables.scss';
 @import 'node_modules/bootstrap/dist/css/bootstrap.min.css';
+@import 'node_modules/swiper/css/swiper.min.css';
 @import 'node_modules/bootstrap-select/dist/css/bootstrap-select.min.css';
+@import 'node_modules/tippy.js/dist/tippy.css';
+@import 'node_modules/tippy.js/themes/light-border.css';
+@import './swiper.scss';
+@import './learn-words.scss';
 
 @import './header.scss';
 @import './logout.scss';
@@ -11,7 +16,12 @@
 @import '../pages/games/audiocall.scss';
 
 @import './authorization.scss';
+@import './statistics/shortStatistics.scss';
+@import './statistics/longStatistics.scss';
 @import '../../src/pages/main/index.scss';
+@import '../games/savannah/css/style.scss';
+
+@import '../games/speakit/css/style.scss';
 
 /********* CUSTOM RESET: START **********/
 label {
