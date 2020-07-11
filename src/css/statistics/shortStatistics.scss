@@ -1,0 +1,30 @@
+.short-statistics__wrapper {
+  margin: $space-md auto;
+  padding: $space-xs;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.completed {
+  margin: 0 auto;
+  background-image: url('../assets/images/completed.png');
+  width: 100px;
+  height: 100px;
+}
+
+.short-statistics__title {
+  margin: $space-xs 0;
+  text-align: center;
+}
+
+.data__text {
+  margin: $space-xxs 0;
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.3rem;
+  border-bottom: 1px solid $colorBorder;
+  & span {
+    margin: $space-xxs 0;
+  }
+}
