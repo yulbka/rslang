@@ -3,7 +3,6 @@ import 'regenerator-runtime/runtime';
 import '../css/hangman.scss';
 // import {WordService} from './service/Word.Service';
 
-import '../assets/img'
 
 export function create_hagman_game(){
 
@@ -20,12 +19,13 @@ function create_main() {
     const main_area = `
     <h1>Hangman</h1>
     <div id="gallows">
-      <img style="padding-left: 70px" id="hangmanImage" src='sdfgsdfgd'>
+      <img style="padding-left: 70px" id="hangmanImage">
     </div>
     <div id="word"></div>
     <br>
-    <div id="controls">
-      <input type="text" id="guessBox">
+	<div id="controls">
+	  <input type="text" id="guessBox">
+	  <button id="guessWordButton" class="button">Guess Word</button>
       <button id="newGameButton" class="button">New Game</button>
       <br>
       <br>
@@ -37,17 +37,9 @@ function create_main() {
     main.innerHTML += main_area;
 }
 
-// "https://i.ibb.co/rF5mZnD/hangman0.png"
-// "https://i.ibb.co/G0Xm6Fv/hangman1.png"
-// "https://i.ibb.co/khmvKcB/hangman2.png"
-// "https://i.ibb.co/Pjht4dk/hangman3.png"
-// "https://i.ibb.co/C068hpy/hangman4.png"
-// "https://i.ibb.co/vdVVzbs/hangman5.png"
-// "https://i.ibb.co/g75vk9C/hangman6.png"
-// "https://i.ibb.co/wc9t00F/hangman7.png"
 
 create_main();
-const words = ['wetwrgt', 'wetwrgt','wetwrgt','wetwrgt','wetwrgt'];
+const words = ['cal', 'cal','cal','cal','cal'];
 // async function test() {
 // 	WordService.getNewWords().then(data => {
 // 		data.map(element => words.push(element.word));
@@ -213,17 +205,17 @@ function listenForInput( game )
 	document.body.addEventListener('click', handleClick );
 }
 
-// function guessWord( game )
-// {
-// 	const gameStillGoing = !game.isWon() && 
-// 						 !game.isLost();
-// 	const guessedWord = document.getElementById('guessBox').value;
-// 	if( gameStillGoing )
-// 	{
-// 		game.guessWord( guessedWord );
-// 		render( game );
-// 	}
-// }
+function guessWord( game )
+{
+	const gameStillGoing = !game.isWon() && 
+						 !game.isLost();
+	const guessedWord = document.getElementById('guessBox').value;
+	if( gameStillGoing )
+	{
+		game.guessWord( guessedWord );
+		render( game );
+	}
+}
 
 
 function render( game )
@@ -234,7 +226,7 @@ function render( game )
 		const innerHtml = `<span class='guess'>${guess}"</span>`;
 		document.getElementById("guesses").innerHTML += innerHtml;
 	});
-	document.getElementById("hangmanImage").src = `img/hangman${game.getIncorrectGuesses()}.png`;
+	document.getElementById("hangmanImage").src = `./assets/img/hangman${game.getIncorrectGuesses()}.png`;
 
 	const guessBox = document.getElementById('guessBox');
 	if( game.isWon() )
@@ -258,6 +250,10 @@ document.getElementById('newGameButton').addEventListener('click', () => {
 	newGame();
 })
 
+document.getElementById('guessWordButton').addEventListener('click', () => {
+	guessWord( game );
+})
+
 function newGame()
 {
 	history.go(0)
@@ -267,3 +263,4 @@ const game = new Game();
 render( game );
 listenForInput( game );
 }
+
