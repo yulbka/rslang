@@ -100,8 +100,9 @@ export function create_dictionary() {
     function create_table(data) {
         tBody.innerHTML = '';
         data.map(item => WordService.getAggregatedWord(item.id).then(newdata => {
-            console.log(newdata)
-            final_count = Number(newdata.userWord.optional.mistakeCount) + Number(newdata.userWord.optional.progressCount);
+            if(newdata.userWord.optional){
+                final_count = Number(newdata.userWord.optional.mistakeCount) + Number(newdata.userWord.optional.progressCount);
+            }
             create_one_cell(item._id, item.audio, item.image, item.word, item.transcription, item.wordTranslate, final_count) 
         }
         )
@@ -120,10 +121,9 @@ export function create_dictionary() {
         )
     }
 
-    // function recover(wordId) {
-    //     WordService.updateUserWord(wordId, 'normal', {category: 'learned'})
-    //     // WordService.updateUserWord(input.dataset.wordId, 'hard', { category: 'difficult' })
-    // }
+    function recover(wordId) {
+        WordService.updateUserWord(wordId, 'normal', {category: 'learned'})
+    }
 
     function create_one_cell(id, audio, image, word, transcription, wordTranslate, total) {
         tBody.innerHTML += `<tr id="${id}">
@@ -153,8 +153,7 @@ export function create_dictionary() {
         if (element == null){
             return
         }
-        console.log('tut')
-        // recover(element.dataset.word);
+        recover(element.dataset.word);
         element.parentElement.parentElement.style.display = 'none';
 
     })
