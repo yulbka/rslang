@@ -2,6 +2,7 @@ import { SIDEBAR, MAIN, HEADER, routesMap, routeKeys } from 'scripts/helpers/var
 import { pageHomeCreate } from 'pages/main';
 import { store } from 'store';
 import { createSidebar } from './burger';
+import { create_hagman_game } from './hangman'
 import { Header } from './Header';
 import { Authorization } from './Authorization';
 import { LearnWords } from './learn_words/learnWords';
@@ -71,10 +72,10 @@ export class App {
         MAIN.innerHTML = '<div>sprint</div>'; // replace with function that render sprint mini-game page
         break;
       case routesMap.get(routeKeys.ourGame).url:
-        MAIN.innerHTML = '<div>ourGame</div>'; // replace with function that render ourGame mini-game page
+        create_hagman_game(); // replace with function that render ourGame mini-game page
         break;
       case routesMap.get(routeKeys.promo).url:
-        MAIN.innerHTML = '<div>promo</div>'; // replace with function that render promo page
+        MAIN.innerHTML = `<div>Promo</div>` // replace with function that render promo page
         break;
       case routesMap.get(routeKeys.team).url:
         MAIN.innerHTML = '<div>aboutUs</div>'; // replace with function that render aboutUs page
