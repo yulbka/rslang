@@ -1,4 +1,5 @@
 import { Puzzle } from './Puzzle';
+import { Game } from './Game';
 import { book1 } from './data/book1';
 import { book2 } from './data/book2';
 import { book3 } from './data/book3';
@@ -22,8 +23,13 @@ export class Sentence {
   }
 
   static render(text, level, page, round) {
-    const sentenceLength = text.split(' ').join('').length;
-    const wordsArray = text.split(' ');
+    let sentence = text;
+    if (text.indexOf('<b>') !== -1) {
+      sentence = text.slice(0, text.indexOf('<b>')) +
+      text.slice(text.indexOf('<b>') + 3, text.indexOf('</b>')) + text.slice(text.indexOf('</b>') + 4);
+    }
+    const sentenceLength = sentence.split(' ').join('').length;
+    const wordsArray = sentence.split(' ');
     const data = document.querySelector('.data');
     if (!data) return;
     const letterWidth =
@@ -82,7 +88,7 @@ export class Sentence {
     if (picturePrompt.classList.contains('prompt-btn_active')) {
       words.forEach((puzzle) => {
         Puzzle.showPicture(puzzle, puzzle.dataset.position,
-            round - 1, level, page);
+            round - 1, level - 1, page - 1);
       });
     }
   }
@@ -94,7 +100,13 @@ export class Sentence {
   }
 
   static translateSentence(level, page, round) {
+    console.log(level, page, round)
     const prompt = document.querySelector('.prompt__text');
-    prompt.textContent = book[level][(page - 1) * 10 + round - 1].textTranslate;
+    const checkbox = document.querySelector('#customSwitch');
+    if (!checkbox.checked) {
+      prompt.textContent = book[level][(page - 1) * 10 + round - 1].textTranslate;
+    } else {
+      prompt.textContent = Game.word.textExampleTranslate;
+    }
   }
 }

@@ -4,22 +4,34 @@
   justify-content: space-between;
 }
 
+.custom-switch {
+  margin-bottom: 10px;
+}
+
 .round {
   margin-top: 6px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   width: 280px;
+}
+
+.drops-container {
+  display: flex;  
 }
 
 .level__droplist, .page__droplist {
   width: 70px;
 }
 
+.level__droplist, .level__text {
+  margin-left: 45px;
+}
+
 .option {
   text-align: center;
 }
 
-.level__text, .page__text {
+.page__text {
   margin-right: $space-xxs;
 }
 
@@ -29,7 +41,7 @@
 
 .prompt__button {
   position: absolute;
-  bottom: 50px;
+  bottom: 75px;
   left: 48%;
   width: 44px;
   height: 40px;
@@ -73,6 +85,7 @@
 
 .prompt-buttons {
   display: flex;
+  align-items: center;
 }
 
 .prompt-btn {

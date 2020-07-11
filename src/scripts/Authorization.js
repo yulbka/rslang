@@ -122,6 +122,7 @@ export class Authorization {
               translation: true,
               audio: true,
               background: false,
+              useLearnedWords: true,
             }
           }
         },

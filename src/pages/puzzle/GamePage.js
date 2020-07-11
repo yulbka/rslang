@@ -15,8 +15,14 @@ export class GamePage {
     const fragment = document.createDocumentFragment();
     const controls = createElement('div', fragment, ['control']);
     const round = createElement('div', controls, ['round']);
-    this.createDropListElement('level', round, 6);
-    this.createDropListElement('page', round, 45);
+    const switcher = createElement('div', round, ['custom-control', 'custom-switch']);
+    const input = createElement('input', switcher, ['custom-control-input'], '', 'type', 'checkbox');
+    input.id = 'customSwitch';
+    input.checked = true;
+    createElement('label', switcher, ['custom-control-label'], 'Использовать изученные слова', 'for', 'customSwitch');
+    const drops = createElement('div', round, ['drops-container']);
+    this.createDropListElement('level', drops, 6);
+    this.createDropListElement('page', drops, 45);
     const promptButtons = createElement('div', controls, ['prompt-buttons']);
     ['voice', 'text', 'note', 'picture'].forEach((className) => {
       createElement('div', promptButtons, ['prompt-btn', `${className}`]);

@@ -12,8 +12,17 @@ import { WordService } from '../../scripts/service/Word.Service';
 export class Game {  
   constructor() {
     this._sentence = [];
+    this._firstWord;
     this._word;
     this._audio;
+  }
+
+  get firstWord() {
+    return this._firstWord;
+  }
+
+  set firstWord(word) {
+    this._firstWord = word;
   }
 
   get sentence() {
@@ -41,9 +50,14 @@ export class Game {
   }
 
   static async init() {
-    const { page, level } = await this.getSettings();
-    await WordService.getWordsForGames(10, '"wordsPerExampleSentence":{"$lte": 10}');
-    await this.loadPage(page, level);
+    const { page, level, useLearnedWords } = await this.getSettings();
+    if (useLearnedWords) {
+      await this.disableDropLists();
+    }
+    const checkbox = document.querySelector('#customSwitch');
+    if (!checkbox.checked) {
+      await this.loadPage(page, level);
+    }
     this.checkHandler();
     this.answerHandler();
     this.continueHandler();
@@ -54,6 +68,7 @@ export class Game {
     this.picturePromptHandler();
     this.audioPromptHandler();
     this.translatePromptHandler();
+    this.handleCheckbox();
   }
 
   static checkHandler() {
@@ -98,11 +113,24 @@ export class Game {
     const answerBtn = document.querySelector('.puzzle-btn_help');
     const resultsBtn = document.querySelector('.puzzle-btn_results');
     continueBtn.addEventListener('click', async () => {
+      const pageDropList = document.querySelector('.page__droplist');
+      const levelDropList = document.querySelector('.level__droplist');
       this.checkAudioPrompt();
       if (!(resultsBtn.classList.contains('btn_hidden'))) {
-        const page = +document.querySelector('.page__droplist').value;
-        const level = +document.querySelector('.level__droplist').value;
-        this.loadPage(page + 1, level);
+        if (pageDropList.selectedIndex === -1) {
+          clearGameField();
+          GamePage.renderResultBlock();
+          this.newWord = await WordService.getWordsForGames(1);
+          this.word = this.newWord;
+          this.audio = Sentence.loadSentencePronounce(this.word.audioExample);
+          document.querySelector('.puzzle-row').classList.add('puzzle-row_active');
+          this.sentence = Sentence.render(this.word.textExample, this.word.group, this.word.page, 1);
+          this.resetButtons();
+        } else {
+          const page = +pageDropList.value;
+          const level = +levelDropList.value;
+          this.loadPage(page + 1, level);
+        }        
       } else {
         this.finishRow();
         const translate = document.querySelector('.prompt__text');
@@ -144,14 +172,17 @@ export class Game {
     const picturePrompt = document.querySelector('.picture');
     if (!picturePrompt) return;
     picturePrompt.addEventListener('click', async () => {
-      const page = +document.querySelector('.page__droplist').value;
-      const level = +document.querySelector('.level__droplist').value;
       picturePrompt.classList.toggle('prompt-btn_active');
       picturePrompt.classList.contains('prompt-btn_active') ?
       await this.updateSettings({ background: true }):
       await this.updateSettings({ background: false });
       const rowPosition = findCurrentRow();
       const puzzles = document.querySelectorAll('.new');
+      const checkbox = document.querySelector('#customSwitch');
+      const levelDropList = document.querySelector('.level__droplist');
+      const level = checkbox.checked ? this.firstWord.group: +levelDropList.value - 1;
+      const pageDropList = document.querySelector('.page__droplist');
+      const page = checkbox.checked ? this.firstWord.page: +pageDropList.value - 1;
       puzzles.forEach((puzzle) => {
         picturePrompt.classList.contains('prompt-btn_active') ?
         Puzzle.showPicture(puzzle, puzzle.dataset.position,
@@ -192,15 +223,17 @@ export class Game {
     if (!translatePrompt) return;
     translatePrompt.addEventListener('click', async () => {
       const prompt = document.querySelector('.prompt__text');
+      prompt.textContent = '';
       translatePrompt.classList.toggle('prompt-btn_active');
       translatePrompt.classList.contains('prompt-btn_active') ?
       await this.updateSettings({ translation: true }):
       await this.updateSettings({ translation: false });
-      prompt.textContent = '';
       if (translatePrompt.classList.contains('prompt-btn_active')) {
-        const level = document.querySelector('.level__droplist').value;
-        const page = document.querySelector('.page__droplist').value;
+        const checkbox = document.querySelector('#customSwitch');
+        const level = checkbox.checked ? this.word.group: +document.querySelector('.level__droplist').value;
+        const page = checkbox.checked ? this.word.page: +document.querySelector('.page__droplist').value; 
         const round = findCurrentRow();
+        console.log(level, page, round)
         Sentence.translateSentence(level, page, round);
       }
     });
@@ -240,7 +273,8 @@ export class Game {
     const levelDropList = document.querySelector('.level__droplist');
     pageDropList.value = `${page}`;
     levelDropList.value = `${level}`;
-    this.word = Sentence.getWordData(level, page, 1);
+    this.firstWord = Sentence.getWordData(level, page, 1);
+    this.word = this.firstWord;
     this.audio = Sentence.loadSentencePronounce(this.word.audio);
     document.querySelector('.puzzle-row').classList.add('puzzle-row_active');
     this.sentence = Sentence.render(this.word.textExample, level, page, 1);
@@ -251,7 +285,7 @@ export class Game {
     const settings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
     console.log(settings.englishPuzzle)
     store.user.englishPuzzle = settings.englishPuzzle;
-    const { page, level, autoplay, translation, audio, background } = store.user.englishPuzzle;
+    const { page, level, autoplay, translation, audio, background, useLearnedWords } = store.user.englishPuzzle;
     if (autoplay) {
         document.querySelector('.voice').classList.add('prompt-btn_active');
     }
@@ -266,7 +300,9 @@ export class Game {
     if (background) {
       document.querySelector('.picture').classList.add('prompt-btn_active');
     }
-    return { page, level };
+    const checkbox = document.querySelector('#customSwitch');
+    checkbox.checked = useLearnedWords;
+    return { page, level, useLearnedWords };
   }
 
   static async updateSettings(updatedFields) {
@@ -293,17 +329,22 @@ export class Game {
     const rowIndex = Number(count.lastChild.textContent);
     const row =
       document.querySelector(`[data-row='${rowIndex}']`);
-    const page = +document.querySelector('.page__droplist').value;
-    const level = +document.querySelector('.level__droplist').value;
     const puzzles = Array.from(document.querySelectorAll('.settled'));
     puzzles.sort((a, b) => +a.dataset.position - +b.dataset.position);
     const fragment = document.createDocumentFragment();
+    const checkbox = document.querySelector('#customSwitch');
+    const pageDropList = document.querySelector('.page__droplist');
+    const levelDropList = document.querySelector('.level__droplist');
     puzzles.forEach((puzzle) => {
       fragment.append(puzzle);
-      Puzzle.showPicture(puzzle, puzzle.dataset.position, rowIndex - 1, level, page, 'green');
+      checkbox.checked ?
+      Puzzle.showPicture(puzzle, puzzle.dataset.position, rowIndex - 1, this.firstWord.group, this.firstWord.page, 'green'):
+      Puzzle.showPicture(puzzle, puzzle.dataset.position, rowIndex - 1, +levelDropList.value - 1, +pageDropList.value - 1, 'green');
     });
     row.append(fragment);
     this.checkAutoPlay();
+    const level = checkbox.checked ? this.word.group: +levelDropList.value;
+    const page = checkbox.checked ? this.word.page: +pageDropList.value;
     Sentence.translateSentence(level, page, rowIndex);
     const playBtn = document.querySelector('.prompt__button');
     playBtn.addEventListener('click', this.audioPlay);
@@ -328,20 +369,27 @@ export class Game {
   }
 
   static async goToNextRow() {
-    let page = +document.querySelector('.page__droplist').value;
-    let level = +document.querySelector('.level__droplist').value;
+    const checkbox = document.querySelector('#customSwitch');
+    const pageDropList = document.querySelector('.page__droplist');
+    const levelDropList = document.querySelector('.level__droplist');
+    let level = checkbox.checked ? this.firstWord.group: +levelDropList.value;
+    let page = checkbox.checked ? this.firstWord.page: +pageDropList.value;
     const rowIndex = findCurrentRow();
     if (rowIndex === 10) {
       // this.setStatistic();
       this.showPictureData(level, page);
-      if (page === book[level].length / 10) {
+      if (!checkbox.checked) {
+        page = +pageDropList.value;
+        level = +levelDropList.value;
+        if (page === book[level].length / 10) {
           level === 6 ? level = 1: level += 1;
           page = 1;
           await this.updateSettings({ page, level });
-      } else {
-        page += 1;
-        await this.updateSettings({ page });
-      }
+        } else {
+          page += 1;
+          await this.updateSettings({ page });
+        }
+      }      
       const answerBtn = document.querySelector('.puzzle-btn_help');
       answerBtn.classList.add('btn_hidden');
       const resultsBtn = document.querySelector('.puzzle-btn_results');
@@ -356,10 +404,17 @@ export class Game {
       });
       createElement('div', count, ['count__number', 'count__number_active'],
           `${Number(rowIndex) + 1}`);
-      this.word = Sentence.getWordData(level, page, rowIndex + 1);
-      this.audio = Sentence.loadSentencePronounce(this.word.audio);
-      this.sentence = Sentence.render(this.word.textExample,
+      if (checkbox.checked) {
+        this.word = await WordService.getWordsForGames(1, '"wordsPerExampleSentence":{"$lte": 10}');
+        this.audio = Sentence.loadSentencePronounce(this.word.audioExample);
+        this.sentence = Sentence.render(this.word.textExample,
+          this.word.group, this.word.page, rowIndex + 1);
+      } else {
+        this.word = Sentence.getWordData(level, page, rowIndex + 1);
+        this.audio = Sentence.loadSentencePronounce(this.word.audio);
+        this.sentence = Sentence.render(this.word.textExample,
           level, page, rowIndex + 1);
+      }
       const newRow =
         document.querySelector(`[data-row='${rowIndex + 1}']`);
       newRow.classList.add('row_active');
@@ -387,7 +442,7 @@ export class Game {
     container.innerHTML = '';
     const playBtn = document.querySelector('.prompt__button');
     playBtn.classList.add('btn_hidden');
-    const picture = paintings[level][page - 1];
+    const picture = paintings[level + 1][page];
     const img = new Image(container.offsetWidth, container.offsetHeight);
     const src = picture.cutSrc;
     img.src = `https://raw.githubusercontent.com/Anna234365/rslang_data_paintings/master/${src}`;
@@ -400,6 +455,45 @@ export class Game {
 
   static audioPlay = () => this.audio.play();
 
+  static handleCheckbox() {
+    const checkbox = document.querySelector('#customSwitch');
+    checkbox.addEventListener('change', async() => {
+      clearGameField();
+      GamePage.renderResultBlock();
+      await this.updateSettings({ "useLearnedWords": checkbox.checked });
+      if (checkbox.checked) {        
+        await this.disableDropLists();
+      } else {
+        const settings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
+        const { page, level } = settings.englishPuzzle;
+        const pageDropList = document.querySelector('.page__droplist');
+        pageDropList.disabled = false;
+        pageDropList.value = page;
+        const levelDropList = document.querySelector('.level__droplist');
+        levelDropList.disabled = false;
+        levelDropList.value = level;
+        await this.loadPage(page, level);
+      }
+    });
+  }
+  
+  static async disableDropLists() {
+    const data = await WordService.getWordsForGames(1, '"wordsPerExampleSentence":{"$lte": 10}');
+    if (typeof data === 'string') {
+      console.log('не хватает изученных слов')
+      return;
+    }
+    const pageDropList = document.querySelector('.page__droplist');
+    pageDropList.selectedIndex = -1;
+    pageDropList.disabled = true;
+    const levelDropList = document.querySelector('.level__droplist');
+    levelDropList.selectedIndex = -1;
+    levelDropList.disabled = true;
+    this.firstWord = data;
+    this.word = this.firstWord;
+    this.audio = Sentence.loadSentencePronounce(this.word.audioExample);
+    this.sentence = Sentence.render(this.word.textExample, this.word.group + 1, this.word.page + 1, 1);
+  }
 }
 
 function findCurrentRow() {

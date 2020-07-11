@@ -88,7 +88,7 @@ export class Puzzle {
     const canvas = element.querySelector('canvas');
     const ctx = canvas.getContext('2d');
     const img = new Image();
-    const src = paintings[level][page - 1].cutSrc;
+    const src = paintings[level + 1][page].cutSrc;
     img.src = `https://raw.githubusercontent.com/Anna234365/rslang_data_paintings/master/${src}`;
     const result = document.querySelector('.result');
     img.onload = () => {

@@ -1,6 +1,7 @@
 import { requestCreator } from '../../utils/requests';
 import { store } from '../../store';
 import { getRandomNumber } from '../helpers/getRandomNumber';
+import { setWordDayRepeat } from '../helpers/setWordDayRepeat';
 
 export class WordService {
   constructor() {
@@ -175,9 +176,10 @@ export class WordService {
       url: `/users/${store.user.auth.userId}/aggregatedWords/?&wordsPerPage=${1}&page=${0}&filter=${filter}`,
       method: requestCreator.methods.get,
     });
+    if (!word[0].totalCount.length) return 'not enough words';
     const wordsCount = word[0].totalCount[0].count;
-    if (wordsCount < wordsNumber) {
-      return 'not enough words'
+    if (wordsCount < 50) {
+      return 'not enough words';
     }
     const wordsForGame = [];
     const pages = [];
@@ -195,7 +197,34 @@ export class WordService {
       wordsForGame.push(randomWord[0].paginatedResults[0]);
     }));
     console.log(wordsForGame);
-    return wordsForGame;
+    return +wordsNumber === 1 ? wordsForGame[0]: wordsForGame;
+  }
+
+  static async writeMistake(wordId) {
+    const word = await WordService.getAggregatedWord(wordId);
+    if (word.userWord) {
+      const { optional } = word.userWord;
+      const mistakeCount = +optional.mistakeCount + 1;
+      let progressCount = +optional.progressCount - 1;
+      if (progressCount < 0) progressCount = 0;
+      WordService.updateUserWord(wordId, 'weak', {
+        lastDayRepeat: new Date().toJSON(),
+        nextDayRepeat: setWordDayRepeat('weak', true),
+        mistakeCount,
+        progressCount,
+      });
+    } else {
+      WordService.createUserWord(
+        wordId,
+        word.word,
+        'weak',
+        'learned',
+        new Date().toJSON(),
+        setWordDayRepeat('weak', true),
+        '1',
+        '0'
+      );
+    } 
   }
 
 }
