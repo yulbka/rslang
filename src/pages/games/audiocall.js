@@ -3,8 +3,8 @@ import { requestCreator } from 'utils/requests';
 import { store } from 'store/index';
 import { WordService } from 'scripts/service/Word.Service';
 import { routesMap, routeKeys } from 'scripts/helpers/variables';
-import { Statistics } from "scripts/Statistics";
-import { initRequests} from "../../index";
+import { Statistics } from 'scripts/Statistics';
+import { initRequests } from '../../index';
 
 export const audiocallGameSettings = {
   currentGame: {
@@ -12,6 +12,7 @@ export const audiocallGameSettings = {
     setCurrentWord() {
       const isEndGame = this.statistics.learned.size + this.statistics.errors.size === this.maxWordsLength;
       if (isEndGame) {
+        sendStatistics();
         createGameStatistics();
         return;
       }
@@ -26,7 +27,7 @@ export const audiocallGameSettings = {
 
       this.currentWord = newWordIndex;
     },
-    maxWordsLength: 10,
+    maxWordsLength: 3,
     variants: 5,
     statistics: {
       learned: new Map(),
@@ -45,6 +46,7 @@ export const audiocallGameSettings = {
     const words = await WordService.getWordsByLevelAndPage(this.currentLevel, 0);
     words.forEach((gameWord) =>
       this.wordsMap.set(gameWord.word, {
+        wordId: gameWord.id,
         word: gameWord.word,
         audio: gameWord.audio,
         image: gameWord.image,
@@ -53,15 +55,13 @@ export const audiocallGameSettings = {
       })
     );
   },
-  async getSimilarWords(regexp = 'голь'){
-    const similarWords = await requestCreator(
-        {
-          url: `/users/${store.user.auth.userId}/aggregatedWords`,
-          method: requestCreator.methods.get,
-          data: { filter: JSON.stringify({  "wordTranslate": { "$regex": `\\w{0,}${regexp}\\w{0,}` } })}
-        })
-    console.log(similarWords[0].paginatedResults)
-    similarWords[0].paginatedResults.forEach(word => this.similarWordsMAp.set(word, word.wordTranslate));
+  async getSimilarWords(regexp = 'голь') {
+    const similarWords = await requestCreator({
+      url: `/users/${store.user.auth.userId}/aggregatedWords`,
+      method: requestCreator.methods.get,
+      data: { filter: JSON.stringify({ wordTranslate: { $regex: `\\w{0,}${regexp}\\w{0,}` } }) },
+    });
+    similarWords[0].paginatedResults.forEach((word) => this.similarWordsMAp.set(word, word.wordTranslate));
     return similarWords[0].paginatedResults;
   },
 };
@@ -78,13 +78,14 @@ export async function audioCallGameCreate() {
         `
   );
   initRequests();
-/*  WordService.getAllUserWords()*/
-/*  WordService.getAllAggregatedWords()*/
-  backgroundColorsHandler();
+  /*  WordService.getAllUserWords()*/
+  /*  WordService.getAllAggregatedWords()*/
+
+  const forGames = await WordService.getWordsForGames();
+  backgroundColorsHandler({ needReset: true });
   await audiocallGameSettings.getSimilarWords();
-  /*createStartScreen();*/
+  /* createStartScreen();*/
   await audiocallGameSettings.getWords();
-  Statistics.get()
   playAudiocallGame();
 }
 
@@ -135,10 +136,10 @@ function createButtonStart() {
 
 async function playAudiocallGame() {
   await initRequests();
-  console.log(store)
+  console.log(store);
   const { body } = constants.DOM;
   const { currentGame } = store.audiocallGame;
-  const { wordsArray : allWords } = store.audiocallGame;
+  const { wordsArray: allWords } = store.audiocallGame;
   const { audioCallGameSection } = constants.DOM;
   currentGame.setCurrentWord();
   body.className = 'audiocall-game play-mode';
@@ -155,8 +156,13 @@ async function playAudiocallGame() {
         </div>
         `
   );
+
   audioButtonHandler();
   playAudio();
+
+  levelsBlockHandler();
+  gameButtonHandler();
+  answersHandler();
 
   function renderContent() {
     const guessWord = audiocallGameSettings.wordsArray[currentGame.currentWord];
@@ -224,10 +230,6 @@ async function playAudiocallGame() {
     await audioWord.play();
   }
 
-  levelsBlockHandler();
-  gameButtonHandler();
-  answersHandler();
-
   function audioButtonHandler() {
     document.querySelector('.sound-img').addEventListener('click', playAudio);
   }
@@ -242,6 +244,7 @@ async function playAudiocallGame() {
         const correctAnswer = document.querySelector(`.answer-word[data-id=${allWords[currentGame.currentWord].word}]`);
         correctAnswer.classList.add('is-right');
         audioCallGameSection.querySelector('.card-preview').classList.remove('inactive');
+        WordService.writeMistake(allWords[currentGame.currentWord].wordId);
         errors.set(allWords[currentGame.currentWord].word, {
           wordTranslate: allWords[currentGame.currentWord].wordTranslate,
         });
@@ -257,8 +260,8 @@ async function playAudiocallGame() {
   }
 
   function answersHandler() {
-    const { errors } = audiocallGameSettings.currentGame.statistics;
-    const { learned } = audiocallGameSettings.currentGame.statistics;
+    const { errors, learned } = audiocallGameSettings.currentGame.statistics;
+    const audiocallButton = audioCallGameSection.querySelector('.audiocall-button');
     const optionsBlock = audioCallGameSection.querySelector('.block-with-words');
     let errorsCounter = 0;
     optionsBlock.addEventListener('click', (event) => {
@@ -267,15 +270,23 @@ async function playAudiocallGame() {
       const isRightAnswer = button.dataset.id === guessWord.word;
       button.classList.add(isRightAnswer ? 'is-right' : 'is-wrong');
       if (isRightAnswer) {
-        audioCallGameSection.querySelector('.audiocall-button').classList.remove('button-not-know');
-        audioCallGameSection.querySelector('.audiocall-button').classList.add('button-next');
+        audiocallButton.classList.remove('button-not-know');
+        audiocallButton.classList.add('button-next');
         audioCallGameSection.querySelector('.card-preview').classList.remove('inactive');
         markRestAnswersAsIncorrect();
-               if (errorsCounter === 0) learned.set(guessWord.word, { wordTranslate: guessWord.wordTranslate, audio: guessWord.audioCallGameSection });
+        if (errorsCounter === 0)
+          learned.set(guessWord.word, {
+            wordTranslate: guessWord.wordTranslate,
+            audio: guessWord.audioCallGameSection,
+          });
         errorsCounter = 0;
       } else {
         errorsCounter += 1;
-        errors.set(guessWord.word, { wordTranslate: guessWord.wordTranslate, audio: guessWord.audioCallGameSection });
+        WordService.writeMistake(guessWord.wordId);
+        errors.set(guessWord.word, {
+          wordTranslate: guessWord.wordTranslate,
+          audio: guessWord.audioCallGameSection,
+        });
       }
     });
   }
@@ -340,8 +351,6 @@ async function getWordsByPartOfSpeech(word) {
   }
 }
 
-
-
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -393,27 +402,44 @@ function createGameStatistics() {
       `
   );
   buttonPlayNextHandler();
+
   function buttonPlayNextHandler() {
-    gameSection.querySelector('button-play-next').addEventListener('click', playAudiocallGame);
+    gameSection.querySelector('.button-play-next').addEventListener('click', playAudiocallGame);
   }
 }
 
-function backgroundColorsHandler() {
+function backgroundColorsHandler({ needReset } = {}) {
   const { body } = document;
   const { maxWordsLength } = audiocallGameSettings.currentGame;
-  const currentHue = +body.style.getPropertyValue('--background-hue');
+  const currentHue = needReset ? 0 : +body.style.getPropertyValue('--background-hue');
   const finishHueValue = 90;
   const step = finishHueValue / maxWordsLength;
   body.style.setProperty('--background-hue', currentHue ? currentHue + step : 20);
 }
 
-
-async function  getLearnedWords() {
+async function getLearnedWords() {
   const learnedWords = await requestCreator({
     url: `/users/${store.user.auth.userId}/aggregatedWords/&filter={"userWord.optional.category":"learned"}`,
     method: requestCreator.methods.get,
   });
   return learnedWords;
 }
-/*
-getLearnedWords()*/
+
+async function sendStatistics() {
+  const allStatistics = await Statistics.get();
+  delete allStatistics.id;
+  allStatistics.optional.audiocallGame = (() => {
+    const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
+    const { audiocallGame = {} } = allStatistics.optional;
+    if (!audiocallGame[today]) audiocallGame[today] = [];
+    audiocallGame[today].push(
+      ['learned', 'errors'].reduce((resAcc, fieldKey) => {
+        // eslint-disable-next-line no-param-reassign
+        resAcc[fieldKey] = audiocallGameSettings.currentGame.statistics[fieldKey].size;
+        return resAcc;
+      }, {})
+    );
+    return audiocallGame;
+  })();
+  await Statistics.set(allStatistics);
+}
