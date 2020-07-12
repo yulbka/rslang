@@ -247,16 +247,7 @@ export class LearnWords {
     let progressCount;
     if (input.dataset.repeat === 'new') {
       if (input.dataset.mistake) {
-        WordService.createUserWord(
-          input.dataset.wordId,
-          input.dataset.word,
-          'weak',
-          'learned',
-          new Date().toJSON(),
-          setWordDayRepeat('weak', true),
-          '1',
-          '0'
-        );
+        WordService.writeMistake(input.dataset.wordId);
       } else {
         WordService.createUserWord(
           input.dataset.wordId,
@@ -277,15 +268,7 @@ export class LearnWords {
       const word = await WordService.getAggregatedWord(input.dataset.wordId);
       const { optional } = word.userWord;
       if (input.dataset.mistake) {
-        const mistakeCount = +optional.mistakeCount + 1;
-        progressCount = +optional.progressCount - 1;
-        if (progressCount < 0) progressCount = 0;
-        WordService.updateUserWord(input.dataset.wordId, 'weak', {
-          lastDayRepeat: new Date().toJSON(),
-          nextDayRepeat: setWordDayRepeat('weak', true),
-          mistakeCount,
-          progressCount,
-        });
+        WordService.writeMistake(input.dataset.wordId);
       } else {
         progressCount = +optional.progressCount + 1;
         const mistakeCount = +optional.mistakeCount;
