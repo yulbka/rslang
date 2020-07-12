@@ -1,9 +1,11 @@
+import { audiocallGameSettings } from 'pages/games/audiocall';
 import { userSettings } from './user';
 import { mainGame } from './mainGame';
 export const store = new Proxy(
   {
     user: userSettings,
     mainGame,
+    audiocallGame: audiocallGameSettings,
   },
   {
     set(target, name, value) {

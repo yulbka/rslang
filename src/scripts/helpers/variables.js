@@ -21,8 +21,8 @@ export const routeKeys = {
 };
 
 export const routesMap = new Map([
-  [routeKeys.registration, { url: '#registration' }],
-  [routeKeys.login, { url: '#login' }],
+  [routeKeys.registration, { url: '#/registration' }],
+  [routeKeys.login, { url: '#/login' }],
   [routeKeys.home, { url: '#/' }],
   [routeKeys.learn, { url: '#/learn', title: 'Учи слова' }],
   [routeKeys.progress, { url: '#/progress', title: 'Твой прогресс' }],

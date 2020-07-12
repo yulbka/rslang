@@ -3,6 +3,8 @@ import { requestCreator } from 'utils/requests';
 import { store } from 'store/index';
 import { WordService } from 'scripts/service/Word.Service';
 import { routesMap, routeKeys } from 'scripts/helpers/variables';
+import { Statistics } from "scripts/Statistics";
+import { initRequests} from "../../index";
 
 export const audiocallGameSettings = {
   currentGame: {
@@ -35,6 +37,7 @@ export const audiocallGameSettings = {
     return localStorage.getItem('levelAudiocallGame') ? +localStorage.getItem('levelAudiocallGame') : 1;
   },
   wordsMap: new Map(),
+  similarWordsMAp: new Map(),
   get wordsArray() {
     return Array.from(this.wordsMap.values());
   },
@@ -50,6 +53,17 @@ export const audiocallGameSettings = {
       })
     );
   },
+  async getSimilarWords(regexp = 'голь'){
+    const similarWords = await requestCreator(
+        {
+          url: `/users/${store.user.auth.userId}/aggregatedWords`,
+          method: requestCreator.methods.get,
+          data: { filter: JSON.stringify({  "wordTranslate": { "$regex": `\\w{0,}${regexp}\\w{0,}` } })}
+        })
+    console.log(similarWords[0].paginatedResults)
+    similarWords[0].paginatedResults.forEach(word => this.similarWordsMAp.set(word, word.wordTranslate));
+    return similarWords[0].paginatedResults;
+  },
 };
 
 export async function audioCallGameCreate() {
@@ -63,10 +77,15 @@ export async function audioCallGameCreate() {
         <section class="audiocall-game-section container"></section>
         `
   );
-
+  initRequests();
+/*  WordService.getAllUserWords()*/
+/*  WordService.getAllAggregatedWords()*/
   backgroundColorsHandler();
-  createStartScreen();
+  await audiocallGameSettings.getSimilarWords();
+  /*createStartScreen();*/
   await audiocallGameSettings.getWords();
+  Statistics.get()
+  playAudiocallGame();
 }
 
 function createStartScreen() {
@@ -75,11 +94,12 @@ function createStartScreen() {
 
 async function timer() {
   const { audioCallGameSection } = constants.DOM;
+  const timerSeconds = 3;
   audioCallGameSection.innerHTML = '';
   audioCallGameSection.insertAdjacentHTML(
     'afterbegin',
     `
-        <div class="timer">3</div>
+        <div class="timer">${timerSeconds}</div>
   `
   );
   const timerBlock = audioCallGameSection.querySelector('.timer');
@@ -113,16 +133,16 @@ function createButtonStart() {
   playButton.addEventListener('click', timer);
 }
 
-function playAudiocallGame() {
-  const { currentGame } = audiocallGameSettings;
-  const allWords = audiocallGameSettings.wordsArray;
-  currentGame.setCurrentWord();
+async function playAudiocallGame() {
+  await initRequests();
+  console.log(store)
   const { body } = constants.DOM;
-  body.classList.remove('start-screen');
-  body.classList.add('play-mode');
+  const { currentGame } = store.audiocallGame;
+  const { wordsArray : allWords } = store.audiocallGame;
   const { audioCallGameSection } = constants.DOM;
+  currentGame.setCurrentWord();
+  body.className = 'audiocall-game play-mode';
   audioCallGameSection.innerHTML = '';
-
   audioCallGameSection.insertAdjacentHTML(
     'afterbegin',
     `
@@ -251,12 +271,11 @@ function playAudiocallGame() {
         audioCallGameSection.querySelector('.audiocall-button').classList.add('button-next');
         audioCallGameSection.querySelector('.card-preview').classList.remove('inactive');
         markRestAnswersAsIncorrect();
-
-        if (errorsCounter === 0) learned.set(guessWord.word, { wordTranslate: guessWord.wordTranslate });
+               if (errorsCounter === 0) learned.set(guessWord.word, { wordTranslate: guessWord.wordTranslate, audio: guessWord.audioCallGameSection });
         errorsCounter = 0;
       } else {
         errorsCounter += 1;
-        errors.set(guessWord.word, { wordTranslate: guessWord.wordTranslate });
+        errors.set(guessWord.word, { wordTranslate: guessWord.wordTranslate, audio: guessWord.audioCallGameSection });
       }
     });
   }
@@ -321,6 +340,8 @@ async function getWordsByPartOfSpeech(word) {
   }
 }
 
+
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -344,7 +365,7 @@ function createGameStatistics() {
       ${Array.from(errors)
         .map(
           (error) =>
-            `<div class="word-in-statistics"><div>${error[0]}</div><span>—</span>
+            `<div class="word-in-statistics"><button onclick=""></button><div>${error[0]}</div><span>—</span>
         <div class="translation">${error[1].wordTranslate}</div></div>`
         )
         .join('')}`
@@ -366,6 +387,7 @@ function createGameStatistics() {
        <div class="buttons-block">
       <a type="button" class="btn btn-info button-play-next">Играть дальше</a>
       <a type="button" class="btn btn-info" href="${routesMap.get(routeKeys.home).url}">Ко всем играм</a>
+      <a type="button" class="btn btn-info">Статистика игр</a>
         </div>
       </div>
       `
@@ -384,3 +406,14 @@ function backgroundColorsHandler() {
   const step = finishHueValue / maxWordsLength;
   body.style.setProperty('--background-hue', currentHue ? currentHue + step : 20);
 }
+
+
+async function  getLearnedWords() {
+  const learnedWords = await requestCreator({
+    url: `/users/${store.user.auth.userId}/aggregatedWords/&filter={"userWord.optional.category":"learned"}`,
+    method: requestCreator.methods.get,
+  });
+  return learnedWords;
+}
+/*
+getLearnedWords()*/
