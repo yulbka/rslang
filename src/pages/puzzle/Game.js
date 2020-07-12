@@ -8,6 +8,7 @@ import { API_USER } from '../../api/user';
 import { MAIN } from '../../scripts/helpers/variables';
 import { ResultsPage } from './ResultsPage';
 import { WordService } from '../../scripts/service/Word.Service';
+import { Statistics } from '../../scripts/Statistics';
 
 export class Game {  
   constructor() {
@@ -51,6 +52,7 @@ export class Game {
 
   static async init() {
     const { page, level, useLearnedWords } = await this.getSettings();
+    this.resetShortStatistics();
     if (useLearnedWords) {
       await this.disableDropLists();
     }
@@ -79,8 +81,8 @@ export class Game {
       let countWrongs = 0;
       puzzles.forEach(async (puzzle, index) => {
         if (puzzle.dataset.word === this.sentence[index]) {
-          localStorage.setItem(this.word.id, 'correct');
           Puzzle.paintStroke(puzzle, 'green');
+          await this.setShortStatistics('correct');
         } else {
           Puzzle.paintStroke(puzzle, 'red');
           countWrongs += 1;
@@ -93,7 +95,7 @@ export class Game {
 
   static answerHandler() {
     const answerBtn = document.querySelector('.puzzle-btn_help');
-    answerBtn.addEventListener('click', () => {
+    answerBtn.addEventListener('click', async () => {
       const checkBtn = document.querySelector('.puzzle-btn_check');
       const data = document.querySelector('.data');
       if (!data.children.length &&
@@ -103,8 +105,10 @@ export class Game {
         puzzle.classList.add('settled');
         puzzle.classList.remove('new');
       });
+      const id = this.word._id || this.word.id;
+      await this.setShortStatistics('wrong');
+      await WordService.writeMistake(id);
       this.sentenceCollected();
-      localStorage.setItem(this.word.id, 'wrong');
     });
   }
 
@@ -130,7 +134,8 @@ export class Game {
           const page = +pageDropList.value;
           const level = +levelDropList.value;
           this.loadPage(page + 1, level);
-        }        
+        }
+        this.resetShortStatistics();     
       } else {
         this.finishRow();
         const translate = document.querySelector('.prompt__text');
@@ -146,8 +151,11 @@ export class Game {
     const resultsBtn =
     document.querySelector('.puzzle-btn_results');
     resultsBtn.addEventListener('click', () => {
-      const level = +document.querySelector('.level__droplist').value;
-      const page = +document.querySelector('.page__droplist').value;
+      const switcher = document.querySelector('#customSwitch');
+      const level = switcher.checked ? this.firstWord.group:
+      +document.querySelector('.level__droplist').value;
+      const page = switcher.checked ? this.firstWord.page:
+      +document.querySelector('.page__droplist').value;
       MAIN.innerHTML = '';
       new ResultsPage(level, page).init();
     });
@@ -183,6 +191,7 @@ export class Game {
       const level = checkbox.checked ? this.firstWord.group: +levelDropList.value - 1;
       const pageDropList = document.querySelector('.page__droplist');
       const page = checkbox.checked ? this.firstWord.page: +pageDropList.value - 1;
+      console.log(level, page)
       puzzles.forEach((puzzle) => {
         picturePrompt.classList.contains('prompt-btn_active') ?
         Puzzle.showPicture(puzzle, puzzle.dataset.position,
@@ -283,7 +292,7 @@ export class Game {
 
   static async getSettings() {
     const settings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
-    console.log(settings.englishPuzzle)
+    console.log(settings)
     store.user.englishPuzzle = settings.englishPuzzle;
     const { page, level, autoplay, translation, audio, background, useLearnedWords } = store.user.englishPuzzle;
     if (autoplay) {
@@ -376,7 +385,7 @@ export class Game {
     let page = checkbox.checked ? this.firstWord.page: +pageDropList.value;
     const rowIndex = findCurrentRow();
     if (rowIndex === 10) {
-      // this.setStatistic();
+      await this.setLongStatistics();
       this.showPictureData(level, page);
       if (!checkbox.checked) {
         page = +pageDropList.value;
@@ -442,7 +451,8 @@ export class Game {
     container.innerHTML = '';
     const playBtn = document.querySelector('.prompt__button');
     playBtn.classList.add('btn_hidden');
-    const picture = paintings[level + 1][page];
+    const switcher = document.querySelector('#customSwitch');
+    const picture = switcher.checked ? paintings[level + 1][page]: paintings[level][page - 1];
     const img = new Image(container.offsetWidth, container.offsetHeight);
     const src = picture.cutSrc;
     img.src = `https://raw.githubusercontent.com/Anna234365/rslang_data_paintings/master/${src}`;
@@ -461,18 +471,10 @@ export class Game {
       clearGameField();
       GamePage.renderResultBlock();
       await this.updateSettings({ "useLearnedWords": checkbox.checked });
-      if (checkbox.checked) {        
+      if (checkbox.checked) {
         await this.disableDropLists();
       } else {
-        const settings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
-        const { page, level } = settings.englishPuzzle;
-        const pageDropList = document.querySelector('.page__droplist');
-        pageDropList.disabled = false;
-        pageDropList.value = page;
-        const levelDropList = document.querySelector('.level__droplist');
-        levelDropList.disabled = false;
-        levelDropList.value = level;
-        await this.loadPage(page, level);
+        await this.loadWordsByLevelAndPage();
       }
     });
   }
@@ -480,7 +482,11 @@ export class Game {
   static async disableDropLists() {
     const data = await WordService.getWordsForGames(1, '"wordsPerExampleSentence":{"$lte": 10}');
     if (typeof data === 'string') {
-      console.log('не хватает изученных слов')
+      const notification = document.querySelector('.prompt__text');
+      notification.textContent = 'Нужно изучить больше слов';
+      const switcher = document.querySelector('#customSwitch');
+      switcher.checked = false;
+      await this.loadWordsByLevelAndPage();
       return;
     }
     const pageDropList = document.querySelector('.page__droplist');
@@ -493,6 +499,85 @@ export class Game {
     this.word = this.firstWord;
     this.audio = Sentence.loadSentencePronounce(this.word.audioExample);
     this.sentence = Sentence.render(this.word.textExample, this.word.group + 1, this.word.page + 1, 1);
+  }
+
+  static async loadWordsByLevelAndPage() {
+    const settings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
+    const { page, level } = settings.englishPuzzle;
+    const pageDropList = document.querySelector('.page__droplist');
+    pageDropList.disabled = false;
+    pageDropList.value = page;
+    const levelDropList = document.querySelector('.level__droplist');
+    levelDropList.disabled = false;
+    levelDropList.value = level;
+    await this.loadPage(page, level);
+  }
+
+  static async setShortStatistics(answer) {
+    const statistics = await Statistics.get();
+    await Statistics.set({
+      learnedWords: statistics.learnedWords,
+      optional: {
+        ...statistics.optional,
+        englishPuzzle: {
+          short: {
+            ...statistics.optional.englishPuzzle.short,
+            [this.word.word]: {
+              sentence: this.sentence.join(' '),
+              translate: this.word.textExampleTranslate || this.word.textTranslate,
+              audio: this.word.audioExample || this.word.audio,
+              mistake: answer,
+            }
+          },
+          long: {
+            ...statistics.optional.englishPuzzle.long,
+          },
+        }
+      }
+    });
+  }
+
+  static async setLongStatistics() {
+    const statistics = await Statistics.get();
+    let mistakes = 0;
+    for (const value of Object.values(statistics.optional.englishPuzzle.short)) {
+      if (value.mistake === 'wrong') {
+        mistakes += 1;
+      }
+    }
+    await Statistics.set({
+      learnedWords: statistics.learnedWords,
+      optional: {
+        ...statistics.optional,
+        englishPuzzle: {
+          short: {
+            ...statistics.optional.englishPuzzle.short,
+          },
+          long: {
+            ...statistics.optional.englishPuzzle.long,
+            [new Date().toLocaleString()]: {
+              "mistakes": mistakes,
+            }
+          },
+        }
+      }
+    });
+  }
+
+  static async resetShortStatistics() {
+    const statistics = await Statistics.get();
+      await Statistics.set({
+        learnedWords: statistics.learnedWords,
+        optional: {
+          ...statistics.optional,
+          englishPuzzle: {
+            short: null,
+            long: {
+              ...statistics.optional.englishPuzzle.long,
+            },
+          }
+        }
+      });
   }
 }
 

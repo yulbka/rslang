@@ -131,19 +131,25 @@ export class Authorization {
       await Statistics.set({
         "learnedWords": 0,
         "optional": {
-          "short": {
-            "day": today,
-            "cards": 0,
-            "newWords": 0,
-            "answers": '',
-          },
-          "long": {
-            [today]: {
+          "mainGame": {
+            "short": {
+              "day": today,
               "cards": 0,
               "newWords": 0,
-              "mistakes": 0,
-            }
+              "answers": '',
+            },
+            "long": {
+              [today]: {
+                "cards": 0,
+                "newWords": 0,
+                "mistakes": 0,
+              }
+            },
           },
+          "englishPuzzle": {
+            "short": null,
+            "long": null,
+          },    
         }
       });
       await initRequests();
