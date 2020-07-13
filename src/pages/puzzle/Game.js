@@ -124,7 +124,7 @@ export class Game {
         if (pageDropList.selectedIndex === -1) {
           clearGameField();
           GamePage.renderResultBlock();
-          this.newWord = await WordService.getWordsForGames(1);
+          this.newWord = await WordService.getWordsForGames(1, null, '"wordsPerExampleSentence":{"$lte": 10}');
           this.word = this.newWord;
           this.audio = Sentence.loadSentencePronounce(this.word.audioExample);
           document.querySelector('.puzzle-row').classList.add('puzzle-row_active');
@@ -369,7 +369,7 @@ export class Game {
     const puzzles = Array.from(document.querySelectorAll('.settled'));
     const row =
       document.querySelector(`[data-row='${findCurrentRow()}']`);
-    row.classList.remove('row_active');
+    row.classList.remove('puzzle-row_active');
     puzzles.forEach((puzzle) => {
       Puzzle.paintStroke(puzzle, 'lightgrey');
       puzzle.classList.remove('new', 'settled');
@@ -414,7 +414,7 @@ export class Game {
       createElement('div', count, ['count__number', 'count__number_active'],
           `${Number(rowIndex) + 1}`);
       if (checkbox.checked) {
-        this.word = await WordService.getWordsForGames(1, '"wordsPerExampleSentence":{"$lte": 10}');
+        this.word = await WordService.getWordsForGames(1, null, '"wordsPerExampleSentence":{"$lte": 10}');
         this.audio = Sentence.loadSentencePronounce(this.word.audioExample);
         this.sentence = Sentence.render(this.word.textExample,
           this.word.group, this.word.page, rowIndex + 1);
@@ -426,7 +426,7 @@ export class Game {
       }
       const newRow =
         document.querySelector(`[data-row='${rowIndex + 1}']`);
-      newRow.classList.add('row_active');
+      newRow.classList.add('puzzle-row_active');
     }
   }
 
@@ -480,7 +480,7 @@ export class Game {
   }
   
   static async disableDropLists() {
-    const data = await WordService.getWordsForGames(1, '"wordsPerExampleSentence":{"$lte": 10}');
+    const data = await WordService.getWordsForGames(1, null, '"wordsPerExampleSentence":{"$lte": 10}');
     if (typeof data === 'string') {
       const notification = document.querySelector('.prompt__text');
       notification.textContent = 'Нужно изучить больше слов';

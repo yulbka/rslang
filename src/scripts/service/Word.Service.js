@@ -168,12 +168,15 @@ export class WordService {
     return words[0].paginatedResults;
   }
 
-  static async getWordsForGames(wordsNumber = 10, additionalFilter = null) {
+  static async getWordsForGames(wordsNumber = 10, level = null, additionalFilter = null) {
     const filter = additionalFilter ?
     `{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}, ${additionalFilter}}]}`:
     '{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}}]}';
+    let url = level ? 
+    `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsNumber}&group=${level}&page=${0}&filter=${filter}`:
+    `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsNumber}&page=${0}&filter=${filter}`;
     const word = await requestCreator({
-      url: `/users/${store.user.auth.userId}/aggregatedWords/?&wordsPerPage=${1}&page=${0}&filter=${filter}`,
+      url,
       method: requestCreator.methods.get,
     });
     if (!word[0].totalCount.length) return 'not enough words';
@@ -184,14 +187,17 @@ export class WordService {
     const wordsForGame = [];
     const pages = [];
     do {
-      const page = getRandomNumber(wordsCount);
+      const page = getRandomNumber(wordsCount - 1);
       if (!pages.includes(page)) {
         pages.push(page);
       }
     } while (pages.length < wordsNumber);
     await Promise.all(pages.map(async (page) => {
+      url = level ? 
+        `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${1}&group=${level}&page=${page}&filter=${filter}`:
+        `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${1}&page=${page}&filter=${filter}`;
       const randomWord = await requestCreator({
-        url: `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${1}&page=${page}&filter=${filter}`,
+        url,
         method: requestCreator.methods.get,
       });
       wordsForGame.push(randomWord[0].paginatedResults[0]);
