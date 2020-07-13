@@ -90,6 +90,12 @@ export async function audioCallGameCreate() {
 }
 
 function createStartScreen() {
+  const { audioCallGameSection } = constants.DOM;
+  audioCallGameSection.insertAdjacentHTML('afterbegin',
+      `
+      <h2 class="game-title">Аудиовызов</h2>
+      <p class="game-description">После начала игры будет озвучено слово, необходимо выбрать перевод слова из пяти предложенных вариантов ответа.</p>
+      `)
   createButtonStart();
 }
 
@@ -125,9 +131,9 @@ async function timer() {
 }
 
 function createButtonStart() {
-  const { body, audioCallGameSection } = constants.DOM;
+  const {  audioCallGameSection } = constants.DOM;
   audioCallGameSection.insertAdjacentHTML(
-    'afterbegin',
+    'beforeend',
     `
   <button class='begin-audiocall btn btn-outline-light'>Начать игру</button>`
   );
@@ -160,10 +166,9 @@ async function playAudiocallGame() {
 
   audioButtonHandler();
   playAudio();
-
   levelsBlockHandler();
   gameButtonHandler();
-  answersHandler();
+  answersHandlers();
 
   function renderContent() {
     const guessWord = audiocallGameSettings.wordsArray[currentGame.currentWord];
@@ -239,27 +244,35 @@ async function playAudiocallGame() {
 
   function gameButtonHandler() {
     const { errors } = currentGame.statistics;
-    const notKnowButton = audioCallGameSection.querySelector('.audiocall-button');
-    notKnowButton.addEventListener('click', () => {
-      const isNotKnow = notKnowButton.classList.contains('button-not-know');
-      const isNext = notKnowButton.classList.contains('button-next');
-      if (isNotKnow) {
-        const correctAnswer = document.querySelector(`.answer-word[data-id=${allWords[currentGame.currentWord].word}]`);
-        correctAnswer.classList.add('is-right');
-        audioCallGameSection.querySelector('.card-preview').classList.remove('inactive');
-        WordService.writeMistake(allWords[currentGame.currentWord].wordId);
-        errors.set(allWords[currentGame.currentWord].word, {
-          wordTranslate: allWords[currentGame.currentWord].wordTranslate,
-        });
-        markRestAnswersAsIncorrect();
-      } else if (isNext) {
-        currentGame.setCurrentWord();
-        updateContent();
-        backgroundColorsHandler();
+    const audiocallButton = audioCallGameSection.querySelector('.audiocall-button');
+    audiocallButton.addEventListener('click', buttonHandler);
+    document.addEventListener('keyup',() => {
+      if (event.key === 'Enter'){
+        buttonHandler();
       }
-      notKnowButton.classList.toggle('button-not-know');
-      notKnowButton.classList.toggle('button-next');
     });
+
+
+    function buttonHandler(){
+        const isNotKnow = audiocallButton.classList.contains('button-not-know');
+        const isNext = audiocallButton.classList.contains('button-next');
+        if (isNotKnow) {
+          const correctAnswer = document.querySelector(`.answer-word[data-id=${allWords[currentGame.currentWord].word}]`);
+          correctAnswer.classList.add('is-right');
+          audioCallGameSection.querySelector('.card-preview').classList.remove('inactive');
+          WordService.writeMistake(allWords[currentGame.currentWord].wordId);
+          errors.set(allWords[currentGame.currentWord].word, {
+            wordTranslate: allWords[currentGame.currentWord].wordTranslate,
+          });
+          markRestAnswersAsIncorrect();
+        } else if (isNext) {
+          currentGame.setCurrentWord();
+          updateContent();
+          backgroundColorsHandler();
+        }
+        audiocallButton.classList.toggle('button-not-know');
+        audiocallButton.classList.toggle('button-next');
+      }
   }
 
   function answersHandlers() {
@@ -324,7 +337,8 @@ async function playAudiocallGame() {
         localStorage.setItem('levelAudiocallGame', currentLevel);
         await audiocallGameSettings.getWords();
         createStartScreen();
-        backgroundColorsHandler({ needReset: true })
+        /* createButtonStart();*/
+        backgroundColorsHandler({ needReset: true });
         timer();
       }
     });
@@ -356,22 +370,6 @@ function createLevelsBlock() {
     </div>
   </div>
   `;
-}
-
-async function getWordsByPartOfSpeech(word) {
-  const words = await requestCreator({
-    host: 'https://dictionary.skyeng.ru/api/public/v1',
-    url: '/words/search',
-    method: requestCreator.methods.get,
-    data: { search: word },
-  });
-  const allowedPartOfSpeach = ['n', 'NN'];
-
-  for (let index = 0; index <= words.length; index++) {
-    const { meanings } = words[index];
-    const meaning = meanings.find(({ partOfSpeechCode }) => allowedPartOfSpeach.includes(partOfSpeechCode));
-    if (meaning) return meaning;
-  }
 }
 
 function getRandomInt(max) {
@@ -440,14 +438,6 @@ function backgroundColorsHandler({ needReset } = {}) {
   body.style.setProperty('--background-hue', currentHue ? currentHue + step : 20);
 }
 
-async function getLearnedWords() {
-  const learnedWords = await requestCreator({
-    url: `/users/${store.user.auth.userId}/aggregatedWords/&filter={"userWord.optional.category":"learned"}`,
-    method: requestCreator.methods.get,
-  });
-  return learnedWords;
-}
-
 async function sendStatistics() {
   const allStatistics = await Statistics.get();
   delete allStatistics.id;
@@ -466,3 +456,5 @@ async function sendStatistics() {
   })();
   await Statistics.set(allStatistics);
 }
+
+
