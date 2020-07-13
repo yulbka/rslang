@@ -59,10 +59,10 @@ export function create_hangman2() {
     let select = 0
     let wordLeft = []
     let fail = 0;
-    let wincount = 0;
-    let losecount = 0;
+    // let wincount = 0;
+    // let losecount = 0;
 
-    ingame_statictic()
+    // ingame_statictic()
     
     window.onload = function() {
         gId("moveKeybord").addEventListener('touchmove', function(e) {
@@ -155,12 +155,12 @@ export function create_hangman2() {
         }
     }
 
-    function ingame_statictic() {
-        const block_for_statictick = `
-        <div class='ingame_statictic' id='block_for_statictick'>W : ${wincount} - L : ${losecount} </div>
-        `
-        main.innerHTML += block_for_statictick;
-    }
+    // function ingame_statictic() {
+    //     const block_for_statictick = `
+    //     <div class='ingame_statictic' id='block_for_statictick'>W : ${wincount} - L : ${losecount} </div>
+    //     `
+    //     main.innerHTML += block_for_statictick;
+    // }
 
     // async function createWord() {
     //     const new_words = await WordService.getWordsForGames();
@@ -295,12 +295,12 @@ export function create_hangman2() {
         if(e) {
             gId("rT").innerText = "You Win!";
             gId("rM").innerHTML = "Congratulations, you found the word!<br/><br/>Good Job!";
-            wincount += 1;
+            // wincount += 1;
             WordService.updateUserWord(new_arr[select][2], 'normal' ,{ category: 'learned' })
         } else {
             gId("rT").innerText = "You Lose!"
             gId("rM").innerHTML = `The word was ${new_arr[select][0].toUpperCase()} Better luck next time.`
-            losecount += 1;
+            // losecount += 1;
             WordService.writeMistake(new_arr[select][2])
         }
         d.className = ""

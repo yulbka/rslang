@@ -1,6 +1,7 @@
 import { requestCreator } from '../../utils/requests';
 import { store } from '../../store';
 import { getRandomNumber } from '../helpers/getRandomNumber'
+import { setWordDayRepeat } from '../../utils/setWordDayRepeat'
 
 export class WordService {
   constructor() {
