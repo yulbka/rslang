@@ -10,7 +10,7 @@ export const audiocallGameSettings = {
   currentGame: {
     currentWord: 0,
     setCurrentWord() {
-      const isEndGame = this.statistics.learned.size + this.statistics.errors.size === this.maxWordsLength;
+      const isEndGame = this.statistics.learned.size + this.statistics.errors.size >= this.maxWordsLength;
       if (isEndGame) {
         sendStatistics();
         createGameStatistics();
@@ -40,10 +40,15 @@ export const audiocallGameSettings = {
   wordsMap: new Map(),
   similarWordsMAp: new Map(),
   get wordsArray() {
-    return Array.from(this.wordsMap.values());
+    return Array.from(this.wordsMap.values()).filter(({ level }) => level === this.currentLevel);
   },
   async getWords() {
-    const words = await WordService.getWordsByLevelAndPage(this.currentLevel, 0);
+    const { count: amountWordsByLevel } = await WordService.getAmountUserWords({ group: this.currentLevel });
+    const pageSize = 20;
+    const words = await WordService.getWordsByLevelAndPage(
+      this.currentLevel,
+      getRandomInt(amountWordsByLevel / pageSize)
+    );
     words.forEach((gameWord) =>
       this.wordsMap.set(gameWord.word, {
         wordId: gameWord.id,
@@ -66,6 +71,14 @@ export const audiocallGameSettings = {
   },
 };
 
+function gameReset() {
+  backgroundColorsHandler({ needReset: true });
+  store.audiocallGame.currentGame.statistics = {
+    learned: new Map(),
+    errors: new Map(),
+  };
+}
+
 export async function audioCallGameCreate() {
   const { main } = constants.DOM;
   const { body } = constants.DOM;
@@ -80,22 +93,25 @@ export async function audioCallGameCreate() {
   initRequests();
   /*  WordService.getAllUserWords()*/
   /*  WordService.getAllAggregatedWords()*/
+  /* createStartScreen();*/
 
-  const forGames = await WordService.getWordsForGames();
+  /*  const forGames = await WordService.getWordsForGames();*/
   backgroundColorsHandler({ needReset: true });
-  await audiocallGameSettings.getSimilarWords();
-   createStartScreen();
+  /*await audiocallGameSettings.getSimilarWords();*/
+  createStartScreen();
   await audiocallGameSettings.getWords();
   /*playAudiocallGame();*/
 }
 
 function createStartScreen() {
   const { audioCallGameSection } = constants.DOM;
-  audioCallGameSection.insertAdjacentHTML('afterbegin',
-      `
+  audioCallGameSection.insertAdjacentHTML(
+    'afterbegin',
+    `
       <h2 class="game-title">Аудиовызов</h2>
       <p class="game-description">После начала игры будет озвучено слово, необходимо выбрать перевод слова из пяти предложенных вариантов ответа.</p>
-      `)
+      `
+  );
   createButtonStart();
 }
 
@@ -131,7 +147,7 @@ async function timer() {
 }
 
 function createButtonStart() {
-  const {  audioCallGameSection } = constants.DOM;
+  const { audioCallGameSection } = constants.DOM;
   audioCallGameSection.insertAdjacentHTML(
     'beforeend',
     `
@@ -142,8 +158,8 @@ function createButtonStart() {
 }
 
 async function playAudiocallGame() {
+  gameReset();
   await initRequests();
-  console.log(store);
   const { body } = constants.DOM;
   const { currentGame } = store.audiocallGame;
   const { wordsArray: allWords } = store.audiocallGame;
@@ -246,33 +262,30 @@ async function playAudiocallGame() {
     const { errors } = currentGame.statistics;
     const audiocallButton = audioCallGameSection.querySelector('.audiocall-button');
     audiocallButton.addEventListener('click', buttonHandler);
-    document.addEventListener('keyup',() => {
-      if (event.key === 'Enter'){
-        buttonHandler();
-      }
+    document.addEventListener('keyup', () => {
+      if (event.key === 'Enter') buttonHandler();
     });
 
-
-    function buttonHandler(){
-        const isNotKnow = audiocallButton.classList.contains('button-not-know');
-        const isNext = audiocallButton.classList.contains('button-next');
-        if (isNotKnow) {
-          const correctAnswer = document.querySelector(`.answer-word[data-id=${allWords[currentGame.currentWord].word}]`);
-          correctAnswer.classList.add('is-right');
-          audioCallGameSection.querySelector('.card-preview').classList.remove('inactive');
-          WordService.writeMistake(allWords[currentGame.currentWord].wordId);
-          errors.set(allWords[currentGame.currentWord].word, {
-            wordTranslate: allWords[currentGame.currentWord].wordTranslate,
-          });
-          markRestAnswersAsIncorrect();
-        } else if (isNext) {
-          currentGame.setCurrentWord();
-          updateContent();
-          backgroundColorsHandler();
-        }
-        audiocallButton.classList.toggle('button-not-know');
-        audiocallButton.classList.toggle('button-next');
+    function buttonHandler() {
+      const isNotKnow = audiocallButton.classList.contains('button-not-know');
+      const isNext = audiocallButton.classList.contains('button-next');
+      if (isNotKnow) {
+        const correctAnswer = document.querySelector(`.answer-word[data-id=${allWords[currentGame.currentWord].word}]`);
+        correctAnswer.classList.add('is-right');
+        audioCallGameSection.querySelector('.card-preview').classList.remove('inactive');
+        errors.set(allWords[currentGame.currentWord].word, {
+          wordTranslate: allWords[currentGame.currentWord].wordTranslate,
+        });
+        markRestAnswersAsIncorrect();
+        WordService.writeMistake(allWords[currentGame.currentWord].wordId);
+      } else if (isNext) {
+        currentGame.setCurrentWord();
+        updateContent();
+        backgroundColorsHandler();
       }
+      audiocallButton.classList.toggle('button-not-know');
+      audiocallButton.classList.toggle('button-next');
+    }
   }
 
   function answersHandlers() {
@@ -280,17 +293,18 @@ async function playAudiocallGame() {
     const audiocallButton = audioCallGameSection.querySelector('.audiocall-button');
     const optionsBlock = audioCallGameSection.querySelector('.block-with-words');
     let errorsCounter = 0;
-    optionsBlock.addEventListener('click', answersHandler);
 
+    optionsBlock.addEventListener('click', answersHandler);
     document.addEventListener('keyup', answersHandler);
+
     function answersHandler(event) {
       const guessWord = allWords[currentGame.currentWord];
       let answerButton = null;
-      console.log(event);
 
       switch (event.type) {
         case 'keyup': {
           const { key } = event;
+          if (event.key === 'Enter') return;
           answerButton = optionsBlock.querySelector(`[data-key='${key}']`);
           break;
         }
@@ -301,6 +315,7 @@ async function playAudiocallGame() {
         default:
           break;
       }
+
       const isRightAnswer = answerButton.dataset.id === guessWord.word;
       answerButton.classList.add(isRightAnswer ? 'is-right' : 'is-wrong');
       if (isRightAnswer) {
@@ -316,11 +331,11 @@ async function playAudiocallGame() {
         errorsCounter = 0;
       } else {
         errorsCounter += 1;
-        WordService.writeMistake(guessWord.wordId);
         errors.set(guessWord.word, {
           wordTranslate: guessWord.wordTranslate,
           audio: guessWord.audioCallGameSection,
         });
+        WordService.writeMistake(guessWord.wordId);
       }
     }
   }
@@ -357,7 +372,7 @@ function createLevelsBlock() {
   return `
   <div class="levels-container">
     <p class="levels-title">Уровень сложности:</p>
-    <div class="levels-block" data-level="1">
+    <div class="levels-block">
         ${(() => {
           let acc = '';
           for (let level = 0; level <= 5; level++) {
@@ -386,11 +401,13 @@ function createGameStatistics() {
   gameSection.insertAdjacentHTML(
     'afterbegin',
     `
+    
       <div class="statistics-block">
       <h2>Статистика игры:</h2>
       ${
         errors.size > 0
           ? `<p>Ошибок<span class="errors-amount">${errors.size}</span></p>
+       
       <div class="errors-words">
       ${Array.from(errors)
         .map(
@@ -417,15 +434,20 @@ function createGameStatistics() {
        <div class="buttons-block">
       <a type="button" class="btn btn-info button-play-next">Играть дальше</a>
       <a type="button" class="btn btn-info" href="${routesMap.get(routeKeys.home).url}">Ко всем играм</a>
-      <a type="button" class="btn btn-info">Статистика игр</a>
+      <a type="button" class="btn btn-info long-statistics">Статистика игр</a>
         </div>
       </div>
       `
   );
   buttonPlayNextHandler();
+  buttonLongStatisticsHandler();
 
   function buttonPlayNextHandler() {
     gameSection.querySelector('.button-play-next').addEventListener('click', playAudiocallGame);
+  }
+
+  function buttonLongStatisticsHandler() {
+    gameSection.querySelector('.long-statistics').addEventListener('click', createLongStatistics);
   }
 }
 
@@ -457,4 +479,20 @@ async function sendStatistics() {
   await Statistics.set(allStatistics);
 }
 
-
+async function createLongStatistics() {
+  const allStatistics = await Statistics.get();
+  const { audiocallGame: longStatistics } = allStatistics.optional;
+  const longStatisticsBlock = document.querySelector('.statistics-block');
+  longStatisticsBlock.innerHTML = '';
+  longStatisticsBlock.insertAdjacentHTML(
+    'afterbegin',
+    `<div>
+<h2>Статистика за все время:</h2>
+<div></div>
+    <div class="buttons-block">
+      <a type="button" class="btn btn-info button-play-next">Играть дальше</a>
+      <a type="button" class="btn btn-info" href="${routesMap.get(routeKeys.home).url}">Ко всем играм</a>
+    </div>
+</div>`
+  );
+}
