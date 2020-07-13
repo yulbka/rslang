@@ -2,16 +2,26 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import '../css/dictionary.scss';
 import { store } from '../store';
-import { initRequests } from '../index'
-import {WordService} from './service/Word.Service';
+// import { initRequests } from '../index'
+import { WordService } from './service/Word.Service';
+import { API_USER } from '../api/user'
 
-export function create_dictionary() {
+export async function create_dictionary() {
     const main = document.getElementById('main');
     const base = 'https://raw.githubusercontent.com/irinainina/rslang/rslang-data/data/';
 
-    window.onload = async () => {
-        await initRequests();
+    // window.onload = async () => {
+    //     await initRequests();
+    // };
+    // await initRequests();
+
+    const userSettings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
+    store.user.learning = {
+      ...store.user.learning,
+      ...userSettings,
     };
+
+    console.log(userSettings)
 
     const settings = store.user.learning;
 
@@ -36,14 +46,14 @@ export function create_dictionary() {
             </div>
         </div>
         <div>
-            <input type='text' class='main_input_area' id='search_string' placeholder="Search for words">
+            <input type='text' class='main_input_area' id='search_string' placeholder="Поиск слов">
         </div>
         <div class="table-responsive">
             <table class="table table-sortable" id='table_id'>
             <thead>
                 <tr id='thead_id'>
-                <th>Audio</th>
-                <th class="th-sort-asc" id='word'>Word</th>
+                <th>Аудио</th>
+                <th class="th-sort-asc" id='word'>Слово</th>
 
                 </tr>
             </thead>
@@ -55,21 +65,20 @@ export function create_dictionary() {
         `;
         main.innerHTML += main_container;
         if(dowithHelpImage === true){
-            document.getElementById('thead_id').innerHTML += `<th>Image</th>`
+            document.getElementById('thead_id').innerHTML += `<th>Картинка</th>`
         }
         if(dowithTranscription === true){
-            document.getElementById('thead_id').innerHTML += `<th>Transcription</th>`
+            document.getElementById('thead_id').innerHTML += `<th>Транскрипция</th>`
         }
         if(dowithTranslation === true){
-            document.getElementById('thead_id').innerHTML += `<th>Translation</th>`
+            document.getElementById('thead_id').innerHTML += `<th>Перевод</th>`
         }
         if(dowithExample === true){
-            document.getElementById('thead_id').innerHTML += `<th>Text example</th>`
+            document.getElementById('thead_id').innerHTML += `<th>Пример в тексте</th>`
         }
         if(dowithExplanation === true){
-            document.getElementById('thead_id').innerHTML += `<th>Text explanation</th>`
+            document.getElementById('thead_id').innerHTML += `<th>Объяснение слова</th>`
         }
-
     }
     
     create_started_table(withExample, withExplanation, withHelpImage, withTranscription, withTranslation);
@@ -77,10 +86,6 @@ export function create_dictionary() {
 
     const tBody = document.getElementById('tBody');
 
-    // WordService.getWordsByLevelAndPage().then(data => {
-    //     console.log(data)
-    //     create_table(data);
-    // })
     WordService.getWordsByLevelAndPage().then(data => {
         create_table(data);
     })
@@ -184,8 +189,11 @@ export function create_dictionary() {
     }
 
     function create_one_cell_for_learned_words(id, audio, image, word, transcription, wordTranslate, textExample, textMeaning, lastDayRepeat, nextDayRepeat, total_count){
-        const lastDayRepeat_correct = lastDayRepeat.slice(0,10);
-        const nextDayRepeat_correct = nextDayRepeat.slice(0,10);
+        const lastDayRepeat_new = new Date(lastDayRepeat).toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
+        const nextDayRepeat_new = new Date(nextDayRepeat).toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
+        // console.log(testData)
+        // const lastDayRepeat_correct = lastDayRepeat.slice(0,10);
+        // const nextDayRepeat_correct = nextDayRepeat.slice(0,10);
         tBody.innerHTML += `<tr id="${id}">
         <td><img src='https://i.ibb.co/FxW8BS6/321.png' class='small_icon' data-audio='${base}${audio}'></td>
         <td>${word}</td>
@@ -205,8 +213,8 @@ export function create_dictionary() {
     if(withExplanation === true){
         document.getElementById(`${id}`).innerHTML += `<td>${textMeaning}</td>`;
     }
-    document.getElementById(`${id}`).innerHTML += `<td>${lastDayRepeat_correct}</td>
-    <td>${nextDayRepeat_correct}</td>
+    document.getElementById(`${id}`).innerHTML += `<td>${lastDayRepeat_new}</td>
+    <td>${nextDayRepeat_new}</td>
     <td>${total_count}</td>
     `
     }
