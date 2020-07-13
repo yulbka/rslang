@@ -85,6 +85,13 @@ export class Sentence {
 
   static checkPicturePrompt(words, level, page, round) {
     const picturePrompt = document.querySelector('.picture');
+    const switcher = document.querySelector('#customSwitch');
+    if (switcher.checked) {
+      // eslint-disable-next-line no-param-reassign
+      level =  Game.firstWord.group + 1;
+      // eslint-disable-next-line no-param-reassign
+      page = Game.firstWord.page + 1;
+    }
     if (picturePrompt.classList.contains('prompt-btn_active')) {
       words.forEach((puzzle) => {
         Puzzle.showPicture(puzzle, puzzle.dataset.position,

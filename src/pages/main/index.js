@@ -121,16 +121,20 @@ function createSettingsBlock() {
     }
 
     try {
+      const settings = await API_USER.getUserSettings({
+        userId: store.user.auth.userId
+      });
       const newSettings = await API_USER.setUserSettings({
         userId: store.user.auth.userId,
         userSettings: {
           wordsPerDay,
           optional: {
             learning: restFormData,
-            englishPuzzle: store.user.englishPuzzle,
+            englishPuzzle: settings.englishPuzzle,
           },
         },
       });
+      console.log(newSettings)
       $('.toast').toast('show');
       store.user.learning = {
         ...store.user.learning,
