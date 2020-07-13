@@ -15,7 +15,7 @@ export const constants = {
     get body() {
       return document.body;
     },
-    get audioCallGameSection(){
+    get audioCallGameSection() {
       return this.main.querySelector('.audiocall-game-section');
     },
     get word() {

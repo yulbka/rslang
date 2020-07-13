@@ -144,10 +144,10 @@
   }
 
   .block-with-words {
-    /*  color: rgba(255, 255, 255, 0.5);*/
-    margin-top: 30px;
     display: flex;
     justify-content: space-around;
+    /*  color: rgba(255, 255, 255, 0.5);*/
+    margin-top: 30px;
     width: 100%;
     @media (max-width: 767px) {
       flex-direction: column;
@@ -228,7 +228,7 @@
     @media (min-width: 1024px) {
       width: 60%;
     }
-    .buttons-block{
+    .buttons-block {
       margin-top: 20px;
     }
     .translation {

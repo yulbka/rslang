@@ -84,9 +84,9 @@ export async function audioCallGameCreate() {
   const forGames = await WordService.getWordsForGames();
   backgroundColorsHandler({ needReset: true });
   await audiocallGameSettings.getSimilarWords();
-  /* createStartScreen();*/
+   createStartScreen();
   await audiocallGameSettings.getWords();
-  playAudiocallGame();
+  /*playAudiocallGame();*/
 }
 
 function createStartScreen() {
@@ -94,8 +94,9 @@ function createStartScreen() {
 }
 
 async function timer() {
-  const { audioCallGameSection } = constants.DOM;
+  const { audioCallGameSection, body } = constants.DOM;
   const timerSeconds = 3;
+  body.classList.remove('play-mode');
   audioCallGameSection.innerHTML = '';
   audioCallGameSection.insertAdjacentHTML(
     'afterbegin',
@@ -124,7 +125,7 @@ async function timer() {
 }
 
 function createButtonStart() {
-  const { audioCallGameSection } = constants.DOM;
+  const { body, audioCallGameSection } = constants.DOM;
   audioCallGameSection.insertAdjacentHTML(
     'afterbegin',
     `
@@ -302,7 +303,9 @@ async function playAudiocallGame() {
         container.dataset.level = currentLevel;
         localStorage.setItem('levelAudiocallGame', currentLevel);
         await audiocallGameSettings.getWords();
-        updateContent();
+        createStartScreen();
+        backgroundColorsHandler({ needReset: true })
+        timer();
       }
     });
   }
