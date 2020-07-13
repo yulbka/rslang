@@ -209,7 +209,9 @@ async function playAudiocallGame() {
             ${answers
               .map(
                 ({ word, wordTranslate }, index) =>
-                  `<p class="answer-word" data-id=${word}><span>${index + 1}</span>${wordTranslate}</p>`
+                  `<p class="answer-word" data-key= ${index + 1} data-id=${word}><span>${
+                    index + 1
+                  }</span>${wordTranslate}</p>`
               )
               .join('')}
            </div>
@@ -222,7 +224,7 @@ async function playAudiocallGame() {
     content.insertAdjacentHTML('afterbegin', renderContent());
     playAudio();
     audioButtonHandler();
-    answersHandler();
+    answersHandlers();
   }
 
   async function playAudio() {
@@ -260,16 +262,34 @@ async function playAudiocallGame() {
     });
   }
 
-  function answersHandler() {
+  function answersHandlers() {
     const { errors, learned } = audiocallGameSettings.currentGame.statistics;
     const audiocallButton = audioCallGameSection.querySelector('.audiocall-button');
     const optionsBlock = audioCallGameSection.querySelector('.block-with-words');
     let errorsCounter = 0;
-    optionsBlock.addEventListener('click', (event) => {
+    optionsBlock.addEventListener('click', answersHandler);
+
+    document.addEventListener('keyup', answersHandler);
+    function answersHandler(event) {
       const guessWord = allWords[currentGame.currentWord];
-      const button = event.target;
-      const isRightAnswer = button.dataset.id === guessWord.word;
-      button.classList.add(isRightAnswer ? 'is-right' : 'is-wrong');
+      let answerButton = null;
+      console.log(event);
+
+      switch (event.type) {
+        case 'keyup': {
+          const { key } = event;
+          answerButton = optionsBlock.querySelector(`[data-key='${key}']`);
+          break;
+        }
+        case 'click': {
+          answerButton = event.target;
+          break;
+        }
+        default:
+          break;
+      }
+      const isRightAnswer = answerButton.dataset.id === guessWord.word;
+      answerButton.classList.add(isRightAnswer ? 'is-right' : 'is-wrong');
       if (isRightAnswer) {
         audiocallButton.classList.remove('button-not-know');
         audiocallButton.classList.add('button-next');
@@ -289,7 +309,7 @@ async function playAudiocallGame() {
           audio: guessWord.audioCallGameSection,
         });
       }
-    });
+    }
   }
 
   function levelsBlockHandler() {
