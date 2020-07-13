@@ -33,6 +33,33 @@ export class WordService {
     this._page = page;
   }
 
+  static async writeMistake(wordId) {
+    const word = await WordService.getAggregatedWord(wordId);
+    if (word.userWord) {
+      const { optional } = word.userWord;
+      const mistakeCount = +optional.mistakeCount + 1;
+      let progressCount = +optional.progressCount - 1;
+      if (progressCount < 0) progressCount = 0;
+      WordService.updateUserWord(wordId, 'weak', {
+        lastDayRepeat: new Date().toJSON(),
+        nextDayRepeat: setWordDayRepeat('weak', true),
+        mistakeCount,
+        progressCount,
+      });
+    } else {
+      WordService.createUserWord(
+        wordId,
+        word.word,
+        'weak',
+        'learned',
+        new Date().toJSON(),
+        setWordDayRepeat('weak', true),
+        '1',
+        '0'
+      );
+    }
+  }
+
   static async getNewWords(wordsPerPage = 50) {
     const words = await requestCreator({
       url: `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsPerPage}&filter={"userWord":null}`,

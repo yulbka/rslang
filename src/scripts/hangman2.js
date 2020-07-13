@@ -51,17 +51,18 @@ export function create_hangman2() {
 
     create_main();
 
-
-    
-    const word = [["Hangman", "That game you are playing right now."], ["Thomas Hj", "About the creator of this game."], ["HTML", "Markup language for creating Web pages."], ["CSS", "Wep page styles"], ["PHP", "A very popular server scripting language."], ["JavaScript", "Make web-page dynamic without reload the web page."], ["Java", "Run 15 billion devices.\nA program can be run in Windows, Linux and Mac"], ["SoloLearn", "A company that everyone can code for fun and share."], ["Love", "What is ?\nBaby don't hurt me\nDon't hurt me\nNo more"], ["Document", "A lot of text in the a file."], ["Playground", "There school kids go to."], ["Run", "Usain bolt."], ["Code", "var hw = 'Hello World';"], ["Samsung", "A company create Phone, Tv, Monitor, SDD, Memory chip..."], ["Super Mario", "A very popular game in Nintendo 64 that have red hat."], ["Star", "Super Mario like to get."], ["Clock", "14:12 or 14pm"], ["Binary Clock", "A clock that only use 0 or 1."], ["Sword", "Link from Zelda have on the hand."], ["Girl", "Not boy but ?"], ["Boy", "Not girl but ?"], ["Female", "Other name as girl."], ["Male", "Other name as boy."], ["Smartphone", "Something you've always on you."]]
-    
+      
     // Game keyboard
     const tastatur = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     
     // Game memory
     let select = 0
     let wordLeft = []
-    let fail = 0
+    let fail = 0;
+    let wincount = 0;
+    let losecount = 0;
+
+    ingame_statictic()
     
     window.onload = function() {
         gId("moveKeybord").addEventListener('touchmove', function(e) {
@@ -100,7 +101,7 @@ export function create_hangman2() {
     function newGame() {
         clearTastatur()
         clearPlayer()
-        createWord()
+        createWord();
     }
     
     // Clear keyboard
@@ -132,8 +133,9 @@ export function create_hangman2() {
     
     // Get new word
     async function createWord() {
-        const new_words = await WordService.getWordsForGames();
-        new_words.map(item => new_arr.push([item.word, item.textMeaning]))
+        const new_words = await WordService.getWordsByCategory('learned');
+        // const new_words = await WordService.getWordsForGames();
+        new_words.map(item => new_arr.push([item.word, item.textMeaning, item._id]))
         const d = gId("letter")
         d.innerHTML = ""
         select = Math.floor(Math.random() * new_arr.length)
@@ -151,6 +153,13 @@ export function create_hangman2() {
                 }
             }
         }
+    }
+
+    function ingame_statictic() {
+        const block_for_statictick = `
+        <div class='ingame_statictic' id='block_for_statictick'>W : ${wincount} - L : ${losecount} </div>
+        `
+        main.innerHTML += block_for_statictick;
     }
 
     // async function createWord() {
@@ -272,8 +281,8 @@ export function create_hangman2() {
     }
     
     function typeWord(e) {
-        for(let a = 0; a < word[select][0].length; a++) {
-            if(word[select][0][a].toUpperCase() === e) {
+        for(let a = 0; a < new_arr[select][0].length; a++) {
+            if(new_arr[select][0][a].toUpperCase() === e) {
                 gId(`l${a}`).innerText = e
             }
         }
@@ -284,18 +293,24 @@ export function create_hangman2() {
         const d = gId("result")
         d.setAttribute("data", e)
         if(e) {
-            gId("rT").innerText = "You Win!"
-            gId("rM").innerHTML = "Congratulations, you found the word!<br/><br/>Good Job!"
+            gId("rT").innerText = "You Win!";
+            gId("rM").innerHTML = "Congratulations, you found the word!<br/><br/>Good Job!";
+            wincount += 1;
+            WordService.updateUserWord(new_arr[select][2], 'normal' ,{ category: 'learned' })
         } else {
             gId("rT").innerText = "You Lose!"
             gId("rM").innerHTML = `The word was ${new_arr[select][0].toUpperCase()} Better luck next time.`
+            losecount += 1;
+            WordService.writeMistake(new_arr[select][2])
         }
         d.className = ""
     }
     
     // Show hint
     function hint() {
-        gId("hintText").innerText = `${new_arr[select][1]}`
+        const str = `${new_arr[select][1]}`
+        const newstr = str.replace(`${new_arr[select][0]}`, 'Needed word');
+        gId("hintText").innerText = newstr;
         gId("hint").style.display = "block"
     }
     // function hint() {

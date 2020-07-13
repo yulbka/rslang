@@ -117,7 +117,7 @@ body {
     box-shadow: 0 3px 0 -1px #555;
     display: inline-block;
     margin: 1px;
-    height: 20px;
+    height: 30px;
     text-transform: uppercase;
     width: 20px;
 }
@@ -415,8 +415,17 @@ body {
 }
 
 .anim {
+    cursor: pointer;
     animation: button 3s infinite;
     -webkit-animation: button 3s infinite;
+}
+
+.ingame_statictic{
+    width: 180px;
+    position: fixed;
+    font-size: 32px;
+    top: 60px;
+    right: 10px;
 }
 
 @keyframes button {
