@@ -1,13 +1,27 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import '../css/dictionary.scss';
+import { store } from '../store';
+import { initRequests } from '../index'
 import {WordService} from './service/Word.Service';
 
 export function create_dictionary() {
     const main = document.getElementById('main');
     const base = 'https://raw.githubusercontent.com/irinainina/rslang/rslang-data/data/';
 
-    function create_started_table() {
+    window.onload = async () => {
+        await initRequests();
+    };
+
+    const settings = store.user.learning;
+
+    const {withExample} = settings;
+    const {withExplanation} = settings;
+    const {withHelpImage} = settings;
+    const {withTranscription} = settings;
+    const {withTranslation} = settings;
+
+    function create_started_table(dowithExample, dowithExplanation, dowithHelpImage, dowithTranscription, dowithTranslation) {
         const main_container = `
         <div class="container" id="container">
         <div class='buttons'>
@@ -27,57 +41,65 @@ export function create_dictionary() {
         <div class="table-responsive">
             <table class="table table-sortable" id='table_id'>
             <thead>
-                <tr>
+                <tr id='thead_id'>
                 <th>Audio</th>
-                <th>Image</th>
                 <th class="th-sort-asc" id='word'>Word</th>
-                <th>Transcription</th>
-                <th>Translate</th>
-                <th>Total count</th>
+
                 </tr>
             </thead>
                 <tbody id="tBody">
                 </tbody>
             </table>
         </div>
-        <div class="bottom_buttons">
-            <button type="button" class="btn btn-primary" id="previousPage">Previous page</button>
-            <button type="button" class="btn btn-primary" id="nextPage">Next page</button>
-        </div>  
         </>
         `;
         main.innerHTML += main_container;
+        if(dowithHelpImage === true){
+            document.getElementById('thead_id').innerHTML += `<th>Image</th>`
+        }
+        if(dowithTranscription === true){
+            document.getElementById('thead_id').innerHTML += `<th>Transcription</th>`
+        }
+        if(dowithTranslation === true){
+            document.getElementById('thead_id').innerHTML += `<th>Translation</th>`
+        }
+        if(dowithExample === true){
+            document.getElementById('thead_id').innerHTML += `<th>Text example</th>`
+        }
+        if(dowithExplanation === true){
+            document.getElementById('thead_id').innerHTML += `<th>Text explanation</th>`
+        }
+
     }
     
-    create_started_table();
+    create_started_table(withExample, withExplanation, withHelpImage, withTranscription, withTranslation);
+    create_default_dictionary();
 
     const tBody = document.getElementById('tBody');
 
+    // WordService.getWordsByLevelAndPage().then(data => {
+    //     console.log(data)
+    //     create_table(data);
+    // })
     WordService.getWordsByLevelAndPage().then(data => {
         create_table(data);
     })
 
 
-    // function create_default_dictionary(){
-    //     const bottom_buttons = `
-    //     <div class="bottom_buttons">
-    //         <button type="button" class="btn btn-primary" id="previousPage">Previous page</button>
-    //         <button type="button" class="btn btn-primary" id="nextPage">Next page</button>
-    //     </div>       
-    //     `;
-    //     document.getElementById('container').innerHTML += bottom_buttons;
-    // }
+    function create_default_dictionary(){
+        const bottom_buttons = `
+        <div class="bottom_buttons" id='bottom_buttons'>
+            <button type="button" class="btn btn-primary" id="previousPage">Previous page</button>
+            <button type="button" class="btn btn-primary" id="nextPage">Next page</button>
+        </div>       
+        `;
+        document.getElementById('container').innerHTML += bottom_buttons;
+    }
 
-
-    
-    // document.getElementById('nextPage').addEventListener('click', () => {
-    //     WordService.getMoreWords().then(data => {
-    //       create_table(data);
-    //     })
-    // });
     document.getElementById('filter_all').addEventListener('click', () => {
         WordService.getWordsByLevelAndPage().then(data => {
             create_table(data);
+            document.getElementById('bottom_buttons').classList.remove('hide');
         })  
     })
 
@@ -94,30 +116,42 @@ export function create_dictionary() {
     })
     });
 
-    let final_count;
-    // let amount;
-    
     function create_table(data) {
         tBody.innerHTML = '';
-        data.map(item => WordService.getAggregatedWord(item.id).then(newdata => {
-            if(newdata.userWord.optional){
-                final_count = Number(newdata.userWord.optional.mistakeCount) + Number(newdata.userWord.optional.progressCount);
-            }
-            create_one_cell(item._id, item.audio, item.image, item.word, item.transcription, item.wordTranslate, final_count) 
+            data.map(item => create_one_cell(item.id, item.audio, item.image, item.word, item.transcription, item.wordTranslate, item.textExample, item.textMeaning))
         }
-        )
-        )
-    };
+
+    function create_one_cell(id, audio, image, word, transcription, wordTranslate, textExample, textMeaning) {
+            tBody.innerHTML += `<tr id="${id}">
+            <td><img src='https://i.ibb.co/FxW8BS6/321.png' class='small_icon' data-audio='${base}${audio}'></td>
+            <td>${word}</td>
+            </tr>`
+            if(withHelpImage === true) {
+                document.getElementById(`${id}`).innerHTML += `<td><img src='${base}${image}' class='small_img'></td>`;
+            }
+            if(withTranscription === true) {
+                document.getElementById(`${id}`).innerHTML += `<td>${transcription}</td>`;
+            }
+            if(withTranslation === true) {
+                document.getElementById(`${id}`).innerHTML += `<td>${wordTranslate}</td>`;
+            }
+            if(withExample === true){
+                document.getElementById(`${id}`).innerHTML += `<td>${textExample}</td>`;
+            }
+            if(withExplanation === true){
+                document.getElementById(`${id}`).innerHTML += `<td>${textMeaning}</td>`;
+            }
+        }
 
     function create_unusual_table(data) {
         tBody.innerHTML = '';
-        data.map( item => create_one_unusual_cell(item._id, item.audio, item.image, item.word, item.transcription, item.wordTranslate))
+        data.map( item => create_one_unusual_cell(item._id, item.audio, item.image, item.word, item.transcription, item.wordTranslate, item.textExample, item.textMeaning))
     }
 
     function create_current_words_table(data) {  
         tBody.innerHTML = '';
         data.map(item => 
-            create_one_cell(item._id, item.audio, item.image, item.word, item.transcription, item.wordTranslate, final_count) 
+            create_one_cell_for_learned_words(item._id, item.audio, item.image, item.word, item.transcription, item.wordTranslate, item.textExample, item.textMeaning, item.userWord.optional.lastDayRepeat, item.userWord.optional.nextDayRepeat, `${Number(item.userWord.optional.mistakeCount) + Number(item.userWord.optional.progressCount)}`) 
         )
     }
 
@@ -125,31 +159,60 @@ export function create_dictionary() {
         WordService.updateUserWord(wordId, 'normal', {category: 'learned'})
     }
 
-    function create_one_cell(id, audio, image, word, transcription, wordTranslate, total) {
+
+    function create_one_unusual_cell(id, audio, image, word, transcription, wordTranslate, textExample, textMeaning) {
         tBody.innerHTML += `<tr id="${id}">
         <td><img src='https://i.ibb.co/FxW8BS6/321.png' class='small_icon' data-audio='${base}${audio}'></td>
-        <td><img src='${base}${image}' class='small_img'></td>
         <td>${word}</td>
-        <td>${transcription}</td>
-        <td>${wordTranslate}</td>
-        <td>${total}</td>
       </tr>`
+    if(withHelpImage === true) {
+        document.getElementById(`${id}`).innerHTML += `<td><img src='${base}${image}' class='small_img'></td>`;
+    }
+    if(withTranscription === true) {
+        document.getElementById(`${id}`).innerHTML += `<td>${transcription}</td>`;
+    }
+    if(withTranslation === true) {
+        document.getElementById(`${id}`).innerHTML += `<td>${wordTranslate}</td>`;
+    }
+    if(withExample === true){
+        document.getElementById(`${id}`).innerHTML += `<td>${textExample}</td>`;
+    }
+    if(withExplanation === true){
+        document.getElementById(`${id}`).innerHTML += `<td>${textMeaning}</td>`;
+    }
+    document.getElementById(`${id}`).innerHTML += `<td><button type="button" class="btn btn-danger" id="filter_recover_word" data-word='${id}'>Восстановить</button></td>`
     }
 
-    function create_one_unusual_cell(id, audio, image, word, transcription, wordTranslate) {
+    function create_one_cell_for_learned_words(id, audio, image, word, transcription, wordTranslate, textExample, textMeaning, lastDayRepeat, nextDayRepeat, total_count){
+        const lastDayRepeat_correct = lastDayRepeat.slice(0,10);
+        const nextDayRepeat_correct = nextDayRepeat.slice(0,10);
         tBody.innerHTML += `<tr id="${id}">
         <td><img src='https://i.ibb.co/FxW8BS6/321.png' class='small_icon' data-audio='${base}${audio}'></td>
-        <td><img src='${base}${image}' class='small_img'></td>
         <td>${word}</td>
-        <td>${transcription}</td>
-        <td>${wordTranslate}</td>
-        <td><button type="button" class="btn btn-danger" id="filter_recover_word" data-word='${id}'>Восстановить</button></td>
       </tr>`
+    if(withHelpImage === true) {
+        document.getElementById(`${id}`).innerHTML += `<td><img src='${base}${image}' class='small_img'></td>`;
+    }
+    if(withTranscription === true) {
+        document.getElementById(`${id}`).innerHTML += `<td>${transcription}</td>`;
+    }
+    if(withTranslation === true) {
+        document.getElementById(`${id}`).innerHTML += `<td>${wordTranslate}</td>`;
+    }
+    if(withExample === true){
+        document.getElementById(`${id}`).innerHTML += `<td>${textExample}</td>`;
+    }
+    if(withExplanation === true){
+        document.getElementById(`${id}`).innerHTML += `<td>${textMeaning}</td>`;
+    }
+    document.getElementById(`${id}`).innerHTML += `<td>${lastDayRepeat_correct}</td>
+    <td>${nextDayRepeat_correct}</td>
+    <td>${total_count}</td>
+    `
     }
 
     tBody.addEventListener('click', () => {
         const element = event.target.closest('button');
-        console.log()
         if (element == null){
             return
         }
@@ -219,19 +282,22 @@ export function create_dictionary() {
 
     document.getElementById('filter_learn').addEventListener('click', () => {
         WordService.getWordsByCategory('learned').then(data => {
-            create_current_words_table(data)
+            create_current_words_table(data);
+            document.getElementById('bottom_buttons').classList.add('hide');
         });
     })
 
     document.getElementById('filter_hard').addEventListener('click', () => {
         WordService.getWordsByCategory('difficult').then(data => {
-            create_unusual_table(data)
+            create_unusual_table(data);
+            document.getElementById('bottom_buttons').classList.add('hide');
         });
     })
 
     document.getElementById('filter_delete').addEventListener('click', () => {
         WordService.getWordsByCategory('deleted').then(data => {
-            create_unusual_table(data)
+            create_unusual_table(data);
+            document.getElementById('bottom_buttons').classList.add('hide');
         });
     })
 }
