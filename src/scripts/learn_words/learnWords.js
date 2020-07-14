@@ -1,5 +1,6 @@
 import tippy from 'tippy.js';
-import { PRELOADER } from '../helpers/variables';
+import $ from 'jquery';
+import { PRELOADER, MAIN, routeKeys, routesMap } from '../helpers/variables';
 import { createElement } from '../helpers/createElement';
 import { initializeSwiper } from './swiper';
 import { WordService } from '../service/Word.Service';
@@ -9,6 +10,7 @@ import { store } from '../../store';
 import { getRandomNumber } from '../helpers/getRandomNumber';
 import { Statistics } from '../Statistics';
 import { API_USER } from '../../api/user';
+import { router } from '../../routes';
 
 export class LearnWords {
   static async init() {
@@ -22,8 +24,10 @@ export class LearnWords {
       learnedWords: statistics.learnedWords,
       ...statistics.optional
     }
+    console.log(statistics)
+    this.createPopUp();
     const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
-    if (store.mainGame.statistics.short.day !== today) {
+    if (!store.mainGame.statistics.short || store.mainGame.statistics.short.day !== today) {
       store.mainGame.statistics.short = {
         day: today,
         cards: 0,
@@ -42,15 +46,14 @@ export class LearnWords {
     PRELOADER.classList.remove('preload-wrapper-hidden');
     if (store.mainGame.statistics.long[today] &&
       store.mainGame.statistics.long[today].cards >= store.user.learning.cardsPerDay) {
-      console.log('show popup'); // TODO add notification;
+        $('#learnModal').modal('show');
     } else {
-      await this.render()
+      await this.render();
     }
     PRELOADER.classList.add('preload-wrapper-hidden');
   }
 
   static async render() {
-    const MAIN = document.querySelector('#main');
     const fragment = document.createDocumentFragment();
     const wrapper = createElement('div', fragment, ['learn-wrapper']);
     const main = createElement('div', wrapper, ['learn-main']);
@@ -65,7 +68,7 @@ export class LearnWords {
     const progress = createElement('div', progressWrapper, ['progress']);
     createElement('div', progress, ['progress-bar'], '', 'role', 'progressbar');
     createElement('div', progressWrapper, ['progress-number', 'progress-max', 'text-primary'], '100');
-    MAIN.append(fragment);
+    MAIN.append(fragment); 
     await this.addCards();
     tippy('[data-tippy-content]');
     this.inputHandler();
@@ -474,7 +477,6 @@ export class LearnWords {
         learnedWords: statistics.learnedWords,
         ...statistics.optional
       }
-    console.log(statistics)
   }
 
   static addSlide(card) {
@@ -486,4 +488,29 @@ export class LearnWords {
     const progressBar = document.querySelector('.progress-bar');
     progressBar.setAttribute('aria-valuemax', progressMax.textContent);
   }
+
+  static createPopUp() {
+    MAIN.insertAdjacentHTML('beforeend', 
+    `<div class="modal" id="learnModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Ура! На сегодня всё.</h5>     
+            </div>
+            <div class="modal-body">
+              <p>Есть ещё новые карточки, но дневной лимит исчерпан. Вы можете увеличить лимит в настройках, но, пожалуйста, имейте в виду, что чем больше новых карточек вы просмотрите, тем больше вам надо будет повторять в ближайшее время.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary btn-popup">Настройки</button>
+            </div>
+          </div>
+        </div>
+      </div>`
+    );
+    const link = document.querySelector('.btn-popup');
+    link.addEventListener('click', () => {
+      router.navigate(routesMap.get(routeKeys.home).url);
+    });
+  }
+
 }
