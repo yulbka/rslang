@@ -2,6 +2,8 @@ import { SIDEBAR, MAIN, HEADER, routesMap, routeKeys } from 'scripts/helpers/var
 import { pageHomeCreate } from 'pages/main';
 import { store } from 'store';
 import { audioCallGameCreate } from 'pages/games/audiocall';
+import { aboutTeamCreate } from 'pages/aboutTeam';
+import { create_dictionary } from './dictionary';
 import { createSidebar } from './burger';
 import { Header } from './Header';
 import { Authorization } from './Authorization';
@@ -27,7 +29,7 @@ export class App {
       this.checkHeader();
     }
     MAIN.innerHTML = '';
-    document.body.classList.remove('main-page');
+    document.body.classList.remove('content-page');
     this.setContent(page);
   }
 
@@ -87,7 +89,7 @@ export class App {
         MAIN.innerHTML = '<div>promo</div>'; // replace with function that render promo page
         break;
       case routesMap.get(routeKeys.team).url:
-        MAIN.innerHTML = '<div>aboutUs</div>'; // replace with function that render aboutUs page
+        aboutTeamCreate(); // replace with function that render aboutUs page
         break;
       default:
         break;
