@@ -27,7 +27,7 @@ export class App {
       this.checkHeader();
     }
     MAIN.innerHTML = '';
-    document.body.classList.remove('main-page');
+    document.body.classList.remove('content-page', 'speakit', 'savannahGame', 'audiocall-game', 'about-team', 'long-statistics');
     this.setContent(page);
   }
 
@@ -61,7 +61,7 @@ export class App {
         Statistics.renderLongPage();
         break;
       case routesMap.get(routeKeys.vocabulary).url:
-        create_dictionary(); // replace with function that render dictionary page
+        create_dictionary();
         break;
       case routesMap.get(routeKeys.speakIt).url:        
         renderSpeakIt();

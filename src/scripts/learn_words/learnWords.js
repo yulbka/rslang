@@ -1,5 +1,6 @@
 import tippy from 'tippy.js';
-import { PRELOADER } from '../helpers/variables';
+import $ from 'jquery';
+import { PRELOADER, MAIN, routeKeys, routesMap } from '../helpers/variables';
 import { createElement } from '../helpers/createElement';
 import { initializeSwiper } from './swiper';
 import { WordService } from '../service/Word.Service';
@@ -9,6 +10,7 @@ import { store } from '../../store';
 import { getRandomNumber } from '../helpers/getRandomNumber';
 import { Statistics } from '../Statistics';
 import { API_USER } from '../../api/user';
+import { router } from '../../routes';
 
 export class LearnWords {
   static async init() {
@@ -17,18 +19,17 @@ export class LearnWords {
       wordsPerDay: userSettings.wordsPerDay,
       ...userSettings.learning,
     };
-    console.log(userSettings);
-    console.log(store)
     const statistics = await Statistics.get();
     store.statistics = {
       learnedWords: statistics.learnedWords,
       mainGame: {
         ...statistics.optional.mainGame,
       },
-      ...statistics.optional,      
-    }    
+      ...statistics.optional,
+    }
+    this.createPopUp();
     const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
-    if (store.statistics.mainGame.short.day !== today) {
+    if (!store.statistics.mainGame.short || store.statistics.mainGame.short.day !== today) {
       store.statistics.mainGame.short = {
         day: today,
         cards: 0,
@@ -46,16 +47,15 @@ export class LearnWords {
     }
     PRELOADER.classList.remove('preload-wrapper-hidden');
     if (store.statistics.mainGame.long[today] &&
-      store.statistics.mainGame.long[today].cards >= store.user.learning.cardsPerDay) {
-      console.log('show popup'); // TODO add notification;
+      +store.statistics.mainGame.long[today].cards >= +store.user.learning.cardsPerDay) {
+        $('#learnModal').modal('show');
     } else {
-      await this.render()
+      await this.render();
     }
     PRELOADER.classList.add('preload-wrapper-hidden');
   }
 
   static async render() {
-    const MAIN = document.querySelector('#main');
     const fragment = document.createDocumentFragment();
     const wrapper = createElement('div', fragment, ['learn-wrapper']);
     const main = createElement('div', wrapper, ['learn-main']);
@@ -70,8 +70,12 @@ export class LearnWords {
     const progress = createElement('div', progressWrapper, ['progress']);
     createElement('div', progress, ['progress-bar'], '', 'role', 'progressbar');
     createElement('div', progressWrapper, ['progress-number', 'progress-max', 'text-primary'], '100');
-    MAIN.append(fragment);
+    MAIN.append(fragment); 
     await this.addCards();
+    const mySwiper = initializeSwiper('.swiper-container');
+    if (mySwiper.slides.length < 1) {
+      $('#learnModal').modal('show');
+    }
     tippy('[data-tippy-content]');
     this.inputHandler();
     this.showAnswerHandler();
@@ -298,7 +302,11 @@ export class LearnWords {
 
   static async goToNextCard() {
     const mySwiper = document.querySelector('.swiper-container').swiper;
-    if (+store.statistics.mainGame.short.cards === +store.user.learning.cardsPerDay) {
+    // if (+store.statistics.mainGame.short.cards === +store.user.learning.cardsPerDay) {
+    //   Statistics.renderShortPage();
+    // }
+    if (+store.statistics.mainGame.short.cards === +store.user.learning.cardsPerDay ||
+      mySwiper.activeIndex === mySwiper.slides.length - 1) {
       Statistics.renderShortPage();
     }
     mySwiper.allowSlideNext = true;
@@ -476,4 +484,30 @@ export class LearnWords {
     const progressBar = document.querySelector('.progress-bar');
     progressBar.setAttribute('aria-valuemax', progressMax.textContent);
   }
+
+  static createPopUp() {
+    MAIN.insertAdjacentHTML('beforeend', 
+    `<div class="modal" id="learnModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Ура! На сегодня всё.</h5>     
+            </div>
+            <div class="modal-body">
+              <p>Есть ещё новые карточки, но дневной лимит исчерпан. Вы можете увеличить лимит в настройках, но, пожалуйста, имейте в виду, что чем больше новых карточек вы просмотрите, тем больше вам надо будет повторять в ближайшее время.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary btn-popup">Настройки</button>
+            </div>
+          </div>
+        </div>
+      </div>`
+    );
+    const link = document.querySelector('.btn-popup');
+    link.addEventListener('click', () => {
+      $('#learnModal').modal('hide');
+      router.navigate(routesMap.get(routeKeys.home).url);
+    });
+  }
+
 }
