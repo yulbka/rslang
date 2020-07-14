@@ -19,8 +19,6 @@ export class LearnWords {
       wordsPerDay: userSettings.wordsPerDay,
       ...userSettings.learning,
     };
-    console.log(userSettings);
-    console.log(store)
     const statistics = await Statistics.get();
     store.statistics = {
       learnedWords: statistics.learnedWords,
@@ -28,9 +26,10 @@ export class LearnWords {
         ...statistics.optional.mainGame,
       },
       ...statistics.optional,
-    }    
+    }
+    this.createPopUp();
     const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
-    if (store.statistics.mainGame.short.day !== today) {
+    if (!store.statistics.mainGame.short || store.statistics.mainGame.short.day !== today) {
       store.statistics.mainGame.short = {
         day: today,
         cards: 0,
@@ -48,7 +47,7 @@ export class LearnWords {
     }
     PRELOADER.classList.remove('preload-wrapper-hidden');
     if (store.statistics.mainGame.long[today] &&
-      store.statistics.mainGame.long[today].cards >= store.user.learning.cardsPerDay) {
+      +store.statistics.mainGame.long[today].cards >= +store.user.learning.cardsPerDay) {
         $('#learnModal').modal('show');
     } else {
       await this.render();
@@ -73,6 +72,10 @@ export class LearnWords {
     createElement('div', progressWrapper, ['progress-number', 'progress-max', 'text-primary'], '100');
     MAIN.append(fragment); 
     await this.addCards();
+    const mySwiper = initializeSwiper('.swiper-container');
+    if (mySwiper.slides.length < 1) {
+      $('#learnModal').modal('show');
+    }
     tippy('[data-tippy-content]');
     this.inputHandler();
     this.showAnswerHandler();
@@ -299,7 +302,11 @@ export class LearnWords {
 
   static async goToNextCard() {
     const mySwiper = document.querySelector('.swiper-container').swiper;
-    if (+store.statistics.mainGame.short.cards === +store.user.learning.cardsPerDay) {
+    // if (+store.statistics.mainGame.short.cards === +store.user.learning.cardsPerDay) {
+    //   Statistics.renderShortPage();
+    // }
+    if (+store.statistics.mainGame.short.cards === +store.user.learning.cardsPerDay ||
+      mySwiper.activeIndex === mySwiper.slides.length - 1) {
       Statistics.renderShortPage();
     }
     mySwiper.allowSlideNext = true;
@@ -481,7 +488,7 @@ export class LearnWords {
   static createPopUp() {
     MAIN.insertAdjacentHTML('beforeend', 
     `<div class="modal" id="learnModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title">Ура! На сегодня всё.</h5>     
@@ -498,6 +505,7 @@ export class LearnWords {
     );
     const link = document.querySelector('.btn-popup');
     link.addEventListener('click', () => {
+      $('#learnModal').modal('hide');
       router.navigate(routesMap.get(routeKeys.home).url);
     });
   }

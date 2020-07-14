@@ -25,4 +25,5 @@ export async function initRequests() {
       ...userSettings,
     };
   }
+  
 }
