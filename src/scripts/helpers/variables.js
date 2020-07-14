@@ -36,7 +36,7 @@ export const routesMap = new Map([
     {
       url: '#/games/englishPuzzle',
       title: 'Английский пазл',
-      preview: require('assets/img/content/speakIt.png').default,
+      preview: require('assets/img/content/puzzle.png').default,
     },
   ],
   [
