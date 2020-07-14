@@ -1,70 +1,70 @@
-import {Statistics} from "scripts/Statistics";
-import {audiocallGameSettings} from "store/gameAudioCall";
-import {constants} from "js/constants";
-import {routeKeys, routesMap} from "scripts/helpers/variables";
-import { timer } from 'pages/games/audiocall/render'
+import { Statistics } from 'scripts/Statistics';
+import { audiocallGameSettings } from 'store/gameAudioCall';
+import { constants } from 'js/constants';
+import { routeKeys, routesMap } from 'scripts/helpers/variables';
+import { timer } from 'pages/games/audiocall/render';
 
 export async function sendStatistics() {
-    const allStatistics = await Statistics.get();
-    delete allStatistics.id;
-    allStatistics.optional.audiocallGame = (() => {
-        const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
-        const { audiocallGame = {} } = allStatistics.optional;
-        if (!audiocallGame[today]) audiocallGame[today] = [];
-        audiocallGame[today].push(
-            ['learned', 'errors'].reduce((resAcc, fieldKey) => {
-                // eslint-disable-next-line no-param-reassign
-                resAcc[fieldKey] = audiocallGameSettings.currentGame.statistics[fieldKey].size;
-                return resAcc;
-            }, {})
-        );
-        return audiocallGame;
-    })();
-    await Statistics.set(allStatistics);
+  const allStatistics = await Statistics.get();
+  delete allStatistics.id;
+  allStatistics.optional.audiocallGame = (() => {
+    const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
+    const { audiocallGame = {} } = allStatistics.optional;
+    if (!audiocallGame[today]) audiocallGame[today] = [];
+    audiocallGame[today].push(
+      ['learned', 'errors'].reduce((resAcc, fieldKey) => {
+        // eslint-disable-next-line no-param-reassign
+        resAcc[fieldKey] = audiocallGameSettings.currentGame.statistics[fieldKey].size;
+        return resAcc;
+      }, {})
+    );
+    return audiocallGame;
+  })();
+  await Statistics.set(allStatistics);
 }
 
 export function createGameStatistics() {
-    const { body } = constants.DOM;
-    const { errors, learned } = audiocallGameSettings.currentGame.statistics;
-    const gameSection = body.querySelector('.audiocall-game-section');
-    gameSection.className = 'audiocall-game-section container';
-    body.classList.remove('play-mode');
-    body.classList.add('game-statistics');
+  const { body } = constants.DOM;
+  const { errors, learned } = audiocallGameSettings.currentGame.statistics;
+  const gameSection = body.querySelector('.audiocall-game-section');
+  gameSection.className = 'audiocall-game-section container';
+  body.classList.remove('play-mode');
+  body.classList.add('game-statistics');
 
-    gameSection.innerHTML = '';
-    gameSection.insertAdjacentHTML(
-        'afterbegin',
-        `
+  gameSection.innerHTML = '';
+  gameSection.insertAdjacentHTML(
+    'afterbegin',
+    `
     
       <div class="statistics-block">
       <h2>Статистика игры:</h2>
       ${
-            errors.size > 0
-                ? `<p>Ошибок<span class="errors-amount">${errors.size}</span></p>
+        errors.size > 0
+          ? `<p>Ошибок<span class="errors-amount">${errors.size}</span></p>
        
       <div class="errors-words">
       ${Array.from(errors)
-                    .map(
-                        (error) =>
-                            `<div class="word-in-statistics"><button onclick=""></button><div>${error[0]}</div><span>—</span>
+        .map(
+          (error) =>
+            `<div class="word-in-statistics"><button onclick=""></button><div>${error[0]}</div><span>—</span>
         <div class="translation">${error[1].wordTranslate}</div></div>`
-                    )
-                    .join('')}`
-                : ''
-        }
+        )
+        .join('')}`
+          : ''
+      }
       ${
-            learned.size > 0
-                ? `<p>Знаю<span class="learned-amount">${learned.size}</span></p>
+        learned.size > 0
+          ? `<p>Знаю<span class="learned-amount">${learned.size}</span></p>
       <div class="learned-words">
       ${Array.from(learned)
-                    .map(
-                        (learnedWord) =>
-                            `<div class="word-in-statistics"><div>${learnedWord[0]}</div>
+        .map(
+          (learnedWord) =>
+            `<div class="word-in-statistics"><div>${learnedWord[0]}</div>
         <div class="translation"><span>—</span>${learnedWord[1].wordTranslate}</div></div>`
-                    )
-                    .join('')}`
-                : ''
-        }
+        )
+        .join('')}`
+          : ''
+      }
        <div class="buttons-block">
       <a type="button" class="btn btn-info button-play-next">Играть дальше</a>
       <a type="button" class="btn btn-info" href="${routesMap.get(routeKeys.home).url}">Ко всем играм</a>
@@ -72,27 +72,27 @@ export function createGameStatistics() {
         </div>
       </div>
       `
-    );
-    buttonPlayNextHandler();
-    buttonLongStatisticsHandler();
+  );
+  buttonPlayNextHandler();
+  buttonLongStatisticsHandler();
 }
 
 async function createLongStatistics() {
-    const allStatistics = await Statistics.get();
-    const { audiocallGame: longStatistics } = allStatistics.optional;
-    const audiocallGameSection = document.querySelector('.audiocall-game-section');
-    audiocallGameSection.innerHTML = '';
-    audiocallGameSection.className = 'audiocall-game-section long-statistics container';
-    audiocallGameSection.insertAdjacentHTML(
-        'afterbegin',
-        `<div class="statistics-block">
+  const allStatistics = await Statistics.get();
+  const { audiocallGame: longStatistics } = allStatistics.optional;
+  const audiocallGameSection = document.querySelector('.audiocall-game-section');
+  audiocallGameSection.innerHTML = '';
+  audiocallGameSection.className = 'audiocall-game-section long-statistics container';
+  audiocallGameSection.insertAdjacentHTML(
+    'afterbegin',
+    `<div class="statistics-block">
             <h2>Статистика за все время:</h2>
             <div class="all-long-statistics">
                 ${(() => {
-            const arr = [];
-            for (const [key, value] of Object.entries(longStatistics)) {
-                arr.push(
-                    `<div class="statistics-one-day">
+                  const arr = [];
+                  for (const [key, value] of Object.entries(longStatistics)) {
+                    arr.push(
+                      `<div class="statistics-one-day">
                           <div class="statisctics-date">
                                 <p>Дата:</p>
                                 <p>${key}</p>
@@ -102,23 +102,23 @@ async function createLongStatistics() {
                             <div>ошибки / правильно</div>
                             <div class="all-results">
                                 ${value
-                        .map(
-                            (el) => `
+                                  .map(
+                                    (el) => `
                                     <div class="one-game-statistics">
                                         <p><span class="learned-amount">${el.learned}</span></p>
                                         <p>/<span class="errors-amount">${el.errors}</span></p>
                                     </div>
                                   `
-                        )
-                        .join('')}
+                                  )
+                                  .join('')}
                             </div>
                           </div>
                       </div> 
                       `
-                );
-            }
-            return arr.join('');
-        })()}
+                    );
+                  }
+                  return arr.join('');
+                })()}
             </div>    
             <div class="buttons-block">
               <a type="button" class="btn btn-info button-play-next">Играть дальше</a>
@@ -126,17 +126,16 @@ async function createLongStatistics() {
             </div>
         </div>  
 `
-    );
-    buttonPlayNextHandler();
+  );
+  buttonPlayNextHandler();
 }
 
-
 function buttonPlayNextHandler() {
-    const gameSection = document.querySelector('.audiocall-game-section');
-    gameSection.querySelector('.button-play-next').addEventListener('click', timer);
+  const gameSection = document.querySelector('.audiocall-game-section');
+  gameSection.querySelector('.button-play-next').addEventListener('click', timer);
 }
 
 function buttonLongStatisticsHandler() {
-    const gameSection = document.querySelector('.audiocall-game-section');
-    gameSection.querySelector('.long-statistics').addEventListener('click', createLongStatistics);
+  const gameSection = document.querySelector('.audiocall-game-section');
+  gameSection.querySelector('.long-statistics').addEventListener('click', createLongStatistics);
 }

@@ -1,13 +1,13 @@
 .audiocall-game {
   font-size: 1.5em;
   &::before {
-    /* background-color: hsla(var(--background-hue), 100%, 26%, 1);*/
     background: linear-gradient(
       180deg,
       rgb(132, 102, 169, 1) 0%,
       hsla(var(--background-hue), 100%, 26%, 0.8) 77%,
       rgb(136, 92, 112, 1) 100%
     );
+    background-color: hsla(var(--background-hue), 100%, 26%, 1);
     content: '';
     display: block;
     height: 100vh;
@@ -188,6 +188,7 @@
       color: $colorWhiteTransparent5;
       pointer-events: none;
       text-decoration: line-through;
+      user-select: none;
     }
 
     &.is-right {
@@ -225,7 +226,7 @@
     }
   }
 }
-/* Statistics mode*/
+/* Statistics*/
 .audiocall-game-section.long-statistic {
   height: initial !important;
 }
@@ -236,7 +237,7 @@
     padding: 30px;
     width: 100%;
     @media (min-width: 1024px) {
-      width: 60%;
+      width: 70%;
     }
     .buttons-block {
       color: $colorWhite;
@@ -264,19 +265,19 @@
     span {
       margin: 0 10px;
     }
+    button {
+      padding: 0;
+    }
   }
   .errors-amount,
   .learned-amount {
     border: 1px solid transparent;
     border-radius: 15px;
-    /*    color: $colorWhite;*/
     font-size: 0.8em;
     margin-left: 20px;
     padding: 1px 15px;
   }
 }
-
-/*statistics*/
 
 .audiocall-game {
   .statistics-one-day {
@@ -312,13 +313,6 @@
   .errors-amount,
   .learned-amount {
     border-radius: 15px;
-    /* padding: 10px;
-    border-radius: 50%;*/
-    /* width: 40px;
-    height: 40px;*/
-    /*  display: flex;
-    justify-content: center;
-    align-items: center;*/
     padding: 2px 12px;
   }
   .errors-amount {

@@ -1,8 +1,8 @@
 import { constants } from 'js/constants';
 import { store } from 'store/index';
-import {  createButtonStart  } from "pages/games/audiocall/render";
+import { createButtonStart } from 'pages/games/audiocall/render';
 
-const { audiocallGame: audiocallGameSettings } = store
+const { audiocallGame: audiocallGameSettings } = store;
 
 export async function audioCallGameCreate() {
   const { main } = constants.DOM;
@@ -34,8 +34,8 @@ export function createStartScreen() {
 }
 
 export function backgroundColorsHandler({ needReset } = {}) {
-  const {body} = document;
-  const {maxWordsLength} = audiocallGameSettings.currentGame;
+  const { body } = document;
+  const { maxWordsLength } = audiocallGameSettings.currentGame;
   const currentHue = needReset ? 0 : +body.style.getPropertyValue('--background-hue');
   const finishHueValue = 90;
   const step = finishHueValue / maxWordsLength;
