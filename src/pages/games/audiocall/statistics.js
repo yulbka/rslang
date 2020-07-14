@@ -2,7 +2,7 @@ import {Statistics} from "scripts/Statistics";
 import {audiocallGameSettings} from "store/gameAudioCall";
 import {constants} from "js/constants";
 import {routeKeys, routesMap} from "scripts/helpers/variables";
-import { playAudiocallGame } from './index'
+import { timer } from 'pages/games/audiocall/render'
 
 export async function sendStatistics() {
     const allStatistics = await Statistics.get();
@@ -75,14 +75,6 @@ export function createGameStatistics() {
     );
     buttonPlayNextHandler();
     buttonLongStatisticsHandler();
-
-    function buttonPlayNextHandler() {
-        gameSection.querySelector('.button-play-next').addEventListener('click', playAudiocallGame);
-    }
-
-    function buttonLongStatisticsHandler() {
-        gameSection.querySelector('.long-statistics').addEventListener('click', createLongStatistics);
-    }
 }
 
 async function createLongStatistics() {
@@ -135,4 +127,16 @@ async function createLongStatistics() {
         </div>  
 `
     );
+    buttonPlayNextHandler();
+}
+
+
+function buttonPlayNextHandler() {
+    const gameSection = document.querySelector('.audiocall-game-section');
+    gameSection.querySelector('.button-play-next').addEventListener('click', timer);
+}
+
+function buttonLongStatisticsHandler() {
+    const gameSection = document.querySelector('.audiocall-game-section');
+    gameSection.querySelector('.long-statistics').addEventListener('click', createLongStatistics);
 }

@@ -60,7 +60,11 @@ export async function requestCreator(settings) {
     const result = await response.json();
     return result;
   } catch (error) {
-    throw error;
+    if (error === 'somethingError') {
+      console.error(error);
+    } else {
+      throw error;
+    }
   }
 }
 
