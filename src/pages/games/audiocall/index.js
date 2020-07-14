@@ -1,83 +1,11 @@
 import { constants } from 'js/constants';
-import { requestCreator } from 'utils/requests';
 import { store } from 'store/index';
 import { WordService } from 'scripts/service/Word.Service';
-import { routesMap, routeKeys } from 'scripts/helpers/variables';
-import { Statistics } from 'scripts/Statistics';
-import { initRequests } from '../../index';
+import { getRandomInt } from 'utils'
+import {createGameStatistics, sendStatistics} from "pages/games/audiocall/statistics";
 
-export const audiocallGameSettings = {
-  currentGame: {
-    currentWord: 0,
-    setCurrentWord() {
-      const isEndGame = this.statistics.learned.size + this.statistics.errors.size >= this.maxWordsLength;
-      if (isEndGame) {
-        sendStatistics();
-        createGameStatistics();
-        return;
-      }
+const { audiocallGame: audiocallGameSettings } = store
 
-      let newWordIndex;
-      let newWord;
-
-      do {
-        newWordIndex = getRandomInt(audiocallGameSettings.wordsArray.length);
-        newWord = audiocallGameSettings.wordsArray[newWordIndex].word;
-      } while (this.statistics.learned.has(newWord) || this.statistics.errors.has(newWord));
-
-      this.currentWord = newWordIndex;
-    },
-    maxWordsLength: 3,
-    variants: 5,
-    statistics: {
-      learned: new Map(),
-      errors: new Map(),
-    },
-  },
-  get currentLevel() {
-    return localStorage.getItem('levelAudiocallGame') ? +localStorage.getItem('levelAudiocallGame') : 1;
-  },
-  wordsMap: new Map(),
-  similarWordsMAp: new Map(),
-  get wordsArray() {
-    return Array.from(this.wordsMap.values()).filter(({ level }) => level === this.currentLevel);
-  },
-  async getWords() {
-    const { count: amountWordsByLevel } = await WordService.getAmountUserWords({ group: this.currentLevel });
-    const pageSize = 20;
-    const words = await WordService.getWordsByLevelAndPage(
-      this.currentLevel,
-      getRandomInt(amountWordsByLevel / pageSize)
-    );
-    words.forEach((gameWord) =>
-      this.wordsMap.set(gameWord.word, {
-        wordId: gameWord.id,
-        word: gameWord.word,
-        audio: gameWord.audio,
-        image: gameWord.image,
-        wordTranslate: gameWord.wordTranslate,
-        level: gameWord.group,
-      })
-    );
-  },
-  async getSimilarWords(regexp = 'голь') {
-    const similarWords = await requestCreator({
-      url: `/users/${store.user.auth.userId}/aggregatedWords`,
-      method: requestCreator.methods.get,
-      data: { filter: JSON.stringify({ wordTranslate: { $regex: `\\w{0,}${regexp}\\w{0,}` } }) },
-    });
-    similarWords[0].paginatedResults.forEach((word) => this.similarWordsMAp.set(word, word.wordTranslate));
-    return similarWords[0].paginatedResults;
-  },
-};
-
-function gameReset() {
-  backgroundColorsHandler({ needReset: true });
-  store.audiocallGame.currentGame.statistics = {
-    learned: new Map(),
-    errors: new Map(),
-  };
-}
 
 export async function audioCallGameCreate() {
   const { main } = constants.DOM;
@@ -90,7 +18,7 @@ export async function audioCallGameCreate() {
         <section class="audiocall-game-section container"></section>
         `
   );
-  initRequests();
+  // initRequests();
   backgroundColorsHandler({ needReset: true });
   createStartScreen();
   /*  createLongStatistics();*/
@@ -151,14 +79,14 @@ function createButtonStart() {
   playButton.addEventListener('click', timer);
 }
 
-async function playAudiocallGame() {
+export async function playAudiocallGame() {
   gameReset();
-  await initRequests();
+  // await initRequests();
   const { body } = constants.DOM;
   const { currentGame } = store.audiocallGame;
   const { wordsArray: allWords } = store.audiocallGame;
   const { audioCallGameSection } = constants.DOM;
-  currentGame.setCurrentWord();
+  setCurrentWord();
   body.className = 'audiocall-game play-mode';
   audioCallGameSection.innerHTML = '';
   audioCallGameSection.insertAdjacentHTML(
@@ -273,7 +201,7 @@ async function playAudiocallGame() {
         markRestAnswersAsIncorrect();
         WordService.writeMistake(allWords[currentGame.currentWord].wordId);
       } else if (isNext) {
-        currentGame.setCurrentWord();
+        setCurrentWord();
         updateContent();
         backgroundColorsHandler();
       }
@@ -381,72 +309,6 @@ function createLevelsBlock() {
   `;
 }
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-}
-
-function createGameStatistics() {
-  const { body } = constants.DOM;
-  const { errors, learned } = audiocallGameSettings.currentGame.statistics;
-  const gameSection = body.querySelector('.audiocall-game-section');
-  gameSection.className = 'audiocall-game-section container';
-  body.classList.remove('play-mode');
-  body.classList.add('game-statistics');
-
-  gameSection.innerHTML = '';
-  gameSection.insertAdjacentHTML(
-    'afterbegin',
-    `
-    
-      <div class="statistics-block">
-      <h2>Статистика игры:</h2>
-      ${
-        errors.size > 0
-          ? `<p>Ошибок<span class="errors-amount">${errors.size}</span></p>
-       
-      <div class="errors-words">
-      ${Array.from(errors)
-        .map(
-          (error) =>
-            `<div class="word-in-statistics"><button onclick=""></button><div>${error[0]}</div><span>—</span>
-        <div class="translation">${error[1].wordTranslate}</div></div>`
-        )
-        .join('')}`
-          : ''
-      }
-      ${
-        learned.size > 0
-          ? `<p>Знаю<span class="learned-amount">${learned.size}</span></p>
-      <div class="learned-words">
-      ${Array.from(learned)
-        .map(
-          (learnedWord) =>
-            `<div class="word-in-statistics"><div>${learnedWord[0]}</div>
-        <div class="translation"><span>—</span>${learnedWord[1].wordTranslate}</div></div>`
-        )
-        .join('')}`
-          : ''
-      }
-       <div class="buttons-block">
-      <a type="button" class="btn btn-info button-play-next">Играть дальше</a>
-      <a type="button" class="btn btn-info" href="${routesMap.get(routeKeys.home).url}">Ко всем играм</a>
-      <a type="button" class="btn btn-info long-statistics">Вся статистика по игре</a>
-        </div>
-      </div>
-      `
-  );
-  buttonPlayNextHandler();
-  buttonLongStatisticsHandler();
-
-  function buttonPlayNextHandler() {
-    gameSection.querySelector('.button-play-next').addEventListener('click', playAudiocallGame);
-  }
-
-  function buttonLongStatisticsHandler() {
-    gameSection.querySelector('.long-statistics').addEventListener('click', createLongStatistics);
-  }
-}
-
 function backgroundColorsHandler({ needReset } = {}) {
   const { body } = document;
   const { maxWordsLength } = audiocallGameSettings.currentGame;
@@ -456,73 +318,30 @@ function backgroundColorsHandler({ needReset } = {}) {
   body.style.setProperty('--background-hue', currentHue ? currentHue + step : 20);
 }
 
-async function sendStatistics() {
-  const allStatistics = await Statistics.get();
-  delete allStatistics.id;
-  allStatistics.optional.audiocallGame = (() => {
-    const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
-    const { audiocallGame = {} } = allStatistics.optional;
-    if (!audiocallGame[today]) audiocallGame[today] = [];
-    audiocallGame[today].push(
-      ['learned', 'errors'].reduce((resAcc, fieldKey) => {
-        // eslint-disable-next-line no-param-reassign
-        resAcc[fieldKey] = audiocallGameSettings.currentGame.statistics[fieldKey].size;
-        return resAcc;
-      }, {})
-    );
-    return audiocallGame;
-  })();
-  await Statistics.set(allStatistics);
+function setCurrentWord() {
+  const { statistics, maxWordsLength } = audiocallGameSettings.currentGame;
+  const isEndGame = statistics.learned.size + statistics.errors.size >= maxWordsLength;
+  if (isEndGame) {
+    sendStatistics();
+    createGameStatistics();
+    return;
+  }
+
+  let newWordIndex;
+  let newWord;
+
+  do {
+    newWordIndex = getRandomInt(audiocallGameSettings.wordsArray.length);
+    newWord = audiocallGameSettings.wordsArray[newWordIndex].word;
+  } while (statistics.learned.has(newWord) || statistics.errors.has(newWord));
+
+  audiocallGameSettings.currentGame.currentWord = newWordIndex;
 }
 
-async function createLongStatistics() {
-  const allStatistics = await Statistics.get();
-  const { audiocallGame: longStatistics } = allStatistics.optional;
-  const audiocallGameSection = document.querySelector('.audiocall-game-section');
-  audiocallGameSection.innerHTML = '';
-  audiocallGameSection.className = 'audiocall-game-section long-statistics container';
-  audiocallGameSection.insertAdjacentHTML(
-    'afterbegin',
-    `<div class="statistics-block">
-            <h2>Статистика за все время:</h2>
-            <div class="all-long-statistics">
-                ${(() => {
-                  const arr = [];
-                  for (const [key, value] of Object.entries(longStatistics)) {
-                    arr.push(
-                      `<div class="statistics-one-day">
-                          <div class="statisctics-date">
-                                <p>Дата:</p>
-                                <p>${key}</p>
-                          </div>
-                          <div class="statistics-results">
-                            <div class="">Результаты:</div>
-                            <div>ошибки / правильно</div>
-                            <div class="all-results">
-                                ${value
-                                  .map(
-                                    (el) => `
-                                    <div class="one-game-statistics">
-                                        <p><span class="learned-amount">${el.learned}</span></p>
-                                        <p>/<span class="errors-amount">${el.errors}</span></p>
-                                    </div>
-                                  `
-                                  )
-                                  .join('')}
-                            </div>
-                          </div>
-                      </div> 
-                      `
-                    );
-                  }
-                  return arr.join('');
-                })()}
-            </div>    
-            <div class="buttons-block">
-              <a type="button" class="btn btn-info button-play-next">Играть дальше</a>
-              <a type="button" class="btn btn-info" href="${routesMap.get(routeKeys.home).url}">Ко всем играм</a>
-            </div>
-        </div>  
-`
-  );
+function gameReset() {
+  backgroundColorsHandler({ needReset: true });
+  store.audiocallGame.currentGame.statistics = {
+    learned: new Map(),
+    errors: new Map(),
+  };
 }

@@ -5,8 +5,7 @@
     background: linear-gradient(
       180deg,
       rgb(132, 102, 169, 1) 0%,
-      hsla(var(--background-hue), 100%, 26%, 0.8),
-      77%,
+      hsla(var(--background-hue), 100%, 26%, 0.8) 77%,
       rgb(136, 92, 112, 1) 100%
     );
     content: '';

@@ -1,6 +1,6 @@
-import { audiocallGameSettings } from 'pages/games/audiocall';
 import { userSettings } from './user';
 import { statistics } from './statistics';
+import { audiocallGameSettings } from './gameAudioCall';
 
 export const store = new Proxy(
   {
