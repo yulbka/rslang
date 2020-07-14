@@ -57,17 +57,10 @@ export async function requestCreator(settings) {
         throw Error(response.status);
       }
     }
-
     const result = await response.json();
     return result;
   } catch (error) {
-    if (error === '1') {
-      console.log('error1');
-    } else if (error === '2') {
-      console.log('error2');
-    } else {
-      throw error;
-    }
+    throw error;
   }
 }
 

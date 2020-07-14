@@ -134,7 +134,6 @@ function createSettingsBlock() {
           },
         },
       });
-      console.log(newSettings);
       $('.toast').toast('show');
       store.user.learning = {
         ...store.user.learning,

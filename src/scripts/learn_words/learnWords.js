@@ -17,8 +17,6 @@ export class LearnWords {
       wordsPerDay: userSettings.wordsPerDay,
       ...userSettings.learning,
     };
-    console.log(userSettings);
-    console.log(store);
     const statistics = await Statistics.get();
     store.statistics = {
       learnedWords: statistics.learnedWords,

@@ -107,7 +107,6 @@ export class Sentence {
   }
 
   static translateSentence(level, page, round) {
-    console.log(level, page, round);
     const prompt = document.querySelector('.prompt__text');
     const checkbox = document.querySelector('#customSwitch');
     if (!checkbox.checked) {
