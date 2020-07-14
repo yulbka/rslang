@@ -1,5 +1,4 @@
-
-import { MAIN, routesMap, routeKeys, PRELOADER} from 'scripts/helpers/variables';
+import { MAIN, routesMap, routeKeys, PRELOADER } from 'scripts/helpers/variables';
 import { createElement } from 'scripts/helpers/createElement';
 import { validatePassword, validateEmail } from 'scripts/helpers/validate';
 import { requestCreator } from 'utils/requests';
@@ -95,11 +94,12 @@ export class Authorization {
         data: { email: email.value, password: password.value },
       });
       await this.loginUser(email, password);
-      await API_USER.setUserSettings({ userId: localStorage.getItem('userId'),
+      await API_USER.setUserSettings({
+        userId: localStorage.getItem('userId'),
         userSettings: {
-          "wordsPerDay": 20,
-          "optional": {
-            "learning": {
+          wordsPerDay: 20,
+          optional: {
+            learning: {
               cardsPerDay: 50,
               learnNewWords: true,
               learnOldWords: true,
@@ -115,7 +115,7 @@ export class Authorization {
               wordRating: true,
               autoTranslate: false,
             },
-            "englishPuzzle": {
+            englishPuzzle: {
               level: 1,
               page: 1,
               autoplay: true,
@@ -123,34 +123,34 @@ export class Authorization {
               audio: true,
               background: false,
               useLearnedWords: true,
-            }
-          }
+            },
+          },
         },
       });
       const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
       await Statistics.set({
-        "learnedWords": 0,
-        "optional": {
-          "mainGame": {
-            "short": {
-              "day": today,
-              "cards": 0,
-              "newWords": 0,
-              "answers": '',
+        learnedWords: 0,
+        optional: {
+          mainGame: {
+            short: {
+              day: today,
+              cards: 0,
+              newWords: 0,
+              answers: '',
             },
-            "long": {
+            long: {
               [today]: {
-                "cards": 0,
-                "newWords": 0,
-                "mistakes": 0,
-              }
+                cards: 0,
+                newWords: 0,
+                mistakes: 0,
+              },
             },
           },
-          "englishPuzzle": {
-            "short": null,
-            "long": null,
-          },    
-        }
+          englishPuzzle: {
+            short: null,
+            long: null,
+          },
+        },
       });
       await initRequests();
       router.navigate(routesMap.get(routeKeys.home).url);

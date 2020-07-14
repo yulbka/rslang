@@ -8,10 +8,11 @@ export class PuzzleStartPage {
     const fragment = document.createDocumentFragment();
     const wrapper = createElement('div', fragment, ['start__wrapper']);
     createElement('h2', wrapper, ['start__title', 'text-dark'], 'английский пазл');
-    ['Нажимай на слова, собирай предложения.', 'Слова можно перетаскивать.',
-      'Выбирай подсказки'].forEach((sentence) => {
-      createElement('p', wrapper, ['start__description', 'text-dark'], `${sentence}`);
-    });
+    ['Нажимай на слова, собирай предложения.', 'Слова можно перетаскивать.', 'Выбирай подсказки'].forEach(
+      (sentence) => {
+        createElement('p', wrapper, ['start__description', 'text-dark'], `${sentence}`);
+      }
+    );
     createElement('button', wrapper, ['btn', 'btn-primary', 'start__button'], 'Начать');
     MAIN.append(fragment);
     this.startHandler();

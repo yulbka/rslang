@@ -1,16 +1,16 @@
 .short-statistics__wrapper {
-  margin: $space-md auto;
-  padding: $space-xs;
-  max-width: 600px;
   display: flex;
   flex-direction: column;
+  margin: $space-md auto;
+  max-width: 600px;
+  padding: $space-xs;
 }
 
 .completed {
-  margin: 0 auto;
   background-image: url('../assets/images/completed.png');
-  width: 100px;
   height: 100px;
+  margin: 0 auto;
+  width: 100px;
 }
 
 .short-statistics__title {
@@ -19,11 +19,11 @@
 }
 
 .data__text {
-  margin: $space-xxs 0;
-  display: flex;
-  justify-content: space-between;
-  font-size: 1.3rem;
   border-bottom: 1px solid $colorBorder;
+  display: flex;
+  font-size: 1.3rem;
+  justify-content: space-between;
+  margin: $space-xxs 0;
   & span {
     margin: $space-xxs 0;
   }

@@ -63,16 +63,16 @@ export class App {
         Statistics.renderLongPage();
         break;
       case routesMap.get(routeKeys.vocabulary).url:
-        MAIN.innerHTML = '<div>vocabulary</div>'; // replace with function that render dictionary page
+        create_dictionary(); // replace with function that render dictionary page
         break;
-      case routesMap.get(routeKeys.speakIt).url:        
+      case routesMap.get(routeKeys.speakIt).url:
         renderSpeakIt();
         createSpeakItGame();
         break;
       case routesMap.get(routeKeys.englishPuzzle).url:
         PuzzleStartPage.render();
         break;
-      case routesMap.get(routeKeys.savannah).url:        
+      case routesMap.get(routeKeys.savannah).url:
         renderSavannah();
         createSavannahGame();
         break;

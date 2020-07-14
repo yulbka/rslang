@@ -36,7 +36,7 @@ export const routesMap = new Map([
     {
       url: '#/games/englishPuzzle',
       title: 'Английский пазл',
-      preview: require('assets/img/content/speakIt.png').default,
+      preview: require('assets/img/content/puzzle.png').default,
     },
   ],
   [
@@ -82,7 +82,7 @@ export const gamesMap = [
 ].map((key) => routesMap.get(key));
 
 export const coords = [
-  {x: 0, y: 0 },
+  { x: 0, y: 0 },
   { x: 18, y: 1 },
   { x: 25, y: 7 },
   { x: 46, y: 12 },

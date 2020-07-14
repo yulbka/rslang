@@ -18,38 +18,40 @@ export class LearnWords {
       ...userSettings.learning,
     };
     console.log(userSettings);
-    console.log(store)
+    console.log(store);
     const statistics = await Statistics.get();
     store.statistics = {
       learnedWords: statistics.learnedWords,
       mainGame: {
         ...statistics.optional.mainGame,
       },
-      ...statistics.optional,      
-    }    
+      ...statistics.optional,
+    };
     const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
     if (store.statistics.mainGame.short.day !== today) {
       store.statistics.mainGame.short = {
         day: today,
         cards: 0,
         newWords: 0,
-        answers: ''
+        answers: '',
       };
       store.statistics.mainGame.long = {
         [today]: {
           cards: 0,
           newWords: 0,
-          mistakes: 0
+          mistakes: 0,
         },
         ...store.statistics.mainGame.long,
-      }  
+      };
     }
     PRELOADER.classList.remove('preload-wrapper-hidden');
-    if (store.statistics.mainGame.long[today] &&
-      store.statistics.mainGame.long[today].cards >= store.user.learning.cardsPerDay) {
+    if (
+      store.statistics.mainGame.long[today] &&
+      store.statistics.mainGame.long[today].cards >= store.user.learning.cardsPerDay
+    ) {
       console.log('show popup'); // TODO add notification;
     } else {
-      await this.render()
+      await this.render();
     }
     PRELOADER.classList.add('preload-wrapper-hidden');
   }
@@ -100,7 +102,7 @@ export class LearnWords {
       if (newWords < 0) newWords = 0;
       await this.addNewWordsToSlider(mySwiper, newWords);
     } else {
-      numToRepeat = cardsPerDay - store.statistics.mainGame.long[today].cards
+      numToRepeat = cardsPerDay - store.statistics.mainGame.long[today].cards;
       if (numToRepeat < 0) numToRepeat = 0;
       await this.addWordsToRepeatToSlider(mySwiper, numToRepeat, numToRepeat);
     }
@@ -263,7 +265,7 @@ export class LearnWords {
           setWordDayRepeat('normal'),
           '0',
           '1'
-        );  
+        );
       }
       if (!store.user.learning.wordRating) {
         this.showProgress();
@@ -350,7 +352,14 @@ export class LearnWords {
       const target = event.target.closest('.btn-delete');
       if (!target) return;
       if (input.dataset.repeat === 'new') {
-        WordService.createUserWord(input.dataset.wordId, input.dataset.word, 'normal', 'deleted', new Date().toJSON(), new Date().toJSON());
+        WordService.createUserWord(
+          input.dataset.wordId,
+          input.dataset.word,
+          'normal',
+          'deleted',
+          new Date().toJSON(),
+          new Date().toJSON()
+        );
       } else {
         WordService.updateUserWord(input.dataset.wordId, 'normal', { category: 'deleted' });
       }
@@ -418,52 +427,52 @@ export class LearnWords {
 
   static async sendStatistics(input) {
     const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
-      let shortNewWords;
-      let longNewWords;
-      let learnedWords;
-      if (input.dataset.repeat === 'new') {
-        shortNewWords = store.statistics.mainGame.short.newWords + 1;
-        longNewWords = store.statistics.mainGame.long[today].newWords + 1;
-        learnedWords = store.statistics.learnedWords + 1;
-      } else {
-        shortNewWords = store.statistics.mainGame.short.newWords;
-        longNewWords = store.statistics.mainGame.long[today].newWords
-        learnedWords = store.statistics.learnedWords
-      }
-      let answer;
-      let mistakes;
-      if (input.dataset.mistake === 'mistake') {
-        answer = 'W';
-        mistakes = store.statistics.mainGame.long[today].mistakes + 1;
-      } else {
-        answer = 'T';
-        mistakes = store.statistics.mainGame.long[today].mistakes
-      }
-      const statistics = await Statistics.set({
-        "learnedWords": learnedWords,
-        "optional": {
-          ...store.statistics,
-          "mainGame": {
-            "short": {
-              "day": today,
-              "cards": store.statistics.mainGame.short.cards + 1,
-              "newWords": shortNewWords,
-              "answers": store.statistics.mainGame.short.answers + answer,
-            },
-            "long": {
-              ...store.statistics.mainGame.long,
-              [today]: {
-                "cards": store.statistics.mainGame.long[today].cards + 1,
-                "newWords": longNewWords,
-                "mistakes": mistakes,
-              }
+    let shortNewWords;
+    let longNewWords;
+    let learnedWords;
+    if (input.dataset.repeat === 'new') {
+      shortNewWords = store.statistics.mainGame.short.newWords + 1;
+      longNewWords = store.statistics.mainGame.long[today].newWords + 1;
+      learnedWords = store.statistics.learnedWords + 1;
+    } else {
+      shortNewWords = store.statistics.mainGame.short.newWords;
+      longNewWords = store.statistics.mainGame.long[today].newWords;
+      learnedWords = store.statistics.learnedWords;
+    }
+    let answer;
+    let mistakes;
+    if (input.dataset.mistake === 'mistake') {
+      answer = 'W';
+      mistakes = store.statistics.mainGame.long[today].mistakes + 1;
+    } else {
+      answer = 'T';
+      mistakes = store.statistics.mainGame.long[today].mistakes;
+    }
+    const statistics = await Statistics.set({
+      learnedWords,
+      optional: {
+        ...store.statistics,
+        mainGame: {
+          short: {
+            day: today,
+            cards: store.statistics.mainGame.short.cards + 1,
+            newWords: shortNewWords,
+            answers: store.statistics.mainGame.short.answers + answer,
+          },
+          long: {
+            ...store.statistics.mainGame.long,
+            [today]: {
+              cards: store.statistics.mainGame.long[today].cards + 1,
+              newWords: longNewWords,
+              mistakes,
             },
           },
-        }
-      });
+        },
+      },
+    });
     store.statistics.mainGame = {
-       ...statistics.optional.mainGame
-    }
+      ...statistics.optional.mainGame,
+    };
     store.statistics.learnedWords = learnedWords;
   }
 

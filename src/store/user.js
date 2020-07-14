@@ -36,6 +36,6 @@ export const userSettings = {
     translation: true,
     audio: true,
     background: false,
-  }
+  },
   // ...userExample,
 };

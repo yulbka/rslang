@@ -9,13 +9,13 @@ const hash = '#';
 export const router = new Navigo(root, useHash, hash);
 
 export function initializeRouter() {
-    router
-        .on({
-            '*': () => App.reRender(window.location.hash),
-        })
-        .resolve();
+  router
+    .on({
+      '*': () => App.reRender(window.location.hash),
+    })
+    .resolve();
 
-    router.notFound(() => {
-        router.navigate(routesMap.get(routeKeys.home).url);
-    });
-};
+  router.notFound(() => {
+    router.navigate(routesMap.get(routeKeys.home).url);
+  });
+}

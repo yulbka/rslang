@@ -18,12 +18,12 @@ document.body.addEventListener('mousedown', (event) => {
   document.body.append(target);
   moveAt(event.pageX, event.pageY);
   document.addEventListener('mousemove', onMouseMove);
-  target.onmouseup = function() {
+  target.onmouseup = function () {
     document.removeEventListener('mousemove', onMouseMove);
     dropPuzzle(coords, targetSibling, relation);
     target.onmouseup = null;
   };
-  target.ondragstart = function() {
+  target.ondragstart = function () {
     return false;
   };
 });
@@ -44,11 +44,12 @@ function onMouseMove(event) {
 function dropPuzzle(coords) {
   const newCoords = target.getBoundingClientRect();
   const rowIndex = document.querySelector('.count').lastChild?.textContent;
-  const row =
-    document.querySelector(`[data-row='${rowIndex}']`);
+  const row = document.querySelector(`[data-row='${rowIndex}']`);
   settlePuzzle(target);
-  if ((Math.floor(newCoords.x) === Math.floor(coords.x) &&
-  Math.floor(newCoords.y) === Math.floor(coords.y)) || elemBelow === row) {
+  if (
+    (Math.floor(newCoords.x) === Math.floor(coords.x) && Math.floor(newCoords.y) === Math.floor(coords.y)) ||
+    elemBelow === row
+  ) {
     row.append(target);
   } else if (elemBelow && elemBelow.closest('.settled')) {
     elemBelow.closest('.settled').after(target);
@@ -64,8 +65,7 @@ function dropPuzzle(coords) {
         targetSibling.append(target);
     }
   }
-  if (document.querySelectorAll('.settled').length ===
-  document.querySelectorAll('.new').length) {
+  if (document.querySelectorAll('.settled').length === document.querySelectorAll('.new').length) {
     showCheckButton();
   }
 }
