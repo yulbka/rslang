@@ -27,7 +27,7 @@ export class App {
       this.checkHeader();
     }
     MAIN.innerHTML = '';
-    document.body.classList.remove('main-page', 'speakit', 'savannahGame', 'audiocall-game', 'about-team', 'long-statistics');
+    document.body.classList.remove('content-page', 'speakit', 'savannahGame', 'audiocall-game', 'about-team', 'long-statistics');
     this.setContent(page);
   }
 
