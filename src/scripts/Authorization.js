@@ -3,11 +3,11 @@ import { MAIN, routesMap, routeKeys, PRELOADER} from 'scripts/helpers/variables'
 import { createElement } from 'scripts/helpers/createElement';
 import { validatePassword, validateEmail } from 'scripts/helpers/validate';
 import { requestCreator } from 'utils/requests';
-import { store } from 'store';
-import { API_USER } from 'api/user';
+import { store } from '../store/index';
+import { API_USER } from '../api/user';
 import { router } from '../routes';
 import { Statistics } from './Statistics';
-import { initRequests } from '..';
+import { initRequests } from '../index';
 export class Authorization {
   static render(type = '#login') {
     const fragment = document.createDocumentFragment();
@@ -94,26 +94,36 @@ export class Authorization {
         method: requestCreator.methods.post,
         data: { email: email.value, password: password.value },
       });
-      await this.loginUser(email, password, true);
-      await API_USER.setUserSettings({
-        userId: localStorage.getItem('userId'),
+      await this.loginUser(email, password);
+      await API_USER.setUserSettings({ userId: localStorage.getItem('userId'),
         userSettings: {
           "wordsPerDay": 20,
           "optional": {
-            cardsPerDay: 50,
-            learnNewWords: true,
-            learnOldWords: true,
-            withTranslation: true,
-            withExplanation: false,
-            withExample: false,
-            withTranscription: false,
-            withHelpImage: true,
-            deleteWord: true,
-            hardWord: false,
-            showAnswerButton: false,
-            autoplay: false,
-            wordRating: true,
-            autoTranslate: false,
+            "learning": {
+              cardsPerDay: 50,
+              learnNewWords: true,
+              learnOldWords: true,
+              withTranslation: true,
+              withExplanation: false,
+              withExample: false,
+              withTranscription: false,
+              withHelpImage: true,
+              deleteWord: true,
+              hardWord: false,
+              showAnswerButton: false,
+              autoplay: false,
+              wordRating: true,
+              autoTranslate: false,
+            },
+            "englishPuzzle": {
+              level: 1,
+              page: 1,
+              autoplay: true,
+              translation: true,
+              audio: true,
+              background: false,
+              useLearnedWords: true,
+            }
           }
         },
       });
@@ -121,19 +131,25 @@ export class Authorization {
       await Statistics.set({
         "learnedWords": 0,
         "optional": {
-          "short": {
-            "day": today,
-            "cards": 0,
-            "newWords": 0,
-            "answers": '',
-          },
-          "long": {
-            [today]: {
+          "mainGame": {
+            "short": {
+              "day": today,
               "cards": 0,
               "newWords": 0,
-              "mistakes": 0,
-            }
+              "answers": '',
+            },
+            "long": {
+              [today]: {
+                "cards": 0,
+                "newWords": 0,
+                "mistakes": 0,
+              }
+            },
           },
+          "englishPuzzle": {
+            "short": null,
+            "long": null,
+          },    
         }
       });
       await initRequests();

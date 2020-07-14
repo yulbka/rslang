@@ -7,6 +7,7 @@ import { Header } from './Header';
 import { Authorization } from './Authorization';
 import { LearnWords } from './learn_words/learnWords';
 import { router } from '../routes';
+import { PuzzleStartPage } from '../pages/puzzle/StartPage';
 import { Statistics } from './Statistics';
 import { createSavannahGame } from '../games/savannah/js/mainApp';
 import { renderSavannah } from '../games/savannah/js/render';
@@ -67,7 +68,7 @@ export class App {
         createSpeakItGame();
         break;
       case routesMap.get(routeKeys.englishPuzzle).url:
-        MAIN.innerHTML = '<div>puzzle</div>'; // replace with function that render puzzle mini-game page
+        PuzzleStartPage.render();
         break;
       case routesMap.get(routeKeys.savannah).url:        
         renderSavannah();

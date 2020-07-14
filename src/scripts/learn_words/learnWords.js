@@ -14,34 +14,39 @@ export class LearnWords {
   static async init() {
     const userSettings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
     store.user.learning = {
-      ...store.user.learning,
-      ...userSettings,
+      wordsPerDay: userSettings.wordsPerDay,
+      ...userSettings.learning,
     };
+    console.log(userSettings);
+    console.log(store)
     const statistics = await Statistics.get();
-    store.mainGame.statistics = {
+    store.statistics = {
       learnedWords: statistics.learnedWords,
-      ...statistics.optional
-    }
+      mainGame: {
+        ...statistics.optional.mainGame,
+      },
+      ...statistics.optional,      
+    }    
     const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
-    if (store.mainGame.statistics.short.day !== today) {
-      store.mainGame.statistics.short = {
+    if (store.statistics.mainGame.short.day !== today) {
+      store.statistics.mainGame.short = {
         day: today,
         cards: 0,
         newWords: 0,
         answers: ''
       };
-      store.mainGame.statistics.long = {
+      store.statistics.mainGame.long = {
         [today]: {
           cards: 0,
           newWords: 0,
           mistakes: 0
         },
-        ...store.mainGame.statistics.long,
+        ...store.statistics.mainGame.long,
       }  
     }
     PRELOADER.classList.remove('preload-wrapper-hidden');
-    if (store.mainGame.statistics.long[today] &&
-      store.mainGame.statistics.long[today].cards >= store.user.learning.cardsPerDay) {
+    if (store.statistics.mainGame.long[today] &&
+      store.statistics.mainGame.long[today].cards >= store.user.learning.cardsPerDay) {
       console.log('show popup'); // TODO add notification;
     } else {
       await this.render()
@@ -84,27 +89,27 @@ export class LearnWords {
     let newWords;
     let numToRepeat;
     if (learnNewWords && learnOldWords) {
-      newWords = wordsPerDay - store.mainGame.statistics.long[today].newWords;
+      newWords = wordsPerDay - store.statistics.mainGame.long[today].newWords;
       if (newWords < 0) newWords = 0;
-      numToRepeat = cardsPerDay - newWords - store.mainGame.statistics.long[today].cards;
+      numToRepeat = cardsPerDay - newWords - store.statistics.mainGame.long[today].cards;
       if (numToRepeat < 0) numToRepeat = 0;
       await this.addNewWordsToSlider(mySwiper, newWords);
       await this.addWordsToRepeatToSlider(mySwiper, numToRepeat, newWords);
     } else if (learnNewWords) {
-      newWords = wordsPerDay - store.mainGame.statistics.long[today].cards;
+      newWords = wordsPerDay - store.statistics.mainGame.long[today].cards;
       if (newWords < 0) newWords = 0;
       await this.addNewWordsToSlider(mySwiper, newWords);
     } else {
-      numToRepeat = cardsPerDay - store.mainGame.statistics.long[today].cards
+      numToRepeat = cardsPerDay - store.statistics.mainGame.long[today].cards
       if (numToRepeat < 0) numToRepeat = 0;
       await this.addWordsToRepeatToSlider(mySwiper, numToRepeat, numToRepeat);
     }
     const progressValue = document.querySelector('.progress-value');
-    progressValue.textContent = store.mainGame.statistics.short.cards;
+    progressValue.textContent = store.statistics.mainGame.short.cards;
     const progressMax = document.querySelector('.progress-max');
-    progressMax.textContent = mySwiper.slides.length + store.mainGame.statistics.short.cards;
+    progressMax.textContent = mySwiper.slides.length + store.statistics.mainGame.short.cards;
     const progressBar = document.querySelector('.progress-bar');
-    progressBar.setAttribute('aria-valuemax', `${mySwiper.slides.length + store.mainGame.statistics.short.cards}`);
+    progressBar.setAttribute('aria-valuemax', `${mySwiper.slides.length + store.statistics.mainGame.short.cards}`);
   }
 
   static async addNewWordsToSlider(slider, wordsNumber) {
@@ -247,16 +252,7 @@ export class LearnWords {
     let progressCount;
     if (input.dataset.repeat === 'new') {
       if (input.dataset.mistake) {
-        WordService.createUserWord(
-          input.dataset.wordId,
-          input.dataset.word,
-          'weak',
-          'learned',
-          new Date().toJSON(),
-          setWordDayRepeat('weak', true),
-          '1',
-          '0'
-        );
+        WordService.writeMistake(input.dataset.wordId);
       } else {
         WordService.createUserWord(
           input.dataset.wordId,
@@ -277,15 +273,7 @@ export class LearnWords {
       const word = await WordService.getAggregatedWord(input.dataset.wordId);
       const { optional } = word.userWord;
       if (input.dataset.mistake) {
-        const mistakeCount = +optional.mistakeCount + 1;
-        progressCount = +optional.progressCount - 1;
-        if (progressCount < 0) progressCount = 0;
-        WordService.updateUserWord(input.dataset.wordId, 'weak', {
-          lastDayRepeat: new Date().toJSON(),
-          nextDayRepeat: setWordDayRepeat('weak', true),
-          mistakeCount,
-          progressCount,
-        });
+        WordService.writeMistake(input.dataset.wordId);
       } else {
         progressCount = +optional.progressCount + 1;
         const mistakeCount = +optional.mistakeCount;
@@ -310,7 +298,7 @@ export class LearnWords {
 
   static async goToNextCard() {
     const mySwiper = document.querySelector('.swiper-container').swiper;
-    if (+store.mainGame.statistics.short.cards === +store.user.learning.cardsPerDay) {
+    if (+store.statistics.mainGame.short.cards === +store.user.learning.cardsPerDay) {
       Statistics.renderShortPage();
     }
     mySwiper.allowSlideNext = true;
@@ -434,47 +422,49 @@ export class LearnWords {
       let longNewWords;
       let learnedWords;
       if (input.dataset.repeat === 'new') {
-        shortNewWords = store.mainGame.statistics.short.newWords + 1;
-        longNewWords = store.mainGame.statistics.long[today].newWords + 1;
-        learnedWords = store.mainGame.statistics.learnedWords + 1;
+        shortNewWords = store.statistics.mainGame.short.newWords + 1;
+        longNewWords = store.statistics.mainGame.long[today].newWords + 1;
+        learnedWords = store.statistics.learnedWords + 1;
       } else {
-        shortNewWords = store.mainGame.statistics.short.newWords;
-        longNewWords = store.mainGame.statistics.long[today].newWords
-        learnedWords = store.mainGame.statistics.learnedWords
+        shortNewWords = store.statistics.mainGame.short.newWords;
+        longNewWords = store.statistics.mainGame.long[today].newWords
+        learnedWords = store.statistics.learnedWords
       }
       let answer;
       let mistakes;
       if (input.dataset.mistake === 'mistake') {
         answer = 'W';
-        mistakes = store.mainGame.statistics.long[today].mistakes + 1;
+        mistakes = store.statistics.mainGame.long[today].mistakes + 1;
       } else {
         answer = 'T';
-        mistakes = store.mainGame.statistics.long[today].mistakes
+        mistakes = store.statistics.mainGame.long[today].mistakes
       }
       const statistics = await Statistics.set({
         "learnedWords": learnedWords,
         "optional": {
-          "short": {
-            "day": today,
-            "cards": store.mainGame.statistics.short.cards + 1,
-            "newWords": shortNewWords,
-            "answers": store.mainGame.statistics.short.answers + answer,
-          },
-          "long": {
-            ...store.mainGame.statistics.long,
-            [today]: {
-              "cards": store.mainGame.statistics.long[today].cards + 1,
-              "newWords": longNewWords,
-              "mistakes": mistakes,
-            }
+          ...store.statistics,
+          "mainGame": {
+            "short": {
+              "day": today,
+              "cards": store.statistics.mainGame.short.cards + 1,
+              "newWords": shortNewWords,
+              "answers": store.statistics.mainGame.short.answers + answer,
+            },
+            "long": {
+              ...store.statistics.mainGame.long,
+              [today]: {
+                "cards": store.statistics.mainGame.long[today].cards + 1,
+                "newWords": longNewWords,
+                "mistakes": mistakes,
+              }
+            },
           },
         }
-      });      
-      store.mainGame.statistics = {
-        learnedWords: statistics.learnedWords,
-        ...statistics.optional
-      }
-    console.log(statistics)
+      });
+    store.statistics.mainGame = {
+       ...statistics.optional.mainGame
+    }
+    store.statistics.learnedWords = learnedWords;
   }
 
   static addSlide(card) {
