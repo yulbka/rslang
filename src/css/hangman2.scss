@@ -20,7 +20,7 @@ body {
 #home .title {
     font-size: 48px;
     font-weight: bold;
-    margin-top: 15%;
+    margin-top: 7%;
     text-align: center;
 }
 
@@ -36,7 +36,7 @@ body {
     display: table;
     font-weight: bold;
     padding: 10px 20px;
-    margin: 20% auto;
+    margin: 7% auto;
 }
 
 #home .foother {
@@ -340,6 +340,32 @@ body {
 
 .marg {
     border-bottom: solid 2px #ccc;
+}
+
+.rules{
+    margin-left: 30%;
+    text-align: left;
+    width: auto;
+}
+
+.rules_text{
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.rules_ul{
+    list-style: square;;
+    font-size: 1.5rem;
+}
+
+.game_levels{
+    position: fixed;
+    top: 281px;
+    width: auto;
+}
+
+.my_button{
+    margin-top: 10px;
 }
 
 #hint {

@@ -53,7 +53,7 @@ export const routesMap = new Map([
   ],
   [
     routeKeys.ourGame,
-    { url: '#/games/ourGame', title: 'Наша игра', preview: require('assets/img/content/speakIt.png').default },
+    { url: '#/games/ourGame', title: 'Висельница', preview: require('assets/img/content/hangman.png').default },
   ],
   [routeKeys.promo, { url: '#/promo', title: 'Промо' }],
   [routeKeys.team, { url: '#/team', title: 'Наша команда' }],

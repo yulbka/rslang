@@ -2,23 +2,40 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import '../css/hangman2.scss';
 import {WordService} from './service/Word.Service';
+// import { Statistics } from './Statistics';
 
 export function create_hangman2() {
 
     const main = document.getElementById('main');
     const new_arr = [];
+    let level = 0;
+    let new_words;
 
     function create_main() {
         const new_main = 
         `
         <div id="home">
-                <div class="title">Hangman</div>
-                <div class="button anim" id='startGame'>Play</div>
+                <div class="title">Висельница</div>
+                <div class="button anim" id='startGame'>Играть</div>
+                <div class='rules'>
+                    <p class='rules_text'>Правила игры:</p>
+                    <ul class='rules_ul'>
+                        <li>выберете букву</li>
+                        <li>если буква правильная, продолжайте</li>
+                        <li>если буква не правильная, вы увидите постройку висельницы</li>
+                        <li>если вы допустили 4 ошибки, используйте подсказку (нажмите на значок '?')</li>
+                        <li>продолжайте играть до победы или поражения</li>
+                        <li>сыграйте ещё партейку</li>
+                    </ul>
+                    <p class='rules_text'>Удачи!!!</p>
+                </div>
             </div>
             <div id="result" class="h">
                 <div class="title" id="rT"></div>
                 <div class="body" id="rM"></div>
-                <div class="button anim" id='startGameAgain'>Try Again?</div>
+                <div class="button anim" id='startGameAgain'>Попоробовать снова?</div>
+                <div class="button anim" id='go_to_stat_page'>Статистика</div>
+                <div class='hidden' id='statistic_div'></div>
             </div>
             <div id="pGame">
                 <div id="letter"></div>
@@ -44,6 +61,14 @@ export function create_hangman2() {
                     <div class="title">Hint<div class="exit" id='hintExit'>X</div></div>
                     <div class="body" id="hintText"></div>
                 </div>
+                <div class='game_levels' id='game_levels'>
+                    <button type="button" class="btn btn-primary my_button" id='first_level'>Уровень 1</button><br>
+                    <button type="button" class="btn btn-primary my_button" id='second_level'>Уровень 2</button><br>
+                    <button type="button" class="btn btn-success my_button" id='third_level'>Уровень 3</button><br>
+                    <button type="button" class="btn btn-info my_button" id='fourth_level'>Уровень 4</button><br>
+                    <button type="button" class="btn btn-warning my_button" id='fifth_level'>Уровень 5</button><br>
+                    <button type="button" class="btn btn-danger my_button" id='fixth_level'>Уровень 6</button>
+                </div>
             </div>
         `
         main.innerHTML += new_main;
@@ -51,7 +76,40 @@ export function create_hangman2() {
 
     create_main();
 
-      
+    function get_words_by_hier_level(lvl) {
+        WordService.getWordsByLevelAndPage(lvl).then(data => 
+            newGame(data)
+            )
+    }
+
+    document.getElementById('game_levels').addEventListener('click', (e) => {
+        const target = e.target.closest('button');
+        if (target.id === 'first_level') {
+            level = 0;
+            get_words_by_hier_level(level, 0)
+        }
+        if (target.id === 'second_level') {
+            level = 1;
+            get_words_by_hier_level(level, 0)
+        }
+        if (target.id === 'third_level') {
+            level = 2;
+            get_words_by_hier_level(level, 0)
+        }
+        if (target.id === 'fourth_level') {
+            level = 3;
+            get_words_by_hier_level(level, 0)
+        }
+        if (target.id === 'fifth_level') {
+            level = 4;
+            get_words_by_hier_level(level, 0)
+        }
+        if (target.id === 'fixth_level') {
+            level = 5;
+            get_words_by_hier_level(level, 0)
+        }
+    })
+
     // Game keyboard
     const tastatur = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     
@@ -98,10 +156,10 @@ export function create_hangman2() {
     })
     
     // New game
-    function newGame() {
+    function newGame(data) {
         clearTastatur()
         clearPlayer()
-        createWord();
+        createWord(data);
     }
     
     // Clear keyboard
@@ -132,8 +190,13 @@ export function create_hangman2() {
     }
     
     // Get new word
-    async function createWord() {
-        const new_words = await WordService.getWordsByCategory('learned');
+    async function createWord(data) {
+        if(data === undefined){
+            new_words = await WordService.getWordsByCategory('learned');
+        }
+        if(data !== undefined){
+            new_words = data;
+        }
         // const new_words = await WordService.getWordsForGames();
         new_words.map(item => new_arr.push([item.word, item.textMeaning, item._id]))
         const d = gId("letter")
@@ -154,6 +217,38 @@ export function create_hangman2() {
             }
         }
     }
+
+    // function create_statistic_page() {
+    //     const statistic_page = `<div id="long_stat">
+    //     <p>Долгосрочная статистика</p>
+    //     </div>`
+
+    // }
+
+    // async function setLongStatistics() {
+    //     const statistics = await Statistics.get();
+    //     console.log(statistics);
+    //     // let mistakes = 0;
+    //     // for (const value of Object.values(statistics.optional.englishPuzzle.short)) {
+    //     //   if (value.mistake === 'wrong') {
+    //     //     mistakes += 1;
+    //     //   }
+    //     // }
+    //     // await Statistics.set({
+    //     //   learnedWords: statistics.learnedWords,
+    //     //   optional: {
+    //     //     ...statistics.optional,
+    //     //     hangman: {
+    //     //       long: {
+    //     //         ...statistics.optional.hangman.long,
+    //     //         [new Date().toLocaleString()]: {
+    //     //           "mistakes": 'нету',
+    //     //         }
+    //     //       },
+    //     //     }
+    //     //   }
+    //     // });
+    //   }
 
     // function ingame_statictic() {
     //     const block_for_statictick = `
@@ -293,13 +388,12 @@ export function create_hangman2() {
         const d = gId("result")
         d.setAttribute("data", e)
         if(e) {
-            gId("rT").innerText = "You Win!";
-            gId("rM").innerHTML = "Congratulations, you found the word!<br/><br/>Good Job!";
+            gId("rT").innerText = "Ты победил!";
+            gId("rM").innerHTML = "Поздравляю, ты правильно отгадал слово!<br/><br/>Отличная работа!";
             // wincount += 1;
-            WordService.updateUserWord(new_arr[select][2], 'normal' ,{ category: 'learned' })
         } else {
-            gId("rT").innerText = "You Lose!"
-            gId("rM").innerHTML = `The word was ${new_arr[select][0].toUpperCase()} Better luck next time.`
+            gId("rT").innerText = "Ты проиграл!"
+            gId("rM").innerHTML = `Слово было - ${new_arr[select][0].toUpperCase()}. Удачи в следующей игре!.`
             // losecount += 1;
             WordService.writeMistake(new_arr[select][2])
         }
