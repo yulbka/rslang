@@ -2,7 +2,6 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import '../css/dictionary.scss';
 import { store } from '../store';
-// import { initRequests } from '../index'
 import { WordService } from './service/Word.Service';
 import { API_USER } from '../api/user'
 
@@ -10,18 +9,11 @@ export async function create_dictionary() {
     const main = document.getElementById('main');
     const base = 'https://raw.githubusercontent.com/irinainina/rslang/rslang-data/data/';
 
-    // window.onload = async () => {
-    //     await initRequests();
-    // };
-    // await initRequests();
-
     const userSettings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
     store.user.learning = {
       ...store.user.learning,
       ...userSettings,
     };
-
-    console.log(userSettings)
 
     const settings = store.user.learning;
 
@@ -94,8 +86,8 @@ export async function create_dictionary() {
     function create_default_dictionary(){
         const bottom_buttons = `
         <div class="bottom_buttons" id='bottom_buttons'>
-            <button type="button" class="btn btn-primary" id="previousPage">Previous page</button>
-            <button type="button" class="btn btn-primary" id="nextPage">Next page</button>
+            <button type="button" class="btn btn-primary" id="previousPage">Предыдущая страница</button>
+            <button type="button" class="btn btn-primary" id="nextPage">Следующая страница</button>
         </div>       
         `;
         document.getElementById('container').innerHTML += bottom_buttons;
@@ -155,6 +147,10 @@ export async function create_dictionary() {
 
     function create_current_words_table(data) {  
         tBody.innerHTML = '';
+        document.getElementById('thead_id').innerHTML += `
+        <th>Последнее повторение</th>
+        <th>Следующие повторение</th>
+        <th>Количество повторений</th>`
         data.map(item => 
             create_one_cell_for_learned_words(item._id, item.audio, item.image, item.word, item.transcription, item.wordTranslate, item.textExample, item.textMeaning, item.userWord.optional.lastDayRepeat, item.userWord.optional.nextDayRepeat, `${Number(item.userWord.optional.mistakeCount) + Number(item.userWord.optional.progressCount)}`) 
         )
@@ -191,9 +187,7 @@ export async function create_dictionary() {
     function create_one_cell_for_learned_words(id, audio, image, word, transcription, wordTranslate, textExample, textMeaning, lastDayRepeat, nextDayRepeat, total_count){
         const lastDayRepeat_new = new Date(lastDayRepeat).toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
         const nextDayRepeat_new = new Date(nextDayRepeat).toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
-        // console.log(testData)
-        // const lastDayRepeat_correct = lastDayRepeat.slice(0,10);
-        // const nextDayRepeat_correct = nextDayRepeat.slice(0,10);
+        
         tBody.innerHTML += `<tr id="${id}">
         <td><img src='https://i.ibb.co/FxW8BS6/321.png' class='small_icon' data-audio='${base}${audio}'></td>
         <td>${word}</td>
