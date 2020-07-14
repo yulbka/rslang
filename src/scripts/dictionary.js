@@ -46,7 +46,6 @@ export async function create_dictionary() {
                 <tr id='thead_id'>
                 <th>Аудио</th>
                 <th class="th-sort-asc" id='word'>Слово</th>
-
                 </tr>
             </thead>
                 <tbody id="tBody">
@@ -71,6 +70,11 @@ export async function create_dictionary() {
         if(dowithExplanation === true){
             document.getElementById('thead_id').innerHTML += `<th>Объяснение слова</th>`
         }
+        document.getElementById('thead_id').innerHTML += `
+        <th class='visible'>Последнее повторение</th>
+        <th class='visible'>Следующие повторение</th>
+        <th class='visible'>Количество повторений</th>
+        `
     }
     
     create_started_table(withExample, withExplanation, withHelpImage, withTranscription, withTranslation);
@@ -96,6 +100,7 @@ export async function create_dictionary() {
     document.getElementById('filter_all').addEventListener('click', () => {
         WordService.getWordsByLevelAndPage().then(data => {
             create_table(data);
+            document.getElementById('table_id').classList.remove('is_visible');
             document.getElementById('bottom_buttons').classList.remove('hide');
         })  
     })
@@ -147,10 +152,6 @@ export async function create_dictionary() {
 
     function create_current_words_table(data) {  
         tBody.innerHTML = '';
-        document.getElementById('thead_id').innerHTML += `
-        <th>Последнее повторение</th>
-        <th>Следующие повторение</th>
-        <th>Количество повторений</th>`
         data.map(item => 
             create_one_cell_for_learned_words(item._id, item.audio, item.image, item.word, item.transcription, item.wordTranslate, item.textExample, item.textMeaning, item.userWord.optional.lastDayRepeat, item.userWord.optional.nextDayRepeat, `${Number(item.userWord.optional.mistakeCount) + Number(item.userWord.optional.progressCount)}`) 
         )
@@ -207,9 +208,12 @@ export async function create_dictionary() {
     if(withExplanation === true){
         document.getElementById(`${id}`).innerHTML += `<td>${textMeaning}</td>`;
     }
-    document.getElementById(`${id}`).innerHTML += `<td>${lastDayRepeat_new}</td>
-    <td>${nextDayRepeat_new}</td>
-    <td>${total_count}</td>
+    if(document.getElementById('last_but_not_least')){
+        console.log()
+    }
+    document.getElementById(`${id}`).innerHTML += `<td class='last_but_not_least'>${lastDayRepeat_new}</td>
+    <td class='last_but_not_least'>${nextDayRepeat_new}</td>
+    <td class='last_but_not_least'>${total_count}</td>
     `
     }
 
@@ -285,6 +289,7 @@ export async function create_dictionary() {
     document.getElementById('filter_learn').addEventListener('click', () => {
         WordService.getWordsByCategory('learned').then(data => {
             create_current_words_table(data);
+            document.getElementById('table_id').classList.add('is_visible');
             document.getElementById('bottom_buttons').classList.add('hide');
         });
     })
@@ -292,6 +297,7 @@ export async function create_dictionary() {
     document.getElementById('filter_hard').addEventListener('click', () => {
         WordService.getWordsByCategory('difficult').then(data => {
             create_unusual_table(data);
+            document.getElementById('table_id').classList.remove('is_visible');
             document.getElementById('bottom_buttons').classList.add('hide');
         });
     })
@@ -299,7 +305,9 @@ export async function create_dictionary() {
     document.getElementById('filter_delete').addEventListener('click', () => {
         WordService.getWordsByCategory('deleted').then(data => {
             create_unusual_table(data);
+            document.getElementById('table_id').classList.remove('is_visible');
             document.getElementById('bottom_buttons').classList.add('hide');
         });
     })
 }
+

@@ -17,6 +17,18 @@
   height: 40px;
 }
 
+.delete{
+  display: none;
+}
+
+.is_visible .visible{
+  display: table-cell;
+}
+
+.visible{
+  display: none;
+}
+
 .hide{
   opacity: 0;
 }
