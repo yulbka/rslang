@@ -1,6 +1,6 @@
-export const mainGame = {
-  statistics: {
-    learnedWords: 0,
+export const statistics = {
+  learnedWords: 0,
+  mainGame: {
     short: {
       cards: 0,
       newWords: 0,
@@ -14,4 +14,8 @@ export const mainGame = {
       },
     },
   },
+  englishPuzzle: {
+    short: null,
+    long: null,
+  }
 };

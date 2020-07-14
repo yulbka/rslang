@@ -19,7 +19,7 @@ export async function initRequests() {
   if (!userId) {
     router.navigate(routesMap.get(routeKeys.login).url);
   } else {
-    const userSettings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
+    const userSettings = await API_USER.getUserSettings({ userId });
     store.user.learning = {
       ...store.user.learning,
       ...userSettings,

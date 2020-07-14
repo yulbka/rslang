@@ -1,11 +1,14 @@
 import { SIDEBAR, MAIN, HEADER, routesMap, routeKeys } from 'scripts/helpers/variables';
 import { pageHomeCreate } from 'pages/main';
 import { store } from 'store';
+import { aboutTeamCreate } from 'pages/aboutTeam';
+import { create_dictionary } from './dictionary'
 import { createSidebar } from './burger';
 import { Header } from './Header';
 import { Authorization } from './Authorization';
 import { LearnWords } from './learn_words/learnWords';
 import { router } from '../routes';
+import { PuzzleStartPage } from '../pages/puzzle/StartPage';
 import { Statistics } from './Statistics';
 import { createSavannahGame } from '../games/savannah/js/mainApp';
 import { renderSavannah } from '../games/savannah/js/render';
@@ -27,7 +30,7 @@ export class App {
       this.checkHeader();
     }
     MAIN.innerHTML = '';
-    document.body.classList.remove('main-page');
+    document.body.classList.remove('content-page', 'speakit', 'savannahGame', 'audiocall-game', 'about-team', 'long-statistics');
     this.setContent(page);
   }
 
@@ -61,14 +64,14 @@ export class App {
         Statistics.renderLongPage();
         break;
       case routesMap.get(routeKeys.vocabulary).url:
-        MAIN.innerHTML = '<div>vocabulary</div>'; // replace with function that render dictionary page
+        create_dictionary();
         break;
       case routesMap.get(routeKeys.speakIt).url:
         renderSpeakIt();
         createSpeakItGame();
         break;
       case routesMap.get(routeKeys.englishPuzzle).url:
-        MAIN.innerHTML = '<div>puzzle</div>'; // replace with function that render puzzle mini-game page
+        PuzzleStartPage.render();
         break;
       case routesMap.get(routeKeys.savannah).url:
         renderSavannah();
@@ -87,7 +90,7 @@ export class App {
         MAIN.innerHTML = '<div>promo</div>'; // replace with function that render promo page
         break;
       case routesMap.get(routeKeys.team).url:
-        MAIN.innerHTML = '<div>aboutUs</div>'; // replace with function that render aboutUs page
+        aboutTeamCreate();
         break;
       default:
         break;

@@ -1,9 +1,10 @@
 import { userSettings } from './user';
-import { mainGame } from './mainGame';
+import { statistics } from './statistics';
+ 
 export const store = new Proxy(
   {
     user: userSettings,
-    mainGame,
+    statistics,
   },
   {
     set(target, name, value) {
