@@ -23,6 +23,15 @@
     padding: 40px;
   }
 
+  .game-title,
+  .game-description {
+    color: $colorWhiteTransparent5;
+    margin-bottom: 40px;
+    max-width: 95%;
+    text-align: center;
+    width: 500px;
+  }
+
   &.start-screen {
     height: 100%;
 
@@ -74,7 +83,7 @@
     }
 
     .sound-img {
-      border: 2px solid rgba(255, 255, 255, 0.5);
+      border: 2px solid $colorWhiteTransparent5;
       border-radius: 50%;
       cursor: pointer;
       height: 80px;
@@ -145,8 +154,8 @@
 
   .block-with-words {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-around;
-    /*  color: rgba(255, 255, 255, 0.5);*/
     margin-top: 30px;
     width: 100%;
     @media (max-width: 767px) {
@@ -168,7 +177,7 @@
     transition: background-color 0.3s;
 
     &:hover {
-      background-color: rgba(255, 255, 255, 0.05);
+      background-color: $colorWhiteTransparent5;
     }
     span {
       margin-right: 5px;
@@ -176,8 +185,8 @@
     }
 
     &.is-wrong {
-      border-color: rgba(255, 255, 255, 0.5);
-      color: rgba(255, 255, 255, 0.5);
+      border-color: $colorWhiteTransparent5;
+      color: $colorWhiteTransparent5;
       pointer-events: none;
       text-decoration: line-through;
     }
@@ -203,14 +212,14 @@
       display: none;
       &:checked + .level {
         background-color: $colorWhite;
-        border-color: #986783;
+        border-color: $colorPinkDark;
         transition: background-color 0.3s ease-out;
       }
     }
     .level {
       border: 4px solid transparent;
       border-radius: 50%;
-      box-shadow: 0 0 0 1px #dde0e9;
+      box-shadow: 0 0 0 1px $colorGrayLight;
       cursor: pointer;
       height: 25px;
       width: 25px;
@@ -218,10 +227,12 @@
   }
 }
 /* Statistics mode*/
-
+.audiocall-game-section.long-statistic {
+  height: initial !important;
+}
 .audiocall-game.game-statistics {
   .statistics-block {
-    background-color: white;
+    background-color: $colorWhite;
     border-radius: 5px;
     padding: 30px;
     width: 100%;
@@ -229,10 +240,21 @@
       width: 60%;
     }
     .buttons-block {
+      color: $colorWhite;
+      display: flex;
       margin-top: 20px;
+      @media (max-width: 767px) {
+        flex-direction: column;
+        a + a {
+          margin-top: 15px;
+        }
+      }
+      @media (min-width: 768px) {
+        justify-content: space-between;
+      }
     }
     .translation {
-      color: #a5a4a1;
+      color: $colorGray;
     }
   }
   .word-in-statistics {
@@ -246,19 +268,66 @@
   }
   .errors-amount,
   .learned-amount {
-    border: 1px solid;
+    border: 1px solid transparent;
     border-radius: 15px;
-    color: $colorWhite;
+    /*    color: $colorWhite;*/
     font-size: 0.8em;
     margin-left: 20px;
     padding: 1px 15px;
   }
+}
+
+/*statistics*/
+
+.audiocall-game {
+  .statistics-one-day {
+    display: flex;
+    justify-content: space-between;
+  }
+  .all-long-statistics {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .one-game-statistics {
+    display: flex;
+    margin-left: 15px;
+    .errors-amount {
+      margin-left: 10px;
+    }
+    p + p {
+      margin-left: 10px;
+    }
+  }
+  .statistics-results {
+    text-align: center;
+  }
+  .all-results {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    @media (max-width: 499px) {
+      align-items: flex-start;
+    }
+  }
+  .errors-amount,
+  .learned-amount {
+    border-radius: 15px;
+    /* padding: 10px;
+    border-radius: 50%;*/
+    /* width: 40px;
+    height: 40px;*/
+    /*  display: flex;
+    justify-content: center;
+    align-items: center;*/
+    padding: 2px 12px;
+  }
   .errors-amount {
-    background-color: red;
-    border-color: red;
+    background-color: $colorRed;
+    border-color: $colorRed;
   }
   .learned-amount {
-    background-color: green;
-    border-color: green;
+    background-color: $colorGreen;
+    border-color: $colorGreen;
   }
 }

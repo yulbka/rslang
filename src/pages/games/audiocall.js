@@ -82,7 +82,7 @@ function gameReset() {
 export async function audioCallGameCreate() {
   const { main } = constants.DOM;
   const { body } = constants.DOM;
-  body.classList.remove('main-page');
+  body.classList.remove('content-page');
   body.classList.add('audiocall-game', 'start-screen');
   main.insertAdjacentHTML(
     'afterbegin',
@@ -91,16 +91,10 @@ export async function audioCallGameCreate() {
         `
   );
   initRequests();
-  /*  WordService.getAllUserWords()*/
-  /*  WordService.getAllAggregatedWords()*/
-  /* createStartScreen();*/
-
-  /*  const forGames = await WordService.getWordsForGames();*/
   backgroundColorsHandler({ needReset: true });
-  /*await audiocallGameSettings.getSimilarWords();*/
   createStartScreen();
+  /*  createLongStatistics();*/
   await audiocallGameSettings.getWords();
-  /*playAudiocallGame();*/
 }
 
 function createStartScreen() {
@@ -262,9 +256,9 @@ async function playAudiocallGame() {
     const { errors } = currentGame.statistics;
     const audiocallButton = audioCallGameSection.querySelector('.audiocall-button');
     audiocallButton.addEventListener('click', buttonHandler);
-    document.addEventListener('keyup', () => {
+    /* document.addEventListener('keyup', () => {
       if (event.key === 'Enter') buttonHandler();
-    });
+    });*/
 
     function buttonHandler() {
       const isNotKnow = audiocallButton.classList.contains('button-not-know');
@@ -295,14 +289,14 @@ async function playAudiocallGame() {
     let errorsCounter = 0;
 
     optionsBlock.addEventListener('click', answersHandler);
-    document.addEventListener('keyup', answersHandler);
+    /* document.addEventListener('keyup', answersHandler);*/
 
     function answersHandler(event) {
       const guessWord = allWords[currentGame.currentWord];
       let answerButton = null;
 
       switch (event.type) {
-        case 'keyup': {
+        case 'keydown': {
           const { key } = event;
           if (event.key === 'Enter') return;
           answerButton = optionsBlock.querySelector(`[data-key='${key}']`);
@@ -395,8 +389,10 @@ function createGameStatistics() {
   const { body } = constants.DOM;
   const { errors, learned } = audiocallGameSettings.currentGame.statistics;
   const gameSection = body.querySelector('.audiocall-game-section');
+  gameSection.className = 'audiocall-game-section container';
   body.classList.remove('play-mode');
   body.classList.add('game-statistics');
+
   gameSection.innerHTML = '';
   gameSection.insertAdjacentHTML(
     'afterbegin',
@@ -434,7 +430,7 @@ function createGameStatistics() {
        <div class="buttons-block">
       <a type="button" class="btn btn-info button-play-next">Играть дальше</a>
       <a type="button" class="btn btn-info" href="${routesMap.get(routeKeys.home).url}">Ко всем играм</a>
-      <a type="button" class="btn btn-info long-statistics">Статистика игр</a>
+      <a type="button" class="btn btn-info long-statistics">Вся статистика по игре</a>
         </div>
       </div>
       `
@@ -482,17 +478,51 @@ async function sendStatistics() {
 async function createLongStatistics() {
   const allStatistics = await Statistics.get();
   const { audiocallGame: longStatistics } = allStatistics.optional;
-  const longStatisticsBlock = document.querySelector('.statistics-block');
-  longStatisticsBlock.innerHTML = '';
-  longStatisticsBlock.insertAdjacentHTML(
+  const audiocallGameSection = document.querySelector('.audiocall-game-section');
+  audiocallGameSection.innerHTML = '';
+  audiocallGameSection.className = 'audiocall-game-section long-statistics container';
+  audiocallGameSection.insertAdjacentHTML(
     'afterbegin',
-    `<div>
-<h2>Статистика за все время:</h2>
-<div></div>
-    <div class="buttons-block">
-      <a type="button" class="btn btn-info button-play-next">Играть дальше</a>
-      <a type="button" class="btn btn-info" href="${routesMap.get(routeKeys.home).url}">Ко всем играм</a>
-    </div>
-</div>`
+    `<div class="statistics-block">
+            <h2>Статистика за все время:</h2>
+            <div class="all-long-statistics">
+                ${(() => {
+                  const arr = [];
+                  for (const [key, value] of Object.entries(longStatistics)) {
+                    arr.push(
+                      `<div class="statistics-one-day">
+                          <div class="statisctics-date">
+                                <p>Дата:</p>
+                                <p>${key}</p>
+                          </div>
+                          <div class="statistics-results">
+                            <div class="">Результаты:</div>
+                            <div>ошибки / правильно</div>
+                            <div class="all-results">
+                                ${value
+                                  .map(
+                                    (el) => `
+                                    <div class="one-game-statistics">
+                                        <p><span class="learned-amount">${el.learned}</span></p>
+                                        <p>/<span class="errors-amount">${el.errors}</span></p>
+                                    </div>
+                                  `
+                                  )
+                                  .join('')}
+                            </div>
+                          </div>
+                      </div> 
+                      `
+                    );
+                  }
+                  return arr.join('');
+                })()}
+            </div>    
+            <div class="buttons-block">
+              <a type="button" class="btn btn-info button-play-next">Играть дальше</a>
+              <a type="button" class="btn btn-info" href="${routesMap.get(routeKeys.home).url}">Ко всем играм</a>
+            </div>
+        </div>  
+`
   );
 }
