@@ -24,5 +24,5 @@ export async function initRequests() {
       ...store.user.learning,
       ...userSettings,
     };
-  }  
+  }
 }

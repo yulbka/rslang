@@ -10,7 +10,9 @@ import { Statistics } from './Statistics';
 import { createSavannahGame } from '../games/savannah/js/mainApp';
 import { renderSavannah } from '../games/savannah/js/render';
 import { createSpeakItGame } from '../games/speakit/js/mainApp';
+
 import { renderSpeakIt } from '../games/speakit/js/render';
+import { renderSprint } from '../games/sprint/js/render';
 
 export class App {
   static async reRender(page) {
@@ -61,14 +63,14 @@ export class App {
       case routesMap.get(routeKeys.vocabulary).url:
         MAIN.innerHTML = '<div>vocabulary</div>'; // replace with function that render dictionary page
         break;
-      case routesMap.get(routeKeys.speakIt).url:        
+      case routesMap.get(routeKeys.speakIt).url:
         renderSpeakIt();
         createSpeakItGame();
         break;
       case routesMap.get(routeKeys.englishPuzzle).url:
         MAIN.innerHTML = '<div>puzzle</div>'; // replace with function that render puzzle mini-game page
         break;
-      case routesMap.get(routeKeys.savannah).url:        
+      case routesMap.get(routeKeys.savannah).url:
         renderSavannah();
         createSavannahGame();
         break;
@@ -76,7 +78,7 @@ export class App {
         MAIN.innerHTML = '<div>audioCall</div>'; // replace with function that render audioCall mini-game page
         break;
       case routesMap.get(routeKeys.sprint).url:
-        MAIN.innerHTML = '<div>sprint</div>'; // replace with function that render sprint mini-game page
+        renderSprint();
         break;
       case routesMap.get(routeKeys.ourGame).url:
         MAIN.innerHTML = '<div>ourGame</div>'; // replace with function that render ourGame mini-game page

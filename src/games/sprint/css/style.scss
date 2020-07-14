@@ -1,0 +1,75 @@
+.flex-position {
+  flex-direction: column;
+  justify-content: center;
+}
+
+.container-fluid {
+  background: url('./../games/sprint/img/background.jpg');
+  background-size: contain;
+  color: rgb(0, 0, 0);
+  font-family: 'Roboto', sans-serif;
+  padding: 60px 110px;
+}
+
+.time {
+  font-size: 48px;
+  line-height: 56px;
+  padding: 70px;
+}
+
+.question-card {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  flex-direction: column;
+  padding: 150px;
+}
+
+.answer-score__title {
+  font-size: 30px;
+  line-height: 35px;
+}
+
+.score-value {
+  font-size: 85px;
+  line-height: 100px;
+}
+
+.total-score__title {
+  font-size: 36px;
+  line-height: 42px;
+}
+
+#current-word {
+  font-size: 64px;
+  line-height: 75px;
+  padding-bottom: 80px;
+}
+
+#current-word-translation {
+  font-size: 48px;
+  line-height: 56px;
+}
+
+button {
+  background: rgb(123, 81, 181);
+  border-radius: 12px;
+  color: rgba(255, 255, 255);
+  font-size: 35px;
+  font-weight: 500;
+  height: 84px;
+  line-height: 41px;
+  width: 235px;
+
+  &:hover {
+    color: yellow;
+    cursor: pointer;
+  }
+}
+
+.question {
+  margin-bottom: 70px;
+}
+
+.positive-button {
+  margin-right: 100px;
+}

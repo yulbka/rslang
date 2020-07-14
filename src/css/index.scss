@@ -19,6 +19,7 @@
 @import '../games/savannah/css/style.scss';
 
 @import '../games/speakit/css/style.scss';
+@import '../games/sprint/css/style.scss';
 
 /********* CUSTOM RESET: START **********/
 label {
@@ -28,5 +29,5 @@ label {
 
 .page-home {
   display: flex;
-  flex-direction: column;  
+  flex-direction: column;
 }

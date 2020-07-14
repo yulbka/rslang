@@ -1,5 +1,6 @@
 import { requestCreator } from '../../utils/requests';
 import { store } from '../../store';
+import { getRandomNumber } from '../helpers/getRandomNumber';
 
 export class WordService {
   constructor() {
@@ -164,5 +165,44 @@ export class WordService {
       method: requestCreator.methods.get,
     });
     return words[0].paginatedResults;
+  }
+
+  static async getWordsForGames(wordsNumber = 10, additionalFilter = null) {
+    const filter = additionalFilter
+      ? `{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}, ${additionalFilter}}]}`
+      : '{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}}]}';
+    const word = await requestCreator({
+      url: `/users/${store.user.auth.userId}/aggregatedWords/?&wordsPerPage=${1}&page=${0}&filter=${filter}`,
+      method: requestCreator.methods.get,
+    });
+    console.log(
+      'url',
+      `/users/${store.user.auth.userId}/aggregatedWords/?&wordsPerPage=${1}&page=${0}&filter=${filter}`
+    );
+    if (!word[0].totalCount.length) return 'not enough words';
+    const wordsCount = word[0].totalCount[0].count;
+    if (wordsCount < 50) {
+      return 'not enough words';
+    }
+    const wordsForGame = [];
+    const pages = [];
+    do {
+      const page = getRandomNumber(wordsCount - 1);
+      if (!pages.includes(page)) {
+        pages.push(page);
+      }
+    } while (pages.length < wordsNumber);
+    await Promise.all(
+      pages.map(async (page) => {
+        const randomWord = await requestCreator({
+          url: `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${1}&page=${page}&filter=${filter}`,
+          method: requestCreator.methods.get,
+        });
+        wordsForGame.push(randomWord[0].paginatedResults[0]);
+      })
+    );
+    console.log(wordsForGame);
+    console.log('wordsCount', wordsCount);
+    return +wordsNumber === 1 ? wordsForGame[0] : wordsForGame;
   }
 }

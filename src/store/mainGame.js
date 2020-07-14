@@ -13,5 +13,5 @@ export const mainGame = {
         mistakes: 0,
       },
     },
-  }
+  },
 };
