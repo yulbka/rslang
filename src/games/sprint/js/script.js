@@ -1,4 +1,5 @@
 import { WordService } from '../../../scripts/service/Word.Service';
+import { getRandomNumber } from '../../../scripts/helpers/getRandomNumber';
 
 let ArrWord = [];
 
@@ -30,7 +31,8 @@ export function startGame() {
   const LoadWords = (p1) => {
     EngWord = ArrWord[p1].word;
     RusWord = ArrWord[p1].wordTranslate;
-    RandomWord = ArrWord[RandomInteger(9)].wordTranslate;
+    const fiftyChance = getRandomNumber(2, 1);
+    RandomWord = fiftyChance === 1 ? RusWord: ArrWord[RandomInteger(9)].wordTranslate;
 
     const currentWord = document.querySelector('#current-word');
     currentWord.innerHTML = EngWord;
