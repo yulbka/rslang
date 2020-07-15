@@ -14,7 +14,7 @@ export class Card {
       deleteWord,
       hardWord,
       wordRating,
-    },
+    }
   ) {
     this.word = word;
     this.withTranslation = withTranslation;

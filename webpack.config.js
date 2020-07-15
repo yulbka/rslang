@@ -2,6 +2,7 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const root = path.resolve(__dirname, './'),
   distPath = `${root}/dist`,
@@ -90,6 +91,9 @@ module.exports = {
       template: './src/html/index.html',
     }),
     new MiniCssExtractPlugin(),
+    new CopyPlugin({
+      patterns: [{ from: './src/assets/', to: './assets/' }],
+    }),
   ],
   output: {
     filename: '[name].bundle.js',

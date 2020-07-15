@@ -1,8 +1,6 @@
 import { routeKeys, routesMap } from 'scripts/helpers/variables';
 import { router } from '../routes/index';
 
-const API_HOST = 'https://afternoon-falls-25894.herokuapp.com';
-
 /*
  (required) url: part after host
  (required) method: one of requestCreator.methods
@@ -10,7 +8,8 @@ const API_HOST = 'https://afternoon-falls-25894.herokuapp.com';
 */
 export async function requestCreator(settings) {
   try {
-    let url = `${API_HOST}${settings.url}`;
+    const { host = 'https://afternoon-falls-25894.herokuapp.com' } = settings;
+    let url = `${host}${settings.url}`;
     let body;
 
     if (!Object.values(requestCreator.methods).includes(settings.method)) throw `${settings.method} is unknown method`;
@@ -19,7 +18,7 @@ export async function requestCreator(settings) {
       case requestCreator.methods.get: {
         if (settings.data) {
           const searhParams = getSearchParams({ params: settings.data });
-          url += `/?${searhParams}`;
+          url += `?${searhParams}`;
         }
         break;
       }
@@ -58,14 +57,11 @@ export async function requestCreator(settings) {
         throw Error(response.status);
       }
     }
-
     const result = await response.json();
     return result;
   } catch (error) {
-    if (error === '1') {
-      console.log('error1');
-    } else if (error === '2') {
-      console.log('error2');
+    if (error === 'somethingError') {
+      console.error(error);
     } else {
       throw error;
     }

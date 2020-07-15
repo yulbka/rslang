@@ -8,9 +8,9 @@ export function renderSpeakIt() {
     <div class="background">
       <main class="main">
         <div class="start">
-          <h1 class="start__title">SpeakIt</h1>
-          <p class="start__text">You should tell words into microphone</p>
-          <a class="button button__start">Start</a>
+          <h1 class="start__title">Произнеси слово</h1>
+          <p class="start__text">Ты должен сказать слово в микрофон!</p>
+          <a class="button button__start">Начать</a>
         </div>
         <div class="speak">
           <section class="level level-select">
@@ -34,22 +34,22 @@ export function renderSpeakIt() {
             <p class="word__translation"></p>
             <p class="word__recognition"></p>
             <div class="btns">
-              <a class="button button__restart">Restart</a>
-              <a class="button button__speak">Speak</a>
-              <a class="button button__results">Results</a>
+              <a class="button button__restart">Заново</a>
+              <a class="button button__speak">Говорить</a>
+              <a class="button button__results">Результаты</a>
             </div>
             <div class="word__items items"></div>
           </section>
         </div>
         <div class="results hidden">
           <div class="results__table">
-            <p class="right__text">Correct <span class="right__count"></span></p>
+            <p class="right__text">Правильно: <span class="right__count"></span></p>
             <div class="right__items"></div>
-            <p class="wrong__text">Mistake <span class="wrong__count"></span></p>
+            <p class="wrong__text">Ошибки: <span class="wrong__count"></span></p>
             <div class="wrong__items"></div>
             <div class="btns">
-              <a class="button button__return">Return</a>
-              <a class="button button__new-game">New game</a>
+              <a class="button button__return">Вернуться</a>
+              <a class="button button__new-game">Новая игра</a>
             </div>
           </div>
         </div>

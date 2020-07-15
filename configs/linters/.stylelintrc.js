@@ -43,5 +43,6 @@ module.exports = {
     'comment-empty-line-before': null,
     'comment-whitespace-inside': null,
     'selector-max-id': null,
+    'no-duplicate-selectors': null,
   },
 };

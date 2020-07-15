@@ -21,12 +21,6 @@
     "deploy:now": "cd dist && now -d --public --prod",
     "upgrade-packages": "ncu -ui"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn format:check && yarn lint:check",
-      "post-commit": "git update-index --again"
-    }
-  },
   "babel": {
     "extends": "./configs/babelrc.js"
   },

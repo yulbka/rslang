@@ -21,8 +21,8 @@ export const routeKeys = {
 };
 
 export const routesMap = new Map([
-  [routeKeys.registration, { url: '#registration' }],
-  [routeKeys.login, { url: '#login' }],
+  [routeKeys.registration, { url: '#/registration' }],
+  [routeKeys.login, { url: '#/login' }],
   [routeKeys.home, { url: '#/' }],
   [routeKeys.learn, { url: '#/learn', title: 'Учи слова' }],
   [routeKeys.progress, { url: '#/progress', title: 'Твой прогресс' }],
@@ -36,16 +36,16 @@ export const routesMap = new Map([
     {
       url: '#/games/englishPuzzle',
       title: 'Английский пазл',
-      preview: require('assets/img/content/speakIt.png').default,
+      preview: require('assets/img/content/puzzle.png').default,
     },
   ],
   [
     routeKeys.savannah,
-    { url: '#/games/savannah', title: 'Саванна', preview: require('assets/img/content/savannah.jpg').default },
+    { url: '#/games/savannah', title: 'Саванна', preview: require('assets/img/content/savannah.png').default },
   ],
   [
     routeKeys.audio,
-    { url: '#/games/audio', title: 'Аудиовызов', preview: require('assets/img/content/audiocall.jpg').default },
+    { url: '#/games/audio', title: 'Аудиовызов', preview: require('assets/img/content/audiocall.png').default },
   ],
   [
     routeKeys.sprint,
@@ -53,7 +53,7 @@ export const routesMap = new Map([
   ],
   [
     routeKeys.ourGame,
-    { url: '#/games/ourGame', title: 'Наша игра', preview: require('assets/img/content/speakIt.png').default },
+    { url: '#/games/ourGame', title: 'Висельница', preview: require('assets/img/content/ourGame.png').default },
   ],
   [routeKeys.promo, { url: '#/promo', title: 'Промо' }],
   [routeKeys.team, { url: '#/team', title: 'Наша команда' }],
@@ -82,7 +82,7 @@ export const gamesMap = [
 ].map((key) => routesMap.get(key));
 
 export const coords = [
-  {x: 0, y: 0 },
+  { x: 0, y: 0 },
   { x: 18, y: 1 },
   { x: 25, y: 7 },
   { x: 46, y: 12 },

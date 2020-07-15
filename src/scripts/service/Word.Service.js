@@ -1,5 +1,7 @@
 import { requestCreator } from '../../utils/requests';
 import { store } from '../../store';
+import { getRandomNumber } from '../helpers/getRandomNumber';
+import { setWordDayRepeat } from '../helpers/setWordDayRepeat';
 
 export class WordService {
   constructor() {
@@ -86,6 +88,15 @@ export class WordService {
     return words;
   }
 
+  static async getAmountUserWords({ group, wordsPerPage, wordsPerExampleSentenceLTE }) {
+    const amount = await requestCreator({
+      url: `/words/count`,
+      method: requestCreator.methods.get,
+      data: { group, wordsPerPage, wordsPerExampleSentenceLTE },
+    });
+    return amount;
+  }
+
   static async getUserWord(wordId) {
     const word = await requestCreator({
       url: `/users/${store.user.auth.userId}/words/${wordId}`,
@@ -120,7 +131,6 @@ export class WordService {
       method: requestCreator.methods.post,
       data: word,
     });
-    console.log(result);
     return result;
   }
 
@@ -138,7 +148,6 @@ export class WordService {
         },
       },
     });
-    console.log(result);
     return result;
   }
 
@@ -164,5 +173,75 @@ export class WordService {
       method: requestCreator.methods.get,
     });
     return words[0].paginatedResults;
+  }
+
+  static async getWordsForGames(wordsNumber = 10, level = null, additionalFilter = null) {
+    const filter = additionalFilter
+      ? `{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}, ${additionalFilter}}]}`
+      : '{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}}]}';
+    let url = level
+      ? `/users/${
+          store.user.auth.userId
+        }/aggregatedWords/?wordsPerPage=${wordsNumber}&group=${level}&page=${0}&filter=${filter}`
+      : `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsNumber}&page=${0}&filter=${filter}`;
+    const word = await requestCreator({
+      url,
+      method: requestCreator.methods.get,
+    });
+    if (!word[0].totalCount.length) return 'not enough words';
+    const wordsCount = word[0].totalCount[0].count;
+    if (wordsCount < 50) {
+      return 'not enough words';
+    }
+    const wordsForGame = [];
+    const pages = [];
+    do {
+      const page = getRandomNumber(wordsCount - 1);
+      if (!pages.includes(page)) {
+        pages.push(page);
+      }
+    } while (pages.length < wordsNumber);
+    await Promise.all(
+      pages.map(async (page) => {
+        url = level
+          ? `/users/${
+              store.user.auth.userId
+            }/aggregatedWords/?wordsPerPage=${1}&group=${level}&page=${page}&filter=${filter}`
+          : `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${1}&page=${page}&filter=${filter}`;
+        const randomWord = await requestCreator({
+          url,
+          method: requestCreator.methods.get,
+        });
+        wordsForGame.push(randomWord[0].paginatedResults[0]);
+      })
+    );
+    return +wordsNumber === 1 ? wordsForGame[0] : wordsForGame;
+  }
+
+  static async writeMistake(wordId) {
+    const word = await WordService.getAggregatedWord(wordId);
+    if (word.userWord) {
+      const { optional } = word.userWord;
+      const mistakeCount = +optional.mistakeCount + 1;
+      let progressCount = +optional.progressCount - 1;
+      if (progressCount < 0) progressCount = 0;
+      WordService.updateUserWord(wordId, 'weak', {
+        lastDayRepeat: new Date().toJSON(),
+        nextDayRepeat: setWordDayRepeat('weak', true),
+        mistakeCount,
+        progressCount,
+      });
+    } else {
+      WordService.createUserWord(
+        wordId,
+        word.word,
+        'weak',
+        'learned',
+        new Date().toJSON(),
+        setWordDayRepeat('weak', true),
+        '1',
+        '0'
+      );
+    }
   }
 }

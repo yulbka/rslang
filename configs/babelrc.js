@@ -19,16 +19,15 @@ module.exports = {
         corejs: 3,
         forceAllTransforms: true,
         debug: false,
-        
       },
     ],
   ],
   plugins: [
     [
-      "@babel/plugin-proposal-class-properties",
+      '@babel/plugin-proposal-class-properties',
       {
-        "loose": true
-      }
-    ]
-  ]
+        loose: true,
+      },
+    ],
+  ],
 };

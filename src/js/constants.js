@@ -12,6 +12,12 @@ export const constants = {
     get main() {
       return document.querySelector('#main');
     },
+    get body() {
+      return document.body;
+    },
+    get audioCallGameSection() {
+      return this.main.querySelector('.audiocall-game-section');
+    },
     get word() {
       return this.main.querySelector('.word');
     },

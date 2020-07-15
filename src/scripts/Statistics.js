@@ -1,20 +1,20 @@
+import $ from 'jquery';
 import { requestCreator } from '../utils/requests';
-import { MAIN, coords, routesMap, routeKeys } from './helpers/variables';
+import { MAIN, coords } from './helpers/variables';
 import { createElement } from './helpers/createElement';
 import { store } from '../store/index';
 import { findLongestSeries } from './helpers/findLongestSeries';
-import { router } from '../routes';
+import { LearnWords } from './learn_words/learnWords';
 
 export class Statistics {
   static async get() {
     try {
       const statistics = await requestCreator({
         url: `/users/${localStorage.getItem('userId')}/statistics`,
-        method: requestCreator.methods.get
+        method: requestCreator.methods.get,
       });
       return statistics;
-    }
-    catch(e) {
+    } catch (e) {
       console.log(e);
     }
   }
@@ -23,14 +23,14 @@ export class Statistics {
     const statistics = await requestCreator({
       url: `/users/${localStorage.getItem('userId')}/statistics`,
       method: requestCreator.methods.put,
-      data: statData
+      data: statData,
     });
     return statistics;
   }
-  
+
   static renderShortPage() {
-    const { cards, newWords } = store.mainGame.statistics.short;
-    const answers = store.mainGame.statistics.short.answers.split('');
+    const { cards, newWords } = store.statistics.mainGame.short;
+    const answers = store.statistics.mainGame.short.answers.split('');
     const rightAnswers = answers.filter((answer) => answer === 'T').length;
     const series = findLongestSeries(answers, 'T');
     MAIN.innerHTML = '';
@@ -45,7 +45,7 @@ export class Statistics {
     createElement('span', cardsData, [], `${cards}`);
     const answersData = createElement('li', ul, ['data__text', 'text-success']);
     createElement('span', answersData, [], 'Правильные ответы:');
-    createElement('span', answersData, [], `${Math.round(rightAnswers / answers.length * 100)}%`);
+    createElement('span', answersData, [], `${Math.round((rightAnswers / answers.length) * 100)}%`);
     const newWordsData = createElement('li', ul, ['data__text', 'text-warning']);
     createElement('span', newWordsData, [], 'Новые слова:');
     createElement('span', newWordsData, [], `${newWords}`);
@@ -61,27 +61,28 @@ export class Statistics {
     const continueBtn = document.querySelector('.short-statistics__btn');
     continueBtn.addEventListener('click', async () => {
       const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
-      store.mainGame.statistics.short = {
+      store.statistics.mainGame.short = {
         day: today,
         cards: 0,
         newWords: 0,
-        answers: ''
+        answers: '',
       };
-      const { learnedWords, ...restStatistics } = store.mainGame.statistics;
       await Statistics.set({
-      learnedWords,
-      optional: restStatistics,
+        learnedWords: store.statistics.learnedWords,
+        optional: {
+          mainGame: store.statistics.mainGame,
+          ...store.statistics,
+        },
       });
-      router.navigate(routesMap.get(routeKeys.home).url);
+      MAIN.innerHTML = '';
+      LearnWords.createPopUp();
+      $('#learnModal').modal('show');
     });
   }
 
   static async renderLongPage() {
     const statistics = await this.get();
-    store.mainGame.statistics = {
-      learnedWords: statistics.learnedWords,
-      ...statistics.optional
-    }
+    store.statistics.mainGame = statistics.optional.mainGame;
     const fragment = document.createDocumentFragment();
     const { learnedWords } = statistics;
     const wrapper = createElement('div', fragment, ['long-statistics__wrapper']);
@@ -110,7 +111,6 @@ export class Statistics {
     this.buildGraph(graph, learnedWords);
     this.rangeHandler();
     this.resizeHandler();
-    this.detailsHandler();
   }
 
   static buildGraph(element, wordsCount) {
@@ -130,13 +130,13 @@ export class Statistics {
     const stepHeight = (height - 2 * margin) / stepCount;
     ctx.strokeStyle = 'rgb(200, 200, 200)';
     ctx.fillStyle = 'rgb(200, 200, 200)';
-    for(let i = 0; i < 11; i++) {
+    for (let i = 0; i < 11; i++) {
       const positionY = height - margin - i * stepHeight;
-      ctx.fillText(`${i * 10}%`, 10, positionY); 
+      ctx.fillText(`${i * 10}%`, 10, positionY);
       ctx.beginPath();
-      ctx.moveTo(margin, positionY); 
-      ctx.lineTo(width - margin, positionY); 
-      ctx.stroke(); 
+      ctx.moveTo(margin, positionY);
+      ctx.lineTo(width - margin, positionY);
+      ctx.stroke();
     }
     [1000, 2000, 3000, 4000, 5000].forEach((label, index) => {
       const positionX = margin + (index + 1) * stepWidth;
@@ -150,7 +150,7 @@ export class Statistics {
 
   static drawGraphLine(ctx, width, height, margin, colorFill, maxX) {
     const xScale = (width - 2 * margin) / 5000;
-    const yScale = (height - 2 * margin) / 100;  
+    const yScale = (height - 2 * margin) / 100;
     ctx.beginPath();
     ctx.strokeStyle = 'rgb(23, 162, 184)';
     ctx.moveTo(margin, height - margin);
@@ -160,7 +160,7 @@ export class Statistics {
         if (isMax) return;
         ctx.lineTo(margin + maxX * xScale, height - margin - coords[index - 1].y * yScale);
         isMax = true;
-        
+
         return;
       }
       ctx.lineTo(margin + coord.x * xScale, height - margin - coord.y * yScale);
@@ -183,7 +183,7 @@ export class Statistics {
     const graphText = createElement('p', graph, ['graph-text']);
     createElement('span', graphText, [], 'Слов: ');
     createElement('span', graphText, ['graph-words'], `${range.value}`);
-  }
+  };
 
   static rangeHandler() {
     const range = document.querySelector('.graph__range');
@@ -193,13 +193,6 @@ export class Statistics {
   static resizeHandler() {
     window.addEventListener('resize', this.rebuiltGraph);
   }
-  
-  static detailsHandler() {
-    const details = document.querySelector('.long-statistics__detail');
-    details.addEventListener('click', () => {
-      console.log(store.mainGame.statistics.long);
-    });
-  }
 
   static renderModal(element) {
     const fragment = document.createDocumentFragment();
@@ -208,7 +201,7 @@ export class Statistics {
     const dialog = createElement('div', modal, ['modal-dialog'], '', 'role', 'dialog');
     const content = createElement('div', dialog, ['modal-content']);
     const body = createElement('div', content, ['modal-body']);
-    const statistics = store.mainGame.statistics.long;
+    const statistics = store.statistics.mainGame.long;
     for (const [date, value] of Object.entries(statistics)) {
       const p = createElement('p', body, []);
       createElement('span', p, ['text-info'], `${date}: `);
@@ -222,5 +215,5 @@ export class Statistics {
     const footer = createElement('div', content, ['modal-footer']);
     createElement('button', footer, ['btn', 'btn-secondary'], 'Закрыть', 'data-dismiss', 'modal');
     element.append(fragment);
-  }  
+  }
 }

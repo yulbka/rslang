@@ -7,20 +7,43 @@
 @import 'node_modules/tippy.js/themes/light-border.css';
 @import './swiper.scss';
 @import './learn-words.scss';
+
 @import './header.scss';
 @import './logout.scss';
 @import './preloader.scss';
 @import '../../src/components/forms/index.scss';
 @import '../../src/components/popup/popup.scss';
+@import '../pages/games/audiocall/index.scss';
+
 @import './authorization.scss';
 @import './statistics/shortStatistics.scss';
 @import './statistics/longStatistics.scss';
 @import '../../src/pages/main/index.scss';
+@import '../../src/pages/puzzle/start-page.scss';
+@import '../../src/pages/puzzle/game-page.scss';
+@import '../../src/pages/puzzle/results-page.scss';
+@import '../../src/pages/puzzle/statistic-page.scss';
 @import '../games/savannah/css/style.scss';
-
 @import '../games/speakit/css/style.scss';
 
+@import '../games/sprint/css/style.scss';
+
+@import '../pages/aboutTeam/index.scss';
+
 /********* CUSTOM RESET: START **********/
+
+*::-webkit-scrollbar {
+  background-color: $colorPrompt;
+  width: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: $colorGray;
+}
+html {
+  overflow: auto;
+}
+
 label {
   margin-bottom: 0;
 }
@@ -28,5 +51,5 @@ label {
 
 .page-home {
   display: flex;
-  flex-direction: column;  
+  flex-direction: column;
 }
