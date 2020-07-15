@@ -554,7 +554,7 @@ export class Game {
           long: {
             ...statistics.optional.englishPuzzle.long,
             [new Date().toLocaleString()]: {
-              mistakes: mistakes,
+              mistakes,
             },
           },
         },
