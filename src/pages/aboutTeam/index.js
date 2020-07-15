@@ -79,7 +79,7 @@ const personsMap = new Map([
     'Сергей',
     {
       photo: require('assets/img/team/Sergey.jpg').default,
-      description: `<p class="person-description"><b>Разработал:</b><br/>Мини-игру "Висельница", страницу "Словарь", участие в создании видео о команде.</p>
+      description: `<p class="person-description"><b>Разработал:</b><br/>Мини-игру "Висельница", страницу "Словарь", "Промо", участие в создании видео о команде.</p>
            <p class="person-description"><b>Принимал участие:</b><br/>В обсуждении разработки, видео о приложении</p>`,
     },
   ],
