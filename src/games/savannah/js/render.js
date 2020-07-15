@@ -8,9 +8,9 @@ export function renderSavannah() {
     <div class="background">
       <main class="main">
         <div class="start">
-          <h1 class="start__title">Savannah</h1>
-          <p class="start__text">Choose correct translation</p>
-          <a class="button button__start">Start</a>
+          <h1 class="start__title">Саванна</h1>
+          <p class="start__text">Выбери правильный перевод!</p>
+          <a class="button button__start">Начать</a>
         </div>
         <div class="savannah">
           <div class="lifes"></div>
@@ -37,9 +37,9 @@ export function renderSavannah() {
         </div>
         <div class="results hidden">
           <div class="results__table">
-            <p class="right__text">Correct</span></p>
+            <p class="right__text">Правильно:</span></p>
             <div class="right__items"></div>
-            <p class="wrong__text">Mistake</span></p>
+            <p class="wrong__text">Ошибки:</span></p>
             <div class="wrong__items"></div>
             <div class="btns">
               <a class="button button__new-game">Новая игра</a>
