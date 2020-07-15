@@ -67,6 +67,9 @@ img {
     &:hover {
       filter: blur(0) brightness(1);
     }
+    @media(min-width:1200px){
+      height: 300px;
+    }
   }
   &:hover {
     p {

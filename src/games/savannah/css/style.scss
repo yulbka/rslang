@@ -86,6 +86,10 @@ $border-radius: 5px;
   margin: 0;
   overflow: hidden;
   padding: 0;
+  .items{
+    justify-content: space-around;
+    grid-template-columns: repeat(auto-fill, 200px);
+  }
 }
 
 .savannah {
@@ -321,6 +325,12 @@ $border-radius: 5px;
     }
     .wrong__count {
       background: $color-wrong;
+    }
+    .item{
+      padding: 15px 15px 15px 40px;
+      &>p{
+        margin-bottom: 0;
+      }
     }
   }
   .item {

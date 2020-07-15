@@ -29,7 +29,7 @@ export class App {
       this.checkHeader();
     }
     MAIN.innerHTML = '';
-    document.body.classList.remove('content-page');
+    document.body.className = '';
     this.setContent(page);
   }
 

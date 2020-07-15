@@ -28,6 +28,20 @@
 @import '../pages/aboutTeam/index.scss';
 
 /********* CUSTOM RESET: START **********/
+
+
+*::-webkit-scrollbar {
+  width: 6px;
+  background-color: $colorPrompt;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: $colorGray;
+}
+html{
+  overflow: auto;
+}
+
 label {
   margin-bottom: 0;
 }
