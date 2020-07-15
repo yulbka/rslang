@@ -7,6 +7,7 @@ import { Authorization } from './Authorization';
 import { LearnWords } from './learn_words/learnWords';
 import { router } from '../routes';
 import { Statistics } from './Statistics';
+import { createa_promo_page } from './promo'
 import { createSavannahGame } from '../games/savannah/js/mainApp';
 import { renderSavannah } from '../games/savannah/js/render';
 import { createSpeakItGame } from '../games/speakit/js/mainApp';
@@ -82,7 +83,7 @@ export class App {
         MAIN.innerHTML = '<div>ourGame</div>'; // replace with function that render ourGame mini-game page
         break;
       case routesMap.get(routeKeys.promo).url:
-        MAIN.innerHTML = '<div>promo</div>'; // replace with function that render promo page
+        createa_promo_page(); // replace with function that render promo page
         break;
       case routesMap.get(routeKeys.team).url:
         MAIN.innerHTML = '<div>aboutUs</div>'; // replace with function that render aboutUs page
