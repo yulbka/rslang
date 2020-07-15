@@ -1,4 +1,68 @@
 .hangman-game {
+
+  @keyframes button {
+    0%,
+    50%,
+    90% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    60% {
+      -webkit-transform: rotate(5deg) scale(1);
+      transform: rotate(5deg) scale(1);
+    }
+    70% {
+      -webkit-transform: rotate(-5deg) scale(0.97);
+      transform: rotate(-5deg) scale(0.97);
+    }
+    80% {
+      -webkit-transform: rotate(5deg) scale(1.05);
+      transform: rotate(5deg) scale(1.05);
+    }
+  }
+
+  @-webkit-keyframes button {
+    0%,
+    50%,
+    90% {
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    60% {
+      -webkit-transform: rotate(5deg) scale(1);
+      transform: rotate(5deg) scale(1);
+    }
+    70% {
+      -webkit-transform: rotate(-5deg) scale(0.97);
+      transform: rotate(-5deg) scale(0.97);
+    }
+    80% {
+      -webkit-transform: rotate(5deg) scale(1.05);
+      transform: rotate(5deg) scale(1.05);
+    }
+  }
+
+  @media all and (max-width: 445px) {
+    .rules_ul {
+      font-size: 1.3rem;
+    }
+
+    .rules {
+      margin-left: 14%;
+    }
+
+    .my_button {
+      margin-right: 3px;
+    }
+
+    .game_levels {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      top: 650px;
+    }
+  }
   body {
     background-color: #eee;
     margin: 0;
@@ -36,8 +100,8 @@
     box-shadow: 0 0 0 5px #090;
     display: table;
     font-weight: bold;
-    padding: 10px 20px;
     margin: 7% auto;
+    padding: 10px 20px;
   }
 
   #home .foother {
@@ -102,9 +166,9 @@
     box-shadow: 0 0 0 5px #090;
     display: table;
     font-weight: bold;
-    padding: 10px 20px;
     margin: 40px auto;
     margin-bottom: 0;
+    padding: 10px 20px;
   }
 
   #letter {
@@ -117,8 +181,8 @@
   .l {
     box-shadow: 0 3px 0 -1px #555;
     display: inline-block;
-    margin: 1px;
     height: 30px;
+    margin: 1px;
     text-transform: uppercase;
     width: 20px;
   }
@@ -136,10 +200,10 @@
   }
 
   #game .player {
+    height: 130px;
     left: 53px;
     position: absolute;
     top: 90px;
-    height: 130px;
     width: 75px;
   }
 
@@ -172,8 +236,8 @@
     display: none;
   }
 
-  .playerModel .body:before,
-  .playerModel .body:after {
+  .playerModel .body::before,
+  .playerModel .body::after {
     background-color: #000;
     content: '';
     display: inline-block;
@@ -182,21 +246,21 @@
     width: 2px;
   }
 
-  .playerModel .body[l='false']:before,
-  .playerModel .body[r='false']:after {
+  .playerModel .body[l='false']::before,
+  .playerModel .body[r='false']::after {
     display: none;
   }
 
-  .playerModel .body:before {
+  .playerModel .body::before {
     left: 27px;
-    transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
   }
 
-  .playerModel .body:after {
+  .playerModel .body::after {
     right: 26px;
-    transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
   }
 
   .playerModel .foot {
@@ -210,8 +274,8 @@
     display: none;
   }
 
-  .playerModel .foot:before,
-  .playerModel .foot:after {
+  .playerModel .foot::before,
+  .playerModel .foot::after {
     background-color: #000;
     content: '';
     display: inline-block;
@@ -220,21 +284,21 @@
     width: 2px;
   }
 
-  .playerModel .foot[l='false']:before,
-  .playerModel .foot[r='false']:after {
+  .playerModel .foot[l='false']::before,
+  .playerModel .foot[r='false']::after {
     display: none;
   }
 
-  .playerModel .foot:before {
+  .playerModel .foot::before {
     left: 30px;
-    transform: rotate(20deg);
     -webkit-transform: rotate(20deg);
+    transform: rotate(20deg);
   }
 
-  .playerModel .foot:after {
+  .playerModel .foot::after {
     right: 29px;
-    transform: rotate(-20deg);
     -webkit-transform: rotate(-20deg);
+    transform: rotate(-20deg);
   }
 
   #game .stang3 {
@@ -260,15 +324,15 @@
     width: 95px;
   }
 
-  #game .stang2:before {
+  #game .stang2::before {
     background-color: #000;
     content: '';
-    left: 50px;
     height: 5px;
+    left: 50px;
     position: absolute;
     top: 17px;
-    transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
     width: 50px;
   }
 
@@ -294,8 +358,8 @@
     background-color: #000;
     border-radius: 5px;
     bottom: 0;
-    left: 0;
     height: 5px;
+    left: 0;
     margin: auto;
     position: absolute;
     right: 0;
@@ -358,8 +422,8 @@
   }
 
   .rules_ul {
-    list-style: square;
     font-size: 1.5rem;
+    list-style: square;
   }
 
   .game_levels {
@@ -447,80 +511,16 @@
   }
 
   .anim {
-    cursor: pointer;
-    animation: button 3s infinite;
     -webkit-animation: button 3s infinite;
+    animation: button 3s infinite;
+    cursor: pointer;
   }
 
   .ingame_statictic {
-    width: 180px;
-    position: fixed;
     font-size: 32px;
-    top: 60px;
+    position: fixed;
     right: 10px;
-  }
-
-  @keyframes button {
-    0%,
-    50%,
-    90% {
-      transform: rotate(0deg);
-      -webkit-transform: rotate(0deg);
-    }
-    60% {
-      transform: rotate(5deg) scale(1);
-      -webkit-transform: rotate(5deg) scale(1);
-    }
-    70% {
-      transform: rotate(-5deg) scale(0.97);
-      -webkit-transform: rotate(-5deg) scale(0.97);
-    }
-    80% {
-      transform: rotate(5deg) scale(1.05);
-      -webkit-transform: rotate(5deg) scale(1.05);
-    }
-  }
-
-  @-webkit-keyframes button {
-    0%,
-    50%,
-    90% {
-      transform: rotate(0deg);
-      -webkit-transform: rotate(0deg);
-    }
-    60% {
-      transform: rotate(5deg) scale(1);
-      -webkit-transform: rotate(5deg) scale(1);
-    }
-    70% {
-      transform: rotate(-5deg) scale(0.97);
-      -webkit-transform: rotate(-5deg) scale(0.97);
-    }
-    80% {
-      transform: rotate(5deg) scale(1.05);
-      -webkit-transform: rotate(5deg) scale(1.05);
-    }
-  }
-
-  @media all and (max-width: 445px) {
-    .rules_ul {
-      font-size: 1.3rem;
-    }
-
-    .rules {
-      margin-left: 14%;
-    }
-
-    .my_button {
-      margin-right: 3px;
-    }
-
-    .game_levels {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      top: 650px;
-    }
+    top: 60px;
+    width: 180px;
   }
 }
