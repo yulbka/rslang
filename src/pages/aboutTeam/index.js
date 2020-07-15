@@ -40,8 +40,7 @@ const personsMap = new Map([
     'Павел',
     {
       photo: require('assets/img/team/Pavel(mentor).jpg').default,
-      description:
-      `<p class="person-description"><b>Frontend developer (3 года)</b></p>
+      description: `<p class="person-description"><b>Frontend developer (3 года)</b></p>
        <p class="person-description"><b>Технологический стек:</b></br>React, Angular, React Native.</p>
        <p class="person-description"><b>Вклад в проект:</b></br>Координировал деятельность команды, принимал участие в обсуждении разработки, настроил инструмент для совместной работы, проводил code-review</p>`,
     },
@@ -52,7 +51,7 @@ const personsMap = new Map([
       photo: require('assets/img/team/Yulia.jpg').default,
       description: `
       <p class="person-description"><b>Разработала:</b><br/>Страницы изучения слов, регистрации и авторизации, график прогресса изучения слов, мини-игру "Английский пазл", методику интервального повторения</p>
-      <p class="person-description"><b>Принимала участие:</b><br/>В обсуждении разработки, code-review</p>`
+      <p class="person-description"><b>Принимала участие:</b><br/>В обсуждении разработки, code-review</p>`,
     },
   ],
   [
@@ -64,7 +63,7 @@ const personsMap = new Map([
         <p class="person-description"><b>Спроектировала:</b><br/>Global store, routing, requestCreator</p>
         <p class="person-description"><b>Разработала:</b><br/>Страницы "Главная" и "О команде", мини-игру "Аудиовызов"</p>
         <p class="person-description"><b>Принимала участие:</b><br/>В обсуждении разработки, code-review, видео о приложении</p>
-      `
+      `,
     },
   ],
   [
@@ -73,17 +72,22 @@ const personsMap = new Map([
       photo: require('assets/img/team/Pavel.jpg').default,
       description: `
         <p class="person-description"><b>Разработал:</b><br/>Sidebar, мини-игры "Произнеси слово" и "Саванна"</p>
-        <p class="person-description"><b>Принимал участие:</b><br/>В обсуждении разработки, code-review</p>`
+        <p class="person-description"><b>Принимал участие:</b><br/>В обсуждении разработки, code-review</p>`,
     },
   ],
   [
     'Сергей',
     {
       photo: require('assets/img/team/Sergey.jpg').default,
-      description:
-          `<p class="person-description"><b>Разработал:</b><br/>Мини-игру "Висельница", страницу "Словарь", участие в создании видео о команде.</p>
-           <p class="person-description"><b>Принимал участие:</b><br/>В обсуждении разработки, видео о приложении</p>`
+      description: `<p class="person-description"><b>Разработал:</b><br/>Мини-игру "Висельница", страницу "Словарь", участие в создании видео о команде.</p>
+           <p class="person-description"><b>Принимал участие:</b><br/>В обсуждении разработки, видео о приложении</p>`,
     },
   ],
-  ['Виктория', { photo: require('assets/img/team/Victoria.jpg').default, description: '<p class="person-description"><b>Разработала:</b><br/>Мини-игру "Спринт"</p>' }],
+  [
+    'Виктория',
+    {
+      photo: require('assets/img/team/Victoria.jpg').default,
+      description: '<p class="person-description"><b>Разработала:</b><br/>Мини-игру "Спринт"</p>',
+    },
+  ],
 ]);

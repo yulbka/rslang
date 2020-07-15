@@ -88,8 +88,7 @@ export class Game {
           countWrongs += 1;
         }
       });
-      countWrongs ? answerBtn.classList.remove('btn_hidden'):
-      this.sentenceCollected();
+      countWrongs ? answerBtn.classList.remove('btn_hidden') : this.sentenceCollected();
     });
   }
 
@@ -98,8 +97,7 @@ export class Game {
     answerBtn.addEventListener('click', async () => {
       const checkBtn = document.querySelector('.puzzle-btn_check');
       const data = document.querySelector('.data');
-      if (!data.children.length &&
-        checkBtn.classList.contains('btn_hidden')) return;
+      if (!data.children.length && checkBtn.classList.contains('btn_hidden')) return;
       const puzzles = document.querySelectorAll('.new');
       puzzles.forEach((puzzle) => {
         puzzle.classList.add('settled');
@@ -120,7 +118,7 @@ export class Game {
       const pageDropList = document.querySelector('.page__droplist');
       const levelDropList = document.querySelector('.level__droplist');
       this.checkAudioPrompt();
-      if (!(resultsBtn.classList.contains('btn_hidden'))) {
+      if (!resultsBtn.classList.contains('btn_hidden')) {
         if (pageDropList.selectedIndex === -1) {
           clearGameField();
           GamePage.renderResultBlock();
@@ -148,14 +146,11 @@ export class Game {
   }
 
   static resultsHandler() {
-    const resultsBtn =
-    document.querySelector('.puzzle-btn_results');
+    const resultsBtn = document.querySelector('.puzzle-btn_results');
     resultsBtn.addEventListener('click', () => {
       const switcher = document.querySelector('#customSwitch');
-      const level = switcher.checked ? this.firstWord.group:
-      +document.querySelector('.level__droplist').value;
-      const page = switcher.checked ? this.firstWord.page:
-      +document.querySelector('.page__droplist').value;
+      const level = switcher.checked ? this.firstWord.group : +document.querySelector('.level__droplist').value;
+      const page = switcher.checked ? this.firstWord.page : +document.querySelector('.page__droplist').value;
       MAIN.innerHTML = '';
       new ResultsPage(level, page).init();
     });
@@ -181,22 +176,21 @@ export class Game {
     if (!picturePrompt) return;
     picturePrompt.addEventListener('click', async () => {
       picturePrompt.classList.toggle('prompt-btn_active');
-      picturePrompt.classList.contains('prompt-btn_active') ?
-      await this.updateSettings({ background: true }):
-      await this.updateSettings({ background: false });
+      picturePrompt.classList.contains('prompt-btn_active')
+        ? await this.updateSettings({ background: true })
+        : await this.updateSettings({ background: false });
       const rowPosition = findCurrentRow();
       const puzzles = document.querySelectorAll('.new');
       const checkbox = document.querySelector('#customSwitch');
       const levelDropList = document.querySelector('.level__droplist');
-      const level = checkbox.checked ? this.firstWord.group: +levelDropList.value - 1;
+      const level = checkbox.checked ? this.firstWord.group : +levelDropList.value - 1;
       const pageDropList = document.querySelector('.page__droplist');
-      const page = checkbox.checked ? this.firstWord.page: +pageDropList.value - 1;
-      console.log(level, page)
+      const page = checkbox.checked ? this.firstWord.page : +pageDropList.value - 1;
+      console.log(level, page);
       puzzles.forEach((puzzle) => {
-        picturePrompt.classList.contains('prompt-btn_active') ?
-        Puzzle.showPicture(puzzle, puzzle.dataset.position,
-            rowPosition - 1, level, page):
-        Puzzle.fillPuzzle(puzzle, '#b6ab98');
+        picturePrompt.classList.contains('prompt-btn_active')
+          ? Puzzle.showPicture(puzzle, puzzle.dataset.position, rowPosition - 1, level, page)
+          : Puzzle.fillPuzzle(puzzle, '#b6ab98');
         Puzzle.paintStroke(puzzle, 'lightgrey');
       });
     });
@@ -234,13 +228,13 @@ export class Game {
       const prompt = document.querySelector('.prompt__text');
       prompt.textContent = '';
       translatePrompt.classList.toggle('prompt-btn_active');
-      translatePrompt.classList.contains('prompt-btn_active') ?
-      await this.updateSettings({ translation: true }):
-      await this.updateSettings({ translation: false });
+      translatePrompt.classList.contains('prompt-btn_active')
+        ? await this.updateSettings({ translation: true })
+        : await this.updateSettings({ translation: false });
       if (translatePrompt.classList.contains('prompt-btn_active')) {
         const checkbox = document.querySelector('#customSwitch');
-        const level = checkbox.checked ? this.word.group: +document.querySelector('.level__droplist').value;
-        const page = checkbox.checked ? this.word.page: +document.querySelector('.page__droplist').value;
+        const level = checkbox.checked ? this.word.group : +document.querySelector('.level__droplist').value;
+        const page = checkbox.checked ? this.word.page : +document.querySelector('.page__droplist').value;
         const round = findCurrentRow();
         Sentence.translateSentence(level, page, round);
       }
@@ -248,14 +242,13 @@ export class Game {
   }
 
   static autoPlay() {
-    const autoPlayPrompt =
-    document.querySelector('.voice');
+    const autoPlayPrompt = document.querySelector('.voice');
     if (!autoPlayPrompt) return;
     autoPlayPrompt.addEventListener('click', async () => {
       autoPlayPrompt.classList.toggle('prompt-btn_active');
-      autoPlayPrompt.classList.contains('prompt-btn_active') ?
-      await this.updateSettings({ autoplay: true }):
-      await this.updateSettings({ autoplay: false });
+      autoPlayPrompt.classList.contains('prompt-btn_active')
+        ? await this.updateSettings({ autoplay: true })
+        : await this.updateSettings({ autoplay: false });
     });
   }
 
@@ -291,11 +284,11 @@ export class Game {
 
   static async getSettings() {
     const settings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
-    console.log(settings)
+    console.log(settings);
     store.user.englishPuzzle = settings.englishPuzzle;
     const { page, level, autoplay, translation, audio, background, useLearnedWords } = store.user.englishPuzzle;
     if (autoplay) {
-        document.querySelector('.voice').classList.add('prompt-btn_active');
+      document.querySelector('.voice').classList.add('prompt-btn_active');
     }
     if (translation) {
       document.querySelector('.text').classList.add('prompt-btn_active');
@@ -316,7 +309,8 @@ export class Game {
   static async updateSettings(updatedFields) {
     const settings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
     const { wordsPerDay, learning, englishPuzzle } = settings;
-    const newSettings = await API_USER.setUserSettings({ userId: localStorage.getItem('userId'),
+    const newSettings = await API_USER.setUserSettings({
+      userId: localStorage.getItem('userId'),
       userSettings: {
         wordsPerDay,
         optional: {
@@ -326,7 +320,7 @@ export class Game {
             ...updatedFields,
           },
         },
-      }
+      },
     });
     store.user.englishPuzzle = newSettings.englishPuzzle;
   }
@@ -334,8 +328,7 @@ export class Game {
   static sentenceCollected() {
     const count = document.querySelector('.count');
     const rowIndex = Number(count.lastChild.textContent);
-    const row =
-      document.querySelector(`[data-row='${rowIndex}']`);
+    const row = document.querySelector(`[data-row='${rowIndex}']`);
     const puzzles = Array.from(document.querySelectorAll('.settled'));
     puzzles.sort((a, b) => +a.dataset.position - +b.dataset.position);
     const fragment = document.createDocumentFragment();
@@ -344,14 +337,28 @@ export class Game {
     const levelDropList = document.querySelector('.level__droplist');
     puzzles.forEach((puzzle) => {
       fragment.append(puzzle);
-      checkbox.checked ?
-      Puzzle.showPicture(puzzle, puzzle.dataset.position, rowIndex - 1, this.firstWord.group, this.firstWord.page, 'green'):
-      Puzzle.showPicture(puzzle, puzzle.dataset.position, rowIndex - 1, +levelDropList.value - 1, +pageDropList.value - 1, 'green');
+      checkbox.checked
+        ? Puzzle.showPicture(
+            puzzle,
+            puzzle.dataset.position,
+            rowIndex - 1,
+            this.firstWord.group,
+            this.firstWord.page,
+            'green'
+          )
+        : Puzzle.showPicture(
+            puzzle,
+            puzzle.dataset.position,
+            rowIndex - 1,
+            +levelDropList.value - 1,
+            +pageDropList.value - 1,
+            'green'
+          );
     });
     row.append(fragment);
     this.checkAutoPlay();
-    const level = checkbox.checked ? this.word.group: +levelDropList.value;
-    const page = checkbox.checked ? this.word.page: +pageDropList.value;
+    const level = checkbox.checked ? this.word.group : +levelDropList.value;
+    const page = checkbox.checked ? this.word.page : +pageDropList.value;
     Sentence.translateSentence(level, page, rowIndex);
     const playBtn = document.querySelector('.prompt__button');
     playBtn.addEventListener('click', this.audioPlay);
@@ -365,8 +372,7 @@ export class Game {
 
   static finishRow() {
     const puzzles = Array.from(document.querySelectorAll('.settled'));
-    const row =
-      document.querySelector(`[data-row='${findCurrentRow()}']`);
+    const row = document.querySelector(`[data-row='${findCurrentRow()}']`);
     row.classList.remove('puzzle-row_active');
     puzzles.forEach((puzzle) => {
       Puzzle.paintStroke(puzzle, 'lightgrey');
@@ -379,8 +385,8 @@ export class Game {
     const checkbox = document.querySelector('#customSwitch');
     const pageDropList = document.querySelector('.page__droplist');
     const levelDropList = document.querySelector('.level__droplist');
-    let level = checkbox.checked ? this.firstWord.group: +levelDropList.value;
-    let page = checkbox.checked ? this.firstWord.page: +pageDropList.value;
+    let level = checkbox.checked ? this.firstWord.group : +levelDropList.value;
+    let page = checkbox.checked ? this.firstWord.page : +pageDropList.value;
     const rowIndex = findCurrentRow();
     if (rowIndex === 10) {
       await this.setLongStatistics();
@@ -389,7 +395,7 @@ export class Game {
         page = +pageDropList.value;
         level = +levelDropList.value;
         if (page === book[level].length / 10) {
-          level === 6 ? level = 1: level += 1;
+          level === 6 ? (level = 1) : (level += 1);
           page = 1;
           await this.updateSettings({ page, level });
         } else {
@@ -409,21 +415,17 @@ export class Game {
       numbers.forEach((number) => {
         number.classList.remove('count__number_active');
       });
-      createElement('div', count, ['count__number', 'count__number_active'],
-          `${Number(rowIndex) + 1}`);
+      createElement('div', count, ['count__number', 'count__number_active'], `${Number(rowIndex) + 1}`);
       if (checkbox.checked) {
         this.word = await WordService.getWordsForGames(1, null, '"wordsPerExampleSentence":{"$lte": 10}');
         this.audio = Sentence.loadSentencePronounce(this.word.audioExample);
-        this.sentence = Sentence.render(this.word.textExample,
-          this.word.group, this.word.page, rowIndex + 1);
+        this.sentence = Sentence.render(this.word.textExample, this.word.group, this.word.page, rowIndex + 1);
       } else {
         this.word = Sentence.getWordData(level, page, rowIndex + 1);
         this.audio = Sentence.loadSentencePronounce(this.word.audio);
-        this.sentence = Sentence.render(this.word.textExample,
-          level, page, rowIndex + 1);
+        this.sentence = Sentence.render(this.word.textExample, level, page, rowIndex + 1);
       }
-      const newRow =
-        document.querySelector(`[data-row='${rowIndex + 1}']`);
+      const newRow = document.querySelector(`[data-row='${rowIndex + 1}']`);
       newRow.classList.add('puzzle-row_active');
     }
   }
@@ -444,19 +446,17 @@ export class Game {
   static showPictureData(level, page) {
     const count = document.querySelector('.count');
     count.innerHTML = '';
-    const container =
-        document.querySelector('.result');
+    const container = document.querySelector('.result');
     container.innerHTML = '';
     const playBtn = document.querySelector('.prompt__button');
     playBtn.classList.add('btn_hidden');
     const switcher = document.querySelector('#customSwitch');
-    const picture = switcher.checked ? paintings[level + 1][page]: paintings[level][page - 1];
+    const picture = switcher.checked ? paintings[level + 1][page] : paintings[level][page - 1];
     const img = new Image(container.offsetWidth, container.offsetHeight);
     const src = picture.cutSrc;
     img.src = `https://raw.githubusercontent.com/Anna234365/rslang_data_paintings/master/${src}`;
     container.append(img);
-    const pictureDescription =
-    `${picture.author} - ${picture.name} (${picture.year})`;
+    const pictureDescription = `${picture.author} - ${picture.name} (${picture.year})`;
     const data = document.querySelector('.data');
     createElement('p', data, ['picture-description', 'text-center', 'text-dark'], pictureDescription);
   }
@@ -465,10 +465,10 @@ export class Game {
 
   static handleCheckbox() {
     const checkbox = document.querySelector('#customSwitch');
-    checkbox.addEventListener('change', async() => {
+    checkbox.addEventListener('change', async () => {
       clearGameField();
       GamePage.renderResultBlock();
-      await this.updateSettings({ "useLearnedWords": checkbox.checked });
+      await this.updateSettings({ useLearnedWords: checkbox.checked });
       if (checkbox.checked) {
         await this.disableDropLists();
       } else {
@@ -525,13 +525,13 @@ export class Game {
               translate: this.word.textExampleTranslate || this.word.textTranslate,
               audio: this.word.audioExample || this.word.audio,
               mistake: answer,
-            }
+            },
           },
           long: {
             ...statistics.optional.englishPuzzle.long,
           },
-        }
-      }
+        },
+      },
     });
   }
 
@@ -554,28 +554,28 @@ export class Game {
           long: {
             ...statistics.optional.englishPuzzle.long,
             [new Date().toLocaleString()]: {
-              "mistakes": mistakes,
-            }
+              mistakes: mistakes,
+            },
           },
-        }
-      }
+        },
+      },
     });
   }
 
   static async resetShortStatistics() {
     const statistics = await Statistics.get();
-      await Statistics.set({
-        learnedWords: statistics.learnedWords,
-        optional: {
-          ...statistics.optional,
-          englishPuzzle: {
-            short: null,
-            long: {
-              ...statistics.optional.englishPuzzle.long,
-            },
-          }
-        }
-      });
+    await Statistics.set({
+      learnedWords: statistics.learnedWords,
+      optional: {
+        ...statistics.optional,
+        englishPuzzle: {
+          short: null,
+          long: {
+            ...statistics.optional.englishPuzzle.long,
+          },
+        },
+      },
+    });
   }
 }
 
@@ -589,8 +589,7 @@ function findCurrentRow() {
 }
 
 function clearGameField() {
-  const container =
-    document.querySelector('.result-container');
+  const container = document.querySelector('.result-container');
   if (!container) return;
   container.innerHTML = '';
   const data = document.querySelector('.data');
