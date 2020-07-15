@@ -13,7 +13,7 @@ export const book = {
   3: book3,
   4: book4,
   5: book5,
-  6: book6
+  6: book6,
 };
 
 export class Sentence {
@@ -25,15 +25,16 @@ export class Sentence {
   static render(text, level, page, round) {
     let sentence = text;
     if (text.indexOf('<b>') !== -1) {
-      sentence = text.slice(0, text.indexOf('<b>')) +
-      text.slice(text.indexOf('<b>') + 3, text.indexOf('</b>')) + text.slice(text.indexOf('</b>') + 4);
+      sentence =
+        text.slice(0, text.indexOf('<b>')) +
+        text.slice(text.indexOf('<b>') + 3, text.indexOf('</b>')) +
+        text.slice(text.indexOf('</b>') + 4);
     }
     const sentenceLength = sentence.split(' ').join('').length;
     const wordsArray = sentence.split(' ');
     const data = document.querySelector('.data');
     if (!data) return;
-    const letterWidth =
-    Math.floor((data.offsetWidth - 20 * wordsArray.length) / sentenceLength);
+    const letterWidth = Math.floor((data.offsetWidth - 20 * wordsArray.length) / sentenceLength);
     let puzzlesWidth = 0;
     let position = 0;
     wordsArray.forEach((word, index) => {
@@ -88,14 +89,13 @@ export class Sentence {
     const switcher = document.querySelector('#customSwitch');
     if (switcher.checked) {
       // eslint-disable-next-line no-param-reassign
-      level =  Game.firstWord.group + 1;
+      level = Game.firstWord.group + 1;
       // eslint-disable-next-line no-param-reassign
       page = Game.firstWord.page + 1;
     }
     if (picturePrompt.classList.contains('prompt-btn_active')) {
       words.forEach((puzzle) => {
-        Puzzle.showPicture(puzzle, puzzle.dataset.position,
-            round - 1, level - 1, page - 1);
+        Puzzle.showPicture(puzzle, puzzle.dataset.position, round - 1, level - 1, page - 1);
       });
     }
   }
@@ -107,7 +107,6 @@ export class Sentence {
   }
 
   static translateSentence(level, page, round) {
-    console.log(level, page, round)
     const prompt = document.querySelector('.prompt__text');
     const checkbox = document.querySelector('#customSwitch');
     if (!checkbox.checked) {

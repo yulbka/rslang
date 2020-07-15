@@ -89,6 +89,15 @@ export class WordService {
     return words;
   }
 
+  static async getAmountUserWords({ group, wordsPerPage, wordsPerExampleSentenceLTE }) {
+    const amount = await requestCreator({
+      url: `/words/count`,
+      method: requestCreator.methods.get,
+      data: { group, wordsPerPage, wordsPerExampleSentenceLTE },
+    });
+    return amount;
+  }
+
   static async getUserWord(wordId) {
     const word = await requestCreator({
       url: `/users/${store.user.auth.userId}/words/${wordId}`,
@@ -123,7 +132,6 @@ export class WordService {
       method: requestCreator.methods.post,
       data: word,
     });
-    console.log(result);
     return result;
   }
 
@@ -141,7 +149,6 @@ export class WordService {
         },
       },
     });
-    console.log(result);
     return result;
   }
 
@@ -173,7 +180,7 @@ export class WordService {
     const filter = additionalFilter ?
     `{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}, ${additionalFilter}}]}`:
     '{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}}]}';
-    let url = level ? 
+    let url = level ?
     `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsNumber}&group=${level}&page=${0}&filter=${filter}`:
     `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsNumber}&page=${0}&filter=${filter}`;
     const word = await requestCreator({
@@ -195,7 +202,7 @@ export class WordService {
     } while (pages.length < wordsNumber);
 
     await Promise.all(pages.map(async (page) => {
-      url = level ? 
+      url = level ?
         `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${1}&group=${level}&page=${page}&filter=${filter}`:
         `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${1}&page=${page}&filter=${filter}`;
       const randomWord = await requestCreator({
@@ -232,6 +239,6 @@ export class WordService {
         '1',
         '0'
       );
-    } 
+    }
   }
 }

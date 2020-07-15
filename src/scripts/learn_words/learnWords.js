@@ -44,12 +44,12 @@ export class LearnWords {
         },
 
         ...store.statistics.mainGame.long,
-      }  
+      }
     }
     PRELOADER.classList.remove('preload-wrapper-hidden');
     if (store.statistics.mainGame.long[today] &&
-      +store.statistics.mainGame.long[today].cards >= +store.user.learning.cardsPerDay) {
-        $('#learnModal').modal('show');
+        +store.statistics.mainGame.long[today].cards >= +store.user.learning.cardsPerDay) {
+      $('#learnModal').modal('show');
     } else {
       await this.render();
     }
@@ -71,7 +71,7 @@ export class LearnWords {
     const progress = createElement('div', progressWrapper, ['progress']);
     createElement('div', progress, ['progress-bar'], '', 'role', 'progressbar');
     createElement('div', progressWrapper, ['progress-number', 'progress-max', 'text-primary'], '100');
-    MAIN.append(fragment); 
+    MAIN.append(fragment);
     await this.addCards();
     const mySwiper = initializeSwiper('.swiper-container');
     if (mySwiper.slides.length < 1) {
@@ -105,7 +105,7 @@ export class LearnWords {
       if (newWords < 0) newWords = 0;
       await this.addNewWordsToSlider(mySwiper, newWords);
     } else {
-      numToRepeat = cardsPerDay - store.statistics.mainGame.long[today].cards
+      numToRepeat = cardsPerDay - store.statistics.mainGame.long[today].cards;
       if (numToRepeat < 0) numToRepeat = 0;
       await this.addWordsToRepeatToSlider(mySwiper, numToRepeat, numToRepeat);
     }
@@ -494,7 +494,7 @@ export class LearnWords {
   }
 
   static createPopUp() {
-    MAIN.insertAdjacentHTML('beforeend', 
+    MAIN.insertAdjacentHTML('beforeend',
     `<div class="modal" id="learnModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">

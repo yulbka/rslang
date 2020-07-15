@@ -17,5 +17,7 @@ export const statistics = {
   englishPuzzle: {
     short: null,
     long: null,
+
   }
-};
+
+}

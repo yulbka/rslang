@@ -1,8 +1,9 @@
 import { SIDEBAR, MAIN, HEADER, routesMap, routeKeys } from 'scripts/helpers/variables';
 import { pageHomeCreate } from 'pages/main';
 import { store } from 'store';
+import { audioCallGameCreate } from 'pages/games/audiocall';
 import { aboutTeamCreate } from 'pages/aboutTeam';
-import { create_dictionary } from './dictionary'
+import { create_dictionary } from './dictionary';
 import { createSidebar } from './burger';
 import { Header } from './Header';
 import { Authorization } from './Authorization';
@@ -30,7 +31,11 @@ export class App {
       this.checkHeader();
     }
     MAIN.innerHTML = '';
+
     document.body.classList.remove('main-page', 'content-page', 'speakit', 'savannahGame', 'audiocall-game', 'about-team', 'long-statistics');
+
+    document.body.classList.remove('content-page');
+
     this.setContent(page);
   }
 
@@ -78,7 +83,7 @@ export class App {
         createSavannahGame();
         break;
       case routesMap.get(routeKeys.audio).url:
-        MAIN.innerHTML = '<div>audioCall</div>'; // replace with function that render audioCall mini-game page
+        audioCallGameCreate();
         break;
       case routesMap.get(routeKeys.sprint).url:
         renderSprint();

@@ -9,7 +9,7 @@ import { createElement } from '../../scripts/helpers/createElement';
 import { router } from '../../routes/index';
 
 function createSettingsBlock() {
-  document.body.classList.add('main-page');
+  document.body.classList.add('content-page');
   const mainPageContainer = createElement('div', constants.DOM.main, ['container', 'main-page-container']);
   mainPageContainer.insertAdjacentHTML(
     'beforeend',
@@ -122,7 +122,7 @@ function createSettingsBlock() {
 
     try {
       const settings = await API_USER.getUserSettings({
-        userId: store.user.auth.userId
+        userId: store.user.auth.userId,
       });
       const newSettings = await API_USER.setUserSettings({
         userId: store.user.auth.userId,
@@ -134,7 +134,6 @@ function createSettingsBlock() {
           },
         },
       });
-      console.log(newSettings)
       $('.toast').toast('show');
       store.user.learning = {
         ...store.user.learning,
