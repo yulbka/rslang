@@ -32,7 +32,15 @@ export class App {
     }
     MAIN.innerHTML = '';
 
-    document.body.classList.remove('main-page', 'content-page', 'speakit', 'savannahGame', 'audiocall-game', 'about-team', 'long-statistics');
+    document.body.classList.remove(
+      'main-page',
+      'content-page',
+      'speakit',
+      'savannahGame',
+      'audiocall-game',
+      'about-team',
+      'long-statistics'
+    );
 
     document.body.classList.remove('content-page');
 

@@ -1,4 +1,34 @@
 body.sprint #main {
+  @media (max-width: 660px) {
+    .question {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #current-word-translation {
+      font-size: 2rem;
+    }
+
+    #current-word {
+      font-size: 2.5rem;
+    }
+  }
+
+  @media (max-width: 500px) {
+    .answer-buttons {
+      align-items: center;
+      flex-direction: column;
+    }
+
+    button {
+      margin-bottom: 10px;
+    }
+
+    .positive-button {
+      margin-right: 0;
+    }
+  }
   .flex-position {
     flex-direction: column;
     justify-content: center;
@@ -78,39 +108,5 @@ body.sprint #main {
 
   .positive-button {
     margin-right: 100px;
-  }
-
-
-  @media (max-width: 660px) {
-    .question {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    #current-word-translation {
-      font-size: 2rem;
-    }
-
-    #current-word {
-      font-size: 2.5rem;
-    }
-
-
-  }
-
-  @media (max-width: 500px) {
-    .answer-buttons {
-      flex-direction: column;
-      align-items: center;
-    }
-
-    button {
-      margin-bottom: 10px;
-    }
-
-    .positive-button {
-      margin-right: 0;
-    }
   }
 }

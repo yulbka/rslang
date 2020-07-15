@@ -26,7 +26,7 @@ export class LearnWords {
         ...statistics.optional.mainGame,
       },
       ...statistics.optional,
-    }
+    };
     this.createPopUp();
     const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
     if (!store.statistics.mainGame.short || store.statistics.mainGame.short.day !== today) {
@@ -44,11 +44,13 @@ export class LearnWords {
         },
 
         ...store.statistics.mainGame.long,
-      }
+      };
     }
     PRELOADER.classList.remove('preload-wrapper-hidden');
-    if (store.statistics.mainGame.long[today] &&
-        +store.statistics.mainGame.long[today].cards >= +store.user.learning.cardsPerDay) {
+    if (
+      store.statistics.mainGame.long[today] &&
+      +store.statistics.mainGame.long[today].cards >= +store.user.learning.cardsPerDay
+    ) {
       $('#learnModal').modal('show');
     } else {
       await this.render();
@@ -306,8 +308,10 @@ export class LearnWords {
     // if (+store.statistics.mainGame.short.cards === +store.user.learning.cardsPerDay) {
     //   Statistics.renderShortPage();
     // }
-    if (+store.statistics.mainGame.short.cards === +store.user.learning.cardsPerDay ||
-      mySwiper.activeIndex === mySwiper.slides.length - 1) {
+    if (
+      +store.statistics.mainGame.short.cards === +store.user.learning.cardsPerDay ||
+      mySwiper.activeIndex === mySwiper.slides.length - 1
+    ) {
       Statistics.renderShortPage();
     }
     mySwiper.allowSlideNext = true;
@@ -434,52 +438,52 @@ export class LearnWords {
 
   static async sendStatistics(input) {
     const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
-      let shortNewWords;
-      let longNewWords;
-      let learnedWords;
-      if (input.dataset.repeat === 'new') {
-        shortNewWords = store.statistics.mainGame.short.newWords + 1;
-        longNewWords = store.statistics.mainGame.long[today].newWords + 1;
-        learnedWords = store.statistics.learnedWords + 1;
-      } else {
-        shortNewWords = store.statistics.mainGame.short.newWords;
-        longNewWords = store.statistics.mainGame.long[today].newWords
-        learnedWords = store.statistics.learnedWords
-      }
-      let answer;
-      let mistakes;
-      if (input.dataset.mistake === 'mistake') {
-        answer = 'W';
-        mistakes = store.statistics.mainGame.long[today].mistakes + 1;
-      } else {
-        answer = 'T';
-        mistakes = store.statistics.mainGame.long[today].mistakes
-      }
-      const statistics = await Statistics.set({
-        "learnedWords": learnedWords,
-        "optional": {
-          ...store.statistics,
-          "mainGame": {
-            "short": {
-              "day": today,
-              "cards": store.statistics.mainGame.short.cards + 1,
-              "newWords": shortNewWords,
-              "answers": store.statistics.mainGame.short.answers + answer,
-            },
-            "long": {
-              ...store.statistics.mainGame.long,
-              [today]: {
-                "cards": store.statistics.mainGame.long[today].cards + 1,
-                "newWords": longNewWords,
-                "mistakes": mistakes,
-              }
+    let shortNewWords;
+    let longNewWords;
+    let learnedWords;
+    if (input.dataset.repeat === 'new') {
+      shortNewWords = store.statistics.mainGame.short.newWords + 1;
+      longNewWords = store.statistics.mainGame.long[today].newWords + 1;
+      learnedWords = store.statistics.learnedWords + 1;
+    } else {
+      shortNewWords = store.statistics.mainGame.short.newWords;
+      longNewWords = store.statistics.mainGame.long[today].newWords;
+      learnedWords = store.statistics.learnedWords;
+    }
+    let answer;
+    let mistakes;
+    if (input.dataset.mistake === 'mistake') {
+      answer = 'W';
+      mistakes = store.statistics.mainGame.long[today].mistakes + 1;
+    } else {
+      answer = 'T';
+      mistakes = store.statistics.mainGame.long[today].mistakes;
+    }
+    const statistics = await Statistics.set({
+      learnedWords: learnedWords,
+      optional: {
+        ...store.statistics,
+        mainGame: {
+          short: {
+            day: today,
+            cards: store.statistics.mainGame.short.cards + 1,
+            newWords: shortNewWords,
+            answers: store.statistics.mainGame.short.answers + answer,
+          },
+          long: {
+            ...store.statistics.mainGame.long,
+            [today]: {
+              cards: store.statistics.mainGame.long[today].cards + 1,
+              newWords: longNewWords,
+              mistakes: mistakes,
             },
           },
-        }
-      });
+        },
+      },
+    });
     store.statistics.mainGame = {
-       ...statistics.optional.mainGame
-    }
+      ...statistics.optional.mainGame,
+    };
     store.statistics.learnedWords = learnedWords;
   }
 
@@ -494,8 +498,9 @@ export class LearnWords {
   }
 
   static createPopUp() {
-    MAIN.insertAdjacentHTML('beforeend',
-    `<div class="modal" id="learnModal" tabindex="-1" role="dialog">
+    MAIN.insertAdjacentHTML(
+      'beforeend',
+      `<div class="modal" id="learnModal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
@@ -517,5 +522,4 @@ export class LearnWords {
       router.navigate(routesMap.get(routeKeys.home).url);
     });
   }
-
 }

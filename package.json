@@ -21,7 +21,6 @@
     "deploy:now": "cd dist && now -d --public --prod",
     "upgrade-packages": "ncu -ui"
   },
- 
   "babel": {
     "extends": "./configs/babelrc.js"
   },

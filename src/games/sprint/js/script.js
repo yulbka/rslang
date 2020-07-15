@@ -7,10 +7,8 @@ let ArrWord = [];
 export const loadAllWords = async () => {
   const ArrWordFirst = await WordService.getWordsByLevelAndPage();
   const ArrWordSecond = await WordService.getWordsByLevelAndPage();
-  ArrWord = [...ArrWordFirst, ...ArrWordSecond]
-}
-
-
+  ArrWord = [...ArrWordFirst, ...ArrWordSecond];
+};
 
 export function startGame() {
   let count = 0;
@@ -32,7 +30,7 @@ export function startGame() {
     EngWord = ArrWord[p1].word;
     RusWord = ArrWord[p1].wordTranslate;
     const fiftyChance = getRandomNumber(2, 1);
-    RandomWord = fiftyChance === 1 ? RusWord: ArrWord[RandomInteger(9)].wordTranslate;
+    RandomWord = fiftyChance === 1 ? RusWord : ArrWord[RandomInteger(9)].wordTranslate;
 
     const currentWord = document.querySelector('#current-word');
     currentWord.innerHTML = EngWord;
@@ -49,9 +47,9 @@ export function startGame() {
     positiveBtn.onclick = () => {
       if (!EndGame) {
         if (RusWord === RandomWord) {
-          gE('score').innerText = score+10;
-          score+=10;     
-		} 
+          gE('score').innerText = score + 10;
+          score += 10;
+        }
         count++;
 
         if (count_time === 0) {
@@ -68,10 +66,9 @@ export function startGame() {
     negativeBtn.onclick = () => {
       if (!EndGame) {
         if (RusWord !== RandomWord) {
-          gE('score').innerText = score+10;
-          score+=10;
-
-        } 
+          gE('score').innerText = score + 10;
+          score += 10;
+        }
         count++;
 
         if (count_time === 0) {
@@ -97,5 +94,4 @@ export function startGame() {
   };
 
   CountTime();
-
 }

@@ -26,7 +26,6 @@ export class Statistics {
       data: statData,
     });
     return statistics;
-
   }
 
   static renderShortPage() {
@@ -73,7 +72,7 @@ export class Statistics {
         optional: {
           mainGame: store.statistics.mainGame,
           ...store.statistics,
-        }
+        },
       });
       MAIN.innerHTML = '';
       LearnWords.createPopUp();

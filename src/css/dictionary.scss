@@ -1,61 +1,59 @@
-.main_input_area{
+.main_input_area {
   margin: 20px 0 20px 0;
 }
 
-.filter_button{
+.filter_button {
   margin-top: 20px;
 }
 
-.bottom_buttons{
+.bottom_buttons {
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
 }
 
-.small_icon{
-  width: 40px;
+.small_icon {
   height: 40px;
+  width: 40px;
 }
 
-.hide{
+.hide {
   opacity: 0;
 }
 
-.small_icon:hover{
+.small_icon:hover {
   cursor: pointer;
 }
 
-.buttons{
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+.buttons {
   align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
-.small_img{
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
+.small_img {
+  height: 60px;
+  object-fit: cover;
+  width: 60px;
 }
 
 @media all and (max-width: 640px) {
-
-.button_div{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-}
-.buttons{
-  justify-content: center;
-  align-items: center;
-}
+  .button_div {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .buttons {
+    align-items: center;
+    justify-content: center;
+  }
   .btn {
     width: 70vw;
-
   }
 
-  .bottom_buttons{
-width: auto;
+  .bottom_buttons {
+    width: auto;
   }
 }
