@@ -34,14 +34,15 @@ export class LearnWords {
         day: today,
         cards: 0,
         newWords: 0,
-        answers: ''
+        answers: '',
       };
       store.statistics.mainGame.long = {
         [today]: {
           cards: 0,
           newWords: 0,
-          mistakes: 0
+          mistakes: 0,
         },
+
         ...store.statistics.mainGame.long,
       }
     }
@@ -358,7 +359,14 @@ export class LearnWords {
       const target = event.target.closest('.btn-delete');
       if (!target) return;
       if (input.dataset.repeat === 'new') {
-        WordService.createUserWord(input.dataset.wordId, input.dataset.word, 'normal', 'deleted', new Date().toJSON(), new Date().toJSON());
+        WordService.createUserWord(
+          input.dataset.wordId,
+          input.dataset.word,
+          'normal',
+          'deleted',
+          new Date().toJSON(),
+          new Date().toJSON()
+        );
       } else {
         WordService.updateUserWord(input.dataset.wordId, 'normal', { category: 'deleted' });
       }

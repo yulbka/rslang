@@ -3,6 +3,7 @@ import { store } from '../../store';
 import { getRandomNumber } from '../helpers/getRandomNumber';
 import { setWordDayRepeat } from '../helpers/setWordDayRepeat';
 
+
 export class WordService {
   constructor() {
     this._words = [];
@@ -174,7 +175,7 @@ export class WordService {
     });
     return words[0].paginatedResults;
   }
-
+  
   static async getWordsForGames(wordsNumber = 10, level = null, additionalFilter = null) {
     const filter = additionalFilter ?
     `{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}, ${additionalFilter}}]}`:
@@ -199,6 +200,7 @@ export class WordService {
         pages.push(page);
       }
     } while (pages.length < wordsNumber);
+
     await Promise.all(pages.map(async (page) => {
       url = level ?
         `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${1}&group=${level}&page=${page}&filter=${filter}`:
@@ -239,5 +241,4 @@ export class WordService {
       );
     }
   }
-
 }

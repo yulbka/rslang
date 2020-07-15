@@ -14,7 +14,9 @@ import { Statistics } from './Statistics';
 import { createSavannahGame } from '../games/savannah/js/mainApp';
 import { renderSavannah } from '../games/savannah/js/render';
 import { createSpeakItGame } from '../games/speakit/js/mainApp';
+
 import { renderSpeakIt } from '../games/speakit/js/render';
+import { renderSprint } from '../games/sprint/js/render';
 
 export class App {
   static async reRender(page) {
@@ -29,7 +31,11 @@ export class App {
       this.checkHeader();
     }
     MAIN.innerHTML = '';
+
+    document.body.classList.remove('main-page', 'content-page', 'speakit', 'savannahGame', 'audiocall-game', 'about-team', 'long-statistics');
+
     document.body.classList.remove('content-page');
+
     this.setContent(page);
   }
 
@@ -80,7 +86,7 @@ export class App {
         audioCallGameCreate();
         break;
       case routesMap.get(routeKeys.sprint).url:
-        MAIN.innerHTML = '<div>sprint</div>'; // replace with function that render sprint mini-game page
+        renderSprint();
         break;
       case routesMap.get(routeKeys.ourGame).url:
         MAIN.innerHTML = '<div>ourGame</div>'; // replace with function that render ourGame mini-game page

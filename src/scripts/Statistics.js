@@ -26,7 +26,10 @@ export class Statistics {
       data: statData,
     });
     return statistics;
-  }
+
+  }  
+}
+
 
   static renderShortPage() {
     const { cards, newWords } = store.statistics.mainGame.short;
@@ -72,7 +75,11 @@ export class Statistics {
         optional: {
           mainGame: store.statistics.mainGame,
           ...store.statistics,
+<<<<<<< HEAD
+        }
+=======
         },
+>>>>>>> develop
       });
       MAIN.innerHTML = '';
       LearnWords.createPopUp();
