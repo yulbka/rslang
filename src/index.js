@@ -7,7 +7,7 @@ import './css/index.scss';
 import { initializeRouter, router } from './routes/index';
 import { store } from './store';
 import { API_USER } from './api/user';
-import { PRELOADER, routeKeys, routesMap } from './scripts/helpers/variables';
+import { routesMap, routeKeys, PRELOADER } from './scripts/helpers/variables';
 
 window.onload = async () => {
   await initRequests();

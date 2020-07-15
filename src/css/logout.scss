@@ -1,15 +1,16 @@
 .logout {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: $space-xs;
+  width: $space-md;
+  height: $space-md;
   background: url('../assets/images/logout.png') no-repeat;
   background-size: cover;
   cursor: pointer;
-  height: $space-md;
-  opacity: 0.8;
+  border: none;
   outline: none;
-  position: absolute;
-  right: $space-xs;
-  top: 50%;
-  transform: translateY(-50%);
-  width: $space-md;
+  opacity: 0.8;
   &:focus {
     outline: none;
   }

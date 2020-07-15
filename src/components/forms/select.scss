@@ -1,6 +1,6 @@
 .bootstrap-select:not([class*='col-']):not([class*='form-control']):not(.input-group-btn) {
-  margin-left: 10px;
   width: 100%;
+  margin-left: 10px;
   @media (min-width: 768px) {
     width: 45%;
   }

@@ -29,16 +29,6 @@ export function createSidebar() {
     document.querySelector('.root-sidebar').classList.toggle('isOpen');
   }
 
-  function closeBurger() {
-    document.querySelector('.root-sidebar').classList.remove('isOpen');
-  }
-
-  document.onclick = function (event) {
-    if (event.target.className !== 'root-sidebar-burger') {
-      closeBurger();
-    }
-  };
-
   document.querySelector('.root-sidebar-burger').addEventListener('click', toggleBurger);
   document.querySelector('.root-sidebar-innerBurger').addEventListener('click', toggleBurger);
 }

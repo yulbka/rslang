@@ -3,6 +3,7 @@ import { createElement } from '../helpers/createElement';
 export class Card {
   constructor(
     word,
+    settings,
     {
       withTranslation,
       withExplanation,
@@ -14,7 +15,7 @@ export class Card {
       deleteWord,
       hardWord,
       wordRating,
-    }
+    } = settings
   ) {
     this.word = word;
     this.withTranslation = withTranslation;
@@ -161,7 +162,6 @@ export class Card {
   }
 
   renderFooter(card) {
-    if (!this.showAnswerButton && !this.deleteWord && !this.hardWord) return;
     const footer = createElement('div', card, ['card-body']);
     const controls = createElement('div', footer, ['btn-group'], '', 'role', 'group');
     if (this.showAnswerButton) {

@@ -9,7 +9,7 @@ import { createElement } from '../../scripts/helpers/createElement';
 import { router } from '../../routes/index';
 
 function createSettingsBlock() {
-  document.body.classList.add('content-page');
+  document.body.classList.add('main-page');
   const mainPageContainer = createElement('div', constants.DOM.main, ['container', 'main-page-container']);
   mainPageContainer.insertAdjacentHTML(
     'beforeend',
@@ -121,16 +121,12 @@ function createSettingsBlock() {
     }
 
     try {
-      const settings = await API_USER.getUserSettings({
-        userId: store.user.auth.userId,
-      });
       const newSettings = await API_USER.setUserSettings({
         userId: store.user.auth.userId,
         userSettings: {
           wordsPerDay,
           optional: {
-            learning: restFormData,
-            englishPuzzle: settings.englishPuzzle,
+            ...restFormData,
           },
         },
       });

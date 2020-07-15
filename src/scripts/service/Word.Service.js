@@ -34,6 +34,33 @@ export class WordService {
     this._page = page;
   }
 
+  static async writeMistake(wordId) {
+    const word = await WordService.getAggregatedWord(wordId);
+    if (word.userWord) {
+      const { optional } = word.userWord;
+      const mistakeCount = +optional.mistakeCount + 1;
+      let progressCount = +optional.progressCount - 1;
+      if (progressCount < 0) progressCount = 0;
+      WordService.updateUserWord(wordId, 'weak', {
+        lastDayRepeat: new Date().toJSON(),
+        nextDayRepeat: setWordDayRepeat('weak', true),
+        mistakeCount,
+        progressCount,
+      });
+    } else {
+      WordService.createUserWord(
+        wordId,
+        word.word,
+        'weak',
+        'learned',
+        new Date().toJSON(),
+        setWordDayRepeat('weak', true),
+        '1',
+        '0'
+      );
+    }
+  }
+
   static async getNewWords(wordsPerPage = 50) {
     const words = await requestCreator({
       url: `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsPerPage}&filter={"userWord":null}`,
@@ -132,6 +159,36 @@ export class WordService {
       data: word,
     });
     return result;
+  }
+
+  static async getWordsForGames(wordsNumber = 10, additionalFilter = null) {
+    const filter = additionalFilter ?
+    `{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}, ${additionalFilter}}]}`:
+    '{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}}]}';
+    const word = await requestCreator({
+      url: `/users/${store.user.auth.userId}/aggregatedWords/?&wordsPerPage=${1}&page=${0}&filter=${filter}`,
+      method: requestCreator.methods.get,
+    });
+    const wordsCount = word[0].totalCount[0].count;
+    if (wordsCount < wordsNumber) {
+      return 'not enough words'
+    }
+    const wordsForGame = [];
+    const pages = [];
+    do {
+      const page = getRandomNumber(wordsCount);
+      if (!pages.includes(page)) {
+        pages.push(page);
+      }
+    } while (pages.length < wordsNumber);
+    await Promise.all(pages.map(async (page) => {
+      const randomWord = await requestCreator({
+        url: `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${1}&page=${page}&filter=${filter}`,
+        method: requestCreator.methods.get,
+      });
+      wordsForGame.push(randomWord[0].paginatedResults[0]);
+    }));
+    return wordsForGame;
   }
 
   static async updateUserWord(wordId, difficulty, updatedFields) {

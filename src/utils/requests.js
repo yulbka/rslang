@@ -1,6 +1,8 @@
 import { routeKeys, routesMap } from 'scripts/helpers/variables';
 import { router } from '../routes/index';
 
+const API_HOST = 'https://afternoon-falls-25894.herokuapp.com';
+
 /*
  (required) url: part after host
  (required) method: one of requestCreator.methods
@@ -8,8 +10,7 @@ import { router } from '../routes/index';
 */
 export async function requestCreator(settings) {
   try {
-    const { host = 'https://afternoon-falls-25894.herokuapp.com' } = settings;
-    let url = `${host}${settings.url}`;
+    let url = `${API_HOST}${settings.url}`;
     let body;
 
     if (!Object.values(requestCreator.methods).includes(settings.method)) throw `${settings.method} is unknown method`;
@@ -18,7 +19,7 @@ export async function requestCreator(settings) {
       case requestCreator.methods.get: {
         if (settings.data) {
           const searhParams = getSearchParams({ params: settings.data });
-          url += `?${searhParams}`;
+          url += `/?${searhParams}`;
         }
         break;
       }
@@ -52,16 +53,19 @@ export async function requestCreator(settings) {
       if (response.status === 401) {
         localStorage.removeItem('token');
         localStorage.removeItem('userId');
-        router.navigate(routesMap.get(routeKeys.login).url);
+        router.navigate(routesMap.get(routeKeys.login));
       } else {
         throw Error(response.status);
       }
     }
+
     const result = await response.json();
     return result;
   } catch (error) {
-    if (error === 'somethingError') {
-      console.error(error);
+    if (error === '1') {
+      console.log('error1');
+    } else if (error === '2') {
+      console.log('error2');
     } else {
       throw error;
     }
