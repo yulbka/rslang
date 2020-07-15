@@ -14,7 +14,7 @@ import { Statistics } from './Statistics';
 import { createSavannahGame } from '../games/savannah/js/mainApp';
 import { renderSavannah } from '../games/savannah/js/render';
 import { createSpeakItGame } from '../games/speakit/js/mainApp';
-
+import { create_hangman2 } from './hangman2';
 import { renderSpeakIt } from '../games/speakit/js/render';
 import { renderSprint } from '../games/sprint/js/render';
 
@@ -32,17 +32,7 @@ export class App {
     }
     MAIN.innerHTML = '';
 
-    document.body.classList.remove(
-      'main-page',
-      'content-page',
-      'speakit',
-      'savannahGame',
-      'audiocall-game',
-      'about-team',
-      'long-statistics'
-    );
-
-    document.body.classList.remove('content-page');
+    document.body.className = '';
 
     this.setContent(page);
   }
@@ -97,7 +87,7 @@ export class App {
         renderSprint();
         break;
       case routesMap.get(routeKeys.ourGame).url:
-        MAIN.innerHTML = '<div>ourGame</div>'; // replace with function that render ourGame mini-game page
+        create_hangman2();
         break;
       case routesMap.get(routeKeys.promo).url:
         MAIN.innerHTML = '<div>promo</div>'; // replace with function that render promo page

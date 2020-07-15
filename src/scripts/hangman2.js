@@ -1,18 +1,17 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import '../css/hangman2.scss';
-import {WordService} from './service/Word.Service';
+import { WordService } from './service/Word.Service';
 
 export function create_hangman2() {
+  document.body.className = 'hangman-game';
+  const main = gId('main');
+  const new_arr = [];
+  let level = 0;
+  let new_words;
 
-    const main = gId('main');
-    const new_arr = [];
-    let level = 0;
-    let new_words;
-
-    function create_main() {
-        const new_main = 
-        `
+  function create_main() {
+    const new_main = `
         <div id="home">
                 <div class="title">Висельница</div>
                 <div class="button anim" id='startGame'>Играть</div>
@@ -67,280 +66,281 @@ export function create_hangman2() {
                     <div><button type="button" class="btn btn-danger my_button" id='fixth_level'>Уровень 6</button></div>
                 </div>
             </div>
-        `
-        main.innerHTML += new_main;
-    }
+        `;
+    main.innerHTML += new_main;
+  }
 
-    create_main();
+  create_main();
 
-    function get_words_by_hier_level(lvl) {
-        WordService.getWordsByLevelAndPage(lvl).then(data => 
-            newGame(data)
-            )
-    }
+  function get_words_by_hier_level(lvl) {
+    WordService.getWordsByLevelAndPage(lvl).then((data) => newGame(data));
+  }
 
-    gId('game_levels').addEventListener('click', (e) => {
-        const target = e.target.closest('button');
-        if (target.id === 'first_level') {
-            level = 0;
-            get_words_by_hier_level(level, 0)
-        }
-        if (target.id === 'second_level') {
-            level = 1;
-            get_words_by_hier_level(level, 0)
-        }
-        if (target.id === 'third_level') {
-            level = 2;
-            get_words_by_hier_level(level, 0)
-        }
-        if (target.id === 'fourth_level') {
-            level = 3;
-            get_words_by_hier_level(level, 0)
-        }
-        if (target.id === 'fifth_level') {
-            level = 4;
-            get_words_by_hier_level(level, 0)
-        }
-        if (target.id === 'fixth_level') {
-            level = 5;
-            get_words_by_hier_level(level, 0)
-        }
-    })
+  gId('game_levels').addEventListener('click', (e) => {
+    const target = e.target.closest('button');
+    if (target.id === 'first_level') {
+      level = 0;
+      get_words_by_hier_level(level, 0);
+    }
+    if (target.id === 'second_level') {
+      level = 1;
+      get_words_by_hier_level(level, 0);
+    }
+    if (target.id === 'third_level') {
+      level = 2;
+      get_words_by_hier_level(level, 0);
+    }
+    if (target.id === 'fourth_level') {
+      level = 3;
+      get_words_by_hier_level(level, 0);
+    }
+    if (target.id === 'fifth_level') {
+      level = 4;
+      get_words_by_hier_level(level, 0);
+    }
+    if (target.id === 'fixth_level') {
+      level = 5;
+      get_words_by_hier_level(level, 0);
+    }
+  });
 
-    const tastatur = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    
-    let select = 0
-    let wordLeft = []
-    let fail = 0;
-    
-    window.onload = function() {
-        gId("moveKeybord").addEventListener('touchmove', function(e) {
-            const wH = window.innerHeight
-            const tY = e.touches[0].clientY
-            const eL = gId("tastatur")
-            let resY = wH - tY - eL.offsetHeight
-            if(resY < 0) {
-                resY = 0
-            } else if(resY > wH / 2) {
-                resY = wH / 2
-            }
-            eL.style.bottom = `${resY}px`
-    }, false)
-    createTastur()
-    }
+  const tastatur = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-    createTastur()
-    
-    function startGame() {
-        gId("home").className = "h"
-        gId("result").className = "h"
-        newGame()
-    }
+  let select = 0;
+  let wordLeft = [];
+  let fail = 0;
 
-    gId('startGame').addEventListener('click', () => {
-        startGame();
-    })
+  window.onload = function () {
+    gId('moveKeybord').addEventListener(
+      'touchmove',
+      function (e) {
+        const wH = window.innerHeight;
+        const tY = e.touches[0].clientY;
+        const eL = gId('tastatur');
+        let resY = wH - tY - eL.offsetHeight;
+        if (resY < 0) {
+          resY = 0;
+        } else if (resY > wH / 2) {
+          resY = wH / 2;
+        }
+        eL.style.bottom = `${resY}px`;
+      },
+      false
+    );
+    createTastur();
+  };
 
-    gId('startGameAgain').addEventListener('click', () => {
-        startGame();
-    })
-    
-    function newGame(data) {
-        clearTastatur()
-        clearPlayer()
-        createWord(data);
+  createTastur();
+
+  function startGame() {
+    gId('home').className = 'h';
+    gId('result').className = 'h';
+    newGame();
+  }
+
+  gId('startGame').addEventListener('click', () => {
+    startGame();
+  });
+
+  gId('startGameAgain').addEventListener('click', () => {
+    startGame();
+  });
+
+  function newGame(data) {
+    clearTastatur();
+    clearPlayer();
+    createWord(data);
+  }
+
+  function clearTastatur() {
+    const e = document.getElementsByClassName('b');
+    for (let a = 0; a < e.length; a++) {
+      e[a].setAttribute('data', '');
     }
-    
-    function clearTastatur() {
-        const e = document.getElementsByClassName("b")
-        for(let a = 0; a < e.length; a++) {
-            e[a].setAttribute("data", "")
+  }
+
+  function clearPlayer() {
+    fail = 0;
+    wordLeft = [];
+    gId('g0').setAttribute('data', 'false');
+    gId('g1').setAttribute('data', 'false');
+    gId('g2').setAttribute('data', 'false');
+    gId('g3').setAttribute('data', 'false');
+    gId('g4').setAttribute('data', 'false');
+    gId('g5').setAttribute('data', 'false');
+    gId('g5').setAttribute('r', 'false');
+    gId('g5').setAttribute('l', 'false');
+    gId('g6').setAttribute('data', 'false');
+    gId('g6').setAttribute('l', 'false');
+    gId('g6').setAttribute('r', 'false');
+    gId('hintButton').setAttribute('data', 'false');
+    gId('hint').style.display = 'none';
+  }
+
+  async function createWord(data) {
+    if (data === undefined) {
+      new_words = await WordService.getWordsByCategory('learned');
+      if (new_words.length < 10) {
+        new_words = await WordService.getNewWords();
+      }
+    }
+    if (data !== undefined) {
+      new_words = data;
+    }
+    new_words.map((item) => new_arr.push([item.word, item.textMeaning, item._id]));
+    const d = gId('letter');
+    d.innerHTML = '';
+    select = Math.floor(Math.random() * new_arr.length);
+    for (let a = 0; a < new_arr[select][0].length; a++) {
+      const x = new_arr[select][0][a].toUpperCase();
+      const b = document.createElement('span');
+      b.className = `l${x === ' ' ? ' ls' : ''}`;
+      b.innerHTML = '&nbsp';
+      b.id = `l${a}`;
+      d.appendChild(b);
+
+      if (x !== ' ') {
+        if (wordLeft.indexOf(x) === -1) {
+          wordLeft.push(x);
         }
+      }
     }
-    
-    function clearPlayer() {
-        fail = 0
-        wordLeft = []
-        gId("g0").setAttribute("data", "false")
-        gId("g1").setAttribute("data", "false")
-        gId("g2").setAttribute("data", "false")
-        gId("g3").setAttribute("data", "false")
-        gId("g4").setAttribute("data", "false")
-        gId("g5").setAttribute("data", "false")
-        gId("g5").setAttribute("r", "false")
-        gId("g5").setAttribute("l", "false")
-        gId("g6").setAttribute("data", "false")
-        gId("g6").setAttribute("l", "false")
-        gId("g6").setAttribute("r", "false")
-        gId("hintButton").setAttribute("data", "false")
-        gId("hint").style.display = "none"
+  }
+
+  function createTastur() {
+    const tas = gId('keybord');
+    tas.innerHTML = '';
+    for (let a = 0; a < tastatur.length; a++) {
+      const b = document.createElement('span');
+      b.className = 'b';
+      b.innerText = tastatur[a];
+      b.setAttribute('data', '');
+      b.onclick = function () {
+        bTas(this);
+      };
+      tas.appendChild(b);
     }
-    
-    async function createWord(data) {
-        if(data === undefined){
-            new_words = await WordService.getWordsByCategory('learned');
-            if (new_words.length < 10){
-                new_words = await WordService.getNewWords();
-            }
+  }
+
+  function bTas(a) {
+    if (a.getAttribute('data') === '') {
+      const x = isExist(a.innerText);
+      console.log(x);
+      a.setAttribute('data', x);
+      if (x) {
+        if (wordLeft.length === 0) {
+          gameEnd(true);
         }
-        if(data !== undefined){
-            new_words = data;
-        }
-        new_words.map(item => new_arr.push([item.word, item.textMeaning, item._id]))
-        const d = gId("letter")
-        d.innerHTML = ""
-        select = Math.floor(Math.random() * new_arr.length)
-        for(let a = 0; a < new_arr[select][0].length; a++) {
-            const x = new_arr[select][0][a].toUpperCase()
-            const b = document.createElement("span")
-            b.className = `l${(x === " " ? " ls" : "")}`
-            b.innerHTML = "&nbsp"
-            b.id = `l${a}`;
-            d.appendChild(b)
-            
-            if(x !== " ") {
-                if(wordLeft.indexOf(x) === -1) {
-                    wordLeft.push(x)
-                }
-            }
-        }
+      } else {
+        showNextFail();
+      }
     }
- 
-    function createTastur() {
-        const tas = gId("keybord")
-        tas.innerHTML = ""
-        for(let a = 0; a < tastatur.length; a++) {
-            const b = document.createElement("span")
-            b.className = "b"
-            b.innerText = tastatur[a]
-            b.setAttribute("data", "")
-            b.onclick = function() {
-                bTas(this)
-            }
-            tas.appendChild(b)
-        }
+  }
+
+  function isExist(e) {
+    e.toUpperCase();
+    const x = wordLeft.indexOf(e);
+    if (x !== -1) {
+      wordLeft.splice(x, 1);
+      typeWord(e);
+      return true;
     }
-    
-    function bTas(a) {
-        if(a.getAttribute("data") === "") {
-            const x = isExist(a.innerText)
-            console.log(x)
-            a.setAttribute("data", x)
-            if(x) {
-                if(wordLeft.length === 0) {
-                    gameEnd(true)
-                }
-            } else {
-                showNextFail()
-            }
-        }
+    return false;
+  }
+
+  function showNextFail() {
+    fail++;
+    switch (fail) {
+      case 1:
+        gId('g0').setAttribute('data', 'true');
+        break;
+
+      case 2:
+        gId('g1').setAttribute('data', 'true');
+        break;
+
+      case 3:
+        gId('g2').setAttribute('data', 'true');
+        break;
+
+      case 4:
+        gId('g3').setAttribute('data', 'true');
+        gId('hintButton').setAttribute('data', 'true');
+        break;
+
+      case 5:
+        gId('g4').setAttribute('data', 'true');
+        break;
+
+      case 6:
+        gId('g5').setAttribute('data', 'true');
+        break;
+
+      case 7:
+        gId('g5').setAttribute('l', 'true');
+        break;
+
+      case 8:
+        gId('g5').setAttribute('r', 'true');
+        break;
+
+      case 9:
+        gId('g6').setAttribute('data', 'true');
+        gId('g6').setAttribute('l', 'true');
+        break;
+
+      case 10:
+        gId('g6').setAttribute('r', 'true');
+        gameEnd(false);
+        break;
+      default:
+        console.log('default');
     }
-    
-    function isExist(e) {
-        e.toUpperCase()
-        const x = wordLeft.indexOf(e)
-        if(x !== -1) {
-            wordLeft.splice(x, 1)
-            typeWord(e)
-            return true
-        }
-        return false
+  }
+
+  function typeWord(e) {
+    for (let a = 0; a < new_arr[select][0].length; a++) {
+      if (new_arr[select][0][a].toUpperCase() === e) {
+        gId(`l${a}`).innerText = e;
+      }
     }
-    
-    function showNextFail() {
-        fail++
-        switch(fail) {
-            case 1:
-                gId("g0").setAttribute("data", "true")
-                break;
-            
-            case 2:
-                gId("g1").setAttribute("data", "true")
-                break;
-            
-            case 3:
-                gId("g2").setAttribute("data", "true")
-                break;
-            
-            case 4:
-                gId("g3").setAttribute("data", "true")
-                gId("hintButton").setAttribute("data", "true")
-                break;
-            
-            case 5:
-                gId("g4").setAttribute("data", "true")
-                break;
-            
-            case 6:
-                gId("g5").setAttribute("data", "true")
-                break;
-            
-            case 7:
-                gId("g5").setAttribute("l", "true")
-                break;
-            
-            case 8:
-                gId("g5").setAttribute("r", "true")
-                break;
-            
-            case 9:
-                gId("g6").setAttribute("data", "true")
-                gId("g6").setAttribute("l", "true")
-                break;
-            
-            case 10:
-                gId("g6").setAttribute("r", "true")
-                gameEnd(false)
-                break;
-            default:
-                console.log('default')
-        }
+  }
+
+  function gameEnd(e) {
+    const d = gId('result');
+    d.setAttribute('data', e);
+    if (e) {
+      gId('rT').innerText = 'Ты победил!';
+      gId('rM').innerHTML = 'Поздравляю, ты правильно отгадал слово!<br/><br/>Отличная работа!';
+      // wincount += 1;
+    } else {
+      gId('rT').innerText = 'Ты проиграл!';
+      gId('rM').innerHTML = `Слово было - ${new_arr[select][0].toUpperCase()}. Удачи в следующей игре!.`;
+      // losecount += 1;
+      WordService.writeMistake(new_arr[select][2]);
     }
-    
-    function typeWord(e) {
-        for(let a = 0; a < new_arr[select][0].length; a++) {
-            if(new_arr[select][0][a].toUpperCase() === e) {
-                gId(`l${a}`).innerText = e
-            }
-        }
-    }
-    
-    function gameEnd(e) {
-        const d = gId("result")
-        d.setAttribute("data", e)
-        if(e) {
-            gId("rT").innerText = "Ты победил!";
-            gId("rM").innerHTML = "Поздравляю, ты правильно отгадал слово!<br/><br/>Отличная работа!";
-            // wincount += 1;
-        } else {
-            gId("rT").innerText = "Ты проиграл!"
-            gId("rM").innerHTML = `Слово было - ${new_arr[select][0].toUpperCase()}. Удачи в следующей игре!.`
-            // losecount += 1;
-            WordService.writeMistake(new_arr[select][2])
-        }
-        d.className = ""
-    }
-    
-    function hint() {
-        const str = `${new_arr[select][1]}`
-        const newstr = str.replace(`${new_arr[select][0]}`, 'Needed word');
-        gId("hintText").innerText = newstr;
-        gId("hint").style.display = "block"
-    }
-    
-    gId('hintButton').addEventListener('click', () => {
-        hint()
-    })
-    
-    function hintExit() {
-        gId("hint").style.display = "none"
-    }
-    gId('hintExit').addEventListener('click', () => {
-        hintExit()
-    })
-    
-    function gId(a) {
-        return document.getElementById(a)
-    }
+    d.className = '';
+  }
+
+  function hint() {
+    const str = `${new_arr[select][1]}`;
+    const newstr = str.replace(`${new_arr[select][0]}`, 'Needed word');
+    gId('hintText').innerText = newstr;
+    gId('hint').style.display = 'block';
+  }
+
+  gId('hintButton').addEventListener('click', () => {
+    hint();
+  });
+
+  function hintExit() {
+    gId('hint').style.display = 'none';
+  }
+  gId('hintExit').addEventListener('click', () => {
+    hintExit();
+  });
+
+  function gId(a) {
+    return document.getElementById(a);
+  }
 }
-
