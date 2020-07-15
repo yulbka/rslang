@@ -21,12 +21,6 @@
     "deploy:now": "cd dist && now -d --public --prod",
     "upgrade-packages": "ncu -ui"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn format:check && yarn lint:check",
-      "post-commit": "git update-index --again"
-    }
-  },
   "babel": {
     "extends": "./configs/babelrc.js"
   },
@@ -37,11 +31,9 @@
     "extends": "./configs/linters/.stylelintrc.js"
   },
   "dependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@popperjs/core": "^2.4.2",
     "bootstrap": "4.5.0",
     "bootstrap-select": "1.13.18",
-    "copy-webpack-plugin": "^6.0.3",
     "jquery": "3.5.1",
     "navigo": "6.0.2",
     "popper.js": "1.16.1",

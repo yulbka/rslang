@@ -459,7 +459,7 @@ export class LearnWords {
       mistakes = store.statistics.mainGame.long[today].mistakes;
     }
     const statistics = await Statistics.set({
-      learnedWords: learnedWords,
+      learnedWords,
       optional: {
         ...store.statistics,
         mainGame: {
@@ -474,7 +474,7 @@ export class LearnWords {
             [today]: {
               cards: store.statistics.mainGame.long[today].cards + 1,
               newWords: longNewWords,
-              mistakes: mistakes,
+              mistakes,
             },
           },
         },

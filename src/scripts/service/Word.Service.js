@@ -215,7 +215,6 @@ export class WordService {
         wordsForGame.push(randomWord[0].paginatedResults[0]);
       })
     );
-    console.log(wordsForGame);
     return +wordsNumber === 1 ? wordsForGame[0] : wordsForGame;
   }
 

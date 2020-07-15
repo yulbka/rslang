@@ -1,8 +1,8 @@
 import { constants } from 'js/constants';
 
 export function aboutTeamCreate() {
-  const { body, main } = constants.DOM;
-  body.className = 'about-team content-page';
+  const { main } = constants.DOM;
+  document.body.className = 'about-team content-page';
   main.insertAdjacentHTML(
     'afterbegin',
     `

@@ -186,7 +186,6 @@ export class Game {
       const level = checkbox.checked ? this.firstWord.group : +levelDropList.value - 1;
       const pageDropList = document.querySelector('.page__droplist');
       const page = checkbox.checked ? this.firstWord.page : +pageDropList.value - 1;
-      console.log(level, page);
       puzzles.forEach((puzzle) => {
         picturePrompt.classList.contains('prompt-btn_active')
           ? Puzzle.showPicture(puzzle, puzzle.dataset.position, rowPosition - 1, level, page)
@@ -284,7 +283,6 @@ export class Game {
 
   static async getSettings() {
     const settings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
-    console.log(settings);
     store.user.englishPuzzle = settings.englishPuzzle;
     const { page, level, autoplay, translation, audio, background, useLearnedWords } = store.user.englishPuzzle;
     if (autoplay) {
@@ -554,7 +552,7 @@ export class Game {
           long: {
             ...statistics.optional.englishPuzzle.long,
             [new Date().toLocaleString()]: {
-              mistakes: mistakes,
+              mistakes,
             },
           },
         },
