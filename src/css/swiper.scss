@@ -1,6 +1,6 @@
 .swiper-container {
-  width: 85%;
   margin: $space-md auto $space-xxs;
+  width: 85%;
 }
 
 .swiper-slide {
@@ -10,6 +10,7 @@
 .swiper-button-prev,
 .swiper-button-next {
   outline: none;
+  z-index: 2;
 }
 
 .swiper-button-prev {

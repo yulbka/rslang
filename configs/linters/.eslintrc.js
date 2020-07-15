@@ -18,7 +18,6 @@ module.exports = {
     'no-use-before-define': 1,
     'no-restricted-globals': 0,
     'no-plusplus': 0,
-    'default-case':0,
     'no-unused-expressions': 1,
     'no-restricted-syntax': 0,
     'no-throw-literal': 0,

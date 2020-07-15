@@ -1,0 +1,246 @@
+.control {
+  display: flex;
+  justify-content: space-between;
+  margin: $space-xs auto $space-xxs;
+  @media (max-width: 767px) {
+    align-items: center;
+    flex-direction: column;
+  }
+}
+
+.custom-switch {
+  margin-bottom: 10px;
+}
+
+.round {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6px;
+  width: 280px;
+}
+
+.drops-container {
+  display: flex;
+  @media (max-width: 767px) {
+    margin-bottom: $space-xs;
+  }
+}
+
+.level__droplist,
+.page__droplist {
+  width: 70px;
+}
+
+.level__droplist,
+.level__text {
+  margin-left: 45px;
+}
+
+.option {
+  text-align: center;
+}
+
+.page__text {
+  margin-right: $space-xxs;
+}
+
+.prompt {
+  position: relative;
+}
+
+.prompt__button {
+  align-self: center;
+  bottom: 75px;
+  cursor: pointer;
+  height: 40px;
+  left: 48%;
+  position: absolute;
+  width: 44px;
+  @media (max-width: 767px) {
+    bottom: 50px;
+  }
+  & img {
+    height: 40px;
+    width: 44px;
+  }
+  &_active {
+    & img {
+      -webkit-filter: invert(41%) sepia(94%) saturate(334%) hue-rotate(109deg) brightness(92%) contrast(89%);
+      filter: invert(41%) sepia(94%) saturate(334%) hue-rotate(109deg) brightness(92%) contrast(89%);
+    }
+  }
+}
+
+.prompt__text {
+  height: 50px;
+  margin: 0;
+  text-align: center;
+}
+
+.result-container {
+  display: flex;
+  margin: 0 auto $space-xs;
+}
+
+.result {
+  background-color: $colorField;
+  height: 500px;
+  width: 90%;
+  @media (max-width: 350px) {
+    margin: 0 auto;
+    overflow: hidden;
+    width: 100%;
+  }
+}
+
+.puzzle-row {
+  height: 50px;
+  &_active {
+    background-color: #53e18738;
+  }
+}
+
+.prompt-buttons {
+  align-items: center;
+  display: flex;
+  @media (max-width: 767px) {
+    justify-content: center;
+    margin-bottom: $space-md;
+  }
+}
+
+.prompt-btn {
+  background-color: $colorPrompt;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: $borderRadius5;
+  cursor: pointer;
+  height: 40px;
+  margin-right: $space-xxs;
+  width: 44px;
+  &:hover {
+    background-color: $colorPuzzleHover;
+  }
+  &_active:not(:hover) {
+    background-color: $colorPuzzle;
+  }
+}
+
+.voice {
+  background-image: url('../assets/images/puzzle/voice.png');
+}
+
+.text {
+  background-image: url('../assets/images/puzzle/doc.png');
+}
+
+.note {
+  background-image: url('../assets/images/puzzle/note.png');
+}
+
+.picture {
+  background-image: url('../assets/images/puzzle/landscape.png');
+}
+
+.btn_hidden {
+  display: none;
+}
+
+.puzzle-btn {
+  background-color: $colorPuzzle;
+  border-color: $colorPuzzle;
+  &:hover {
+    background-color: $colorPuzzleHover;
+    border-color: $colorPuzzleHover;
+  }
+  &_active {
+    background-color: $colorPuzzleHover;
+    border-color: $colorPuzzleHover;
+  }
+  &:active {
+    background-color: $colorPuzzleHover;
+    border-color: $colorPuzzleHover;
+  }
+}
+
+.count {
+  width: 50px;
+  @media (max-width: 767px) {
+    width: 30px;
+  }
+  @media (max-width: 350px) {
+    display: none;
+    width: 0;
+  }
+}
+
+.count__number {
+  align-items: center;
+  border: 2px solid $colorGrayLight;
+  border-radius: 50%;
+  display: flex;
+  height: 30px;
+  justify-content: center;
+  margin: 10px 5px 20px;
+  width: 30px;
+  @media (max-width: 767px) {
+    height: 20px;
+    margin: 20px 2px 30px;
+    width: 20px;
+  }
+  &_active {
+    border-color: $colorPuzzle;
+  }
+}
+
+.data {
+  background-color: $colorField;
+  height: 50px;
+  margin: 0 0 $space-xxs $space-md;
+  width: 90%;
+  @media (max-width: 767px) {
+    margin: 0 0 10px 30px;
+  }
+  @media (max-width: 350px) {
+    margin: 0 auto 10px;
+    overflow: hidden;
+    width: 100%;
+  }
+}
+
+.puzzle-wrapper {
+  cursor: pointer;
+  display: inline-block;
+  height: 50px;
+  position: relative;
+}
+
+.puzzle__text {
+  position: absolute;
+  -webkit-text-stroke-color: $colorGrayLight;
+  -webkit-text-stroke-width: 0.5px;
+  top: 15px;
+  @media (max-width: 350px) {
+    font-size: 1rem;
+    -webkit-text-stroke-width: 0;
+    top: 18px;
+    transform: rotate(-13deg);
+  }
+}
+
+.right {
+  outline: 1px solid green;
+}
+
+.wrong {
+  outline: 1px solid red;
+}
+
+.check-container {
+  display: flex;
+  justify-content: center;
+  margin: $space-xs 0;
+  & button {
+    margin-left: $space-xxs;
+  }
+}
