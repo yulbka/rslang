@@ -1,9 +1,10 @@
+import $ from 'jquery';
 import { requestCreator } from '../utils/requests';
-import { MAIN, coords, routesMap, routeKeys } from './helpers/variables';
+import { MAIN, coords } from './helpers/variables';
 import { createElement } from './helpers/createElement';
 import { store } from '../store/index';
 import { findLongestSeries } from './helpers/findLongestSeries';
-import { router } from '../routes';
+import { LearnWords } from './learn_words/learnWords';
 
 export class Statistics {
   static async get() {
@@ -73,7 +74,9 @@ export class Statistics {
           ...store.statistics,
         },
       });
-      router.navigate(routesMap.get(routeKeys.home).url);
+      MAIN.innerHTML = '';
+      LearnWords.createPopUp();
+      $('#learnModal').modal('show');
     });
   }
 

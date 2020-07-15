@@ -45,7 +45,7 @@ export const routesMap = new Map([
   ],
   [
     routeKeys.audio,
-    { url: '#/games/audio', title: 'Аудиовызов', preview: require('assets/img/content/audiocall.jpg').default },
+    { url: '#/games/audio', title: 'Аудиовызов', preview: require('assets/img/content/audiocall.png').default },
   ],
   [
     routeKeys.sprint,

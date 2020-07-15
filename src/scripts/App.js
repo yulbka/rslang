@@ -63,7 +63,7 @@ export class App {
         Statistics.renderLongPage();
         break;
       case routesMap.get(routeKeys.vocabulary).url:
-        create_dictionary(); // replace with function that render dictionary page
+        create_dictionary();
         break;
       case routesMap.get(routeKeys.speakIt).url:
         renderSpeakIt();
@@ -89,7 +89,7 @@ export class App {
         MAIN.innerHTML = '<div>promo</div>'; // replace with function that render promo page
         break;
       case routesMap.get(routeKeys.team).url:
-        aboutTeamCreate(); // replace with function that render aboutUs page
+        aboutTeamCreate();
         break;
       default:
         break;

@@ -176,14 +176,12 @@ export class WordService {
   }
 
   static async getWordsForGames(wordsNumber = 10, level = null, additionalFilter = null) {
-    const filter = additionalFilter
-      ? `{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}, ${additionalFilter}}]}`
-      : '{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}}]}';
-    let url = level
-      ? `/users/${
-          store.user.auth.userId
-        }/aggregatedWords/?wordsPerPage=${wordsNumber}&group=${level}&page=${0}&filter=${filter}`
-      : `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsNumber}&page=${0}&filter=${filter}`;
+    const filter = additionalFilter ?
+    `{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}, ${additionalFilter}}]}`:
+    '{"$and":[{"userWord":{"$ne":null}, "userWord.optional.category":{"$ne":"deleted"}}]}';
+    let url = level ?
+    `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsNumber}&group=${level}&page=${0}&filter=${filter}`:
+    `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${wordsNumber}&page=${0}&filter=${filter}`;
     const word = await requestCreator({
       url,
       method: requestCreator.methods.get,
@@ -201,21 +199,18 @@ export class WordService {
         pages.push(page);
       }
     } while (pages.length < wordsNumber);
-    await Promise.all(
-      pages.map(async (page) => {
-        url = level
-          ? `/users/${
-              store.user.auth.userId
-            }/aggregatedWords/?wordsPerPage=${1}&group=${level}&page=${page}&filter=${filter}`
-          : `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${1}&page=${page}&filter=${filter}`;
-        const randomWord = await requestCreator({
-          url,
-          method: requestCreator.methods.get,
-        });
-        wordsForGame.push(randomWord[0].paginatedResults[0]);
-      })
-    );
-    return +wordsNumber === 1 ? wordsForGame[0] : wordsForGame;
+    await Promise.all(pages.map(async (page) => {
+      url = level ?
+        `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${1}&group=${level}&page=${page}&filter=${filter}`:
+        `/users/${store.user.auth.userId}/aggregatedWords/?wordsPerPage=${1}&page=${page}&filter=${filter}`;
+      const randomWord = await requestCreator({
+        url,
+        method: requestCreator.methods.get,
+      });
+      wordsForGame.push(randomWord[0].paginatedResults[0]);
+    }));
+    console.log(wordsForGame);
+    return +wordsNumber === 1 ? wordsForGame[0]: wordsForGame;
   }
 
   static async writeMistake(wordId) {
@@ -244,4 +239,5 @@ export class WordService {
       );
     }
   }
+
 }
