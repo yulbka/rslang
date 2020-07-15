@@ -4,7 +4,7 @@ import { getRandomInt } from 'utils';
 export const audiocallGameSettings = {
   currentGame: {
     currentWord: 0,
-    maxWordsLength: 3,
+    maxWordsLength: 10,
     variants: 5,
     answeredWrong: false,
     statistics: {
