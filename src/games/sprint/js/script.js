@@ -1,6 +1,7 @@
 import { WordService } from '../../../scripts/service/Word.Service';
 import { getRandomNumber } from '../../../scripts/helpers/getRandomNumber';
 
+let score = document.querySelector('#score');
 
 let ArrWord = [];
 export const loadAllWords = async () => {
@@ -13,14 +14,12 @@ export const loadAllWords = async () => {
 
 export function startGame() {
   let count = 0;
-  let correctAnswer = 0;
   let count_time = 60;
   let EndGame = false;
   let EngWord = '';
   let RusWord = '';
   let RandomWord = '';
-  let successInRow = 0;
-  const answerValue = document.querySelector('#answerValue');
+ 
 
   const gE = (el) => {
     return document.getElementById(el);
@@ -51,18 +50,9 @@ export function startGame() {
     positiveBtn.onclick = () => {
       if (!EndGame) {
         if (RusWord === RandomWord) {
-		  successInRow++
-      correctAnswer += 10 + 10 * Math.trunc(successInRow / 4);
-      answerValue.innerHTML = 10 * Math.trunc(successInRow / 4);
-      if(10 * Math.trunc(successInRow / 4) < 0 ) {
-        answerValue.innerHTML = 10;
-      }      
-          gE('score').innerText = correctAnswer;
-		} else {
-      successInRow = 0;
-      answerValue.innerHTML = 10;
-		}
-
+          gE('score').innerText = score+10;
+          score+=10;     
+		} 
         count++;
 
         if (count_time === 0) {
@@ -79,22 +69,11 @@ export function startGame() {
     negativeBtn.onclick = () => {
       if (!EndGame) {
         if (RusWord !== RandomWord) {
-			successInRow++
-      correctAnswer += 10 + 10 * Math.trunc(successInRow / 4);
-      answerValue.innerHTML = 10 * Math.trunc(successInRow / 4);
-      if(10 * Math.trunc(successInRow / 4) < 0 ) {
-        answerValue.innerHTML = 10;
-      }  
-      
 
-          if (gE('score')) {
-            gE('score').innerText = correctAnswer;
-          }
-        } else {
-      successInRow = 0;
-      answerValue.innerHTML = 10;
-      
-		}
+          gE('score').innerText = score+10;
+          score+=10;
+
+        } 
         count++;
 
         if (count_time === -1) {
