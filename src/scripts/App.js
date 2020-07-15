@@ -11,6 +11,7 @@ import { LearnWords } from './learn_words/learnWords';
 import { router } from '../routes';
 import { PuzzleStartPage } from '../pages/puzzle/StartPage';
 import { Statistics } from './Statistics';
+import { createa_promo_page } from './promo'
 import { createSavannahGame } from '../games/savannah/js/mainApp';
 import { renderSavannah } from '../games/savannah/js/render';
 import { createSpeakItGame } from '../games/speakit/js/mainApp';
@@ -88,7 +89,7 @@ export class App {
         create_hangman2();
         break;
       case routesMap.get(routeKeys.promo).url:
-        MAIN.innerHTML = '<div>promo</div>'; // replace with function that render promo page
+        createa_promo_page(); // replace with function that render promo page
         break;
       case routesMap.get(routeKeys.team).url:
         aboutTeamCreate();
