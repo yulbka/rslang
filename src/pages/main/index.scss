@@ -64,6 +64,9 @@ img {
     height: 100%;
     object-fit: cover;
     transition: filter 0.5s;
+    @media (min-width: 1200px) {
+      height: 300px;
+    }
     &:hover {
       filter: blur(0) brightness(1);
     }

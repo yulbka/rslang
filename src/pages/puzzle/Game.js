@@ -283,6 +283,7 @@ export class Game {
 
   static async getSettings() {
     const settings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
+    console.log(settings);
     store.user.englishPuzzle = settings.englishPuzzle;
     const { page, level, autoplay, translation, audio, background, useLearnedWords } = store.user.englishPuzzle;
     if (autoplay) {

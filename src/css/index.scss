@@ -31,6 +31,19 @@
 @import '../pages/aboutTeam/index.scss';
 
 /********* CUSTOM RESET: START **********/
+
+*::-webkit-scrollbar {
+  background-color: $colorPrompt;
+  width: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: $colorGray;
+}
+html {
+  overflow: auto;
+}
+
 label {
   margin-bottom: 0;
 }

@@ -31,9 +31,7 @@ export class App {
       this.checkHeader();
     }
     MAIN.innerHTML = '';
-
     document.body.className = '';
-
     this.setContent(page);
   }
 
