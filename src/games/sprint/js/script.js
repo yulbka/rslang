@@ -19,7 +19,6 @@ export function startGame() {
   let EngWord = '';
   let RusWord = '';
   let RandomWord = '';
- 
 
   const gE = (el) => {
     return document.getElementById(el);
@@ -69,14 +68,13 @@ export function startGame() {
     negativeBtn.onclick = () => {
       if (!EndGame) {
         if (RusWord !== RandomWord) {
-
           gE('score').innerText = score+10;
           score+=10;
 
         } 
         count++;
 
-        if (count_time === -1) {
+        if (count_time === 0) {
           EndGame = true;
         }
 
@@ -91,7 +89,7 @@ export function startGame() {
       gE('countdown').innerText = count_time;
     }
 
-    if (!EndGame && count_time >= 0) {
+    if (!EndGame && count_time > 0) {
       setTimeout(() => {
         CountTime();
       }, 1000);
@@ -99,4 +97,5 @@ export function startGame() {
   };
 
   CountTime();
+
 }
