@@ -4,7 +4,7 @@ import 'bootstrap';
 import 'bootstrap-select/dist/js/bootstrap-select.min';
 import 'bootstrap-select/dist/js/i18n/defaults-ru_RU.min';
 import './css/index.scss';
-import { router } from './routes/index';
+import { initializeRouter, router } from './routes/index';
 import { store } from './store';
 import { API_USER } from './api/user';
 import { PRELOADER, routeKeys, routesMap } from './scripts/helpers/variables';
@@ -12,6 +12,7 @@ import { PRELOADER, routeKeys, routesMap } from './scripts/helpers/variables';
 window.onload = async () => {
   await initRequests();
   PRELOADER.classList.add('preload-wrapper-hidden');
+  initializeRouter();
 };
 
 export async function initRequests() {
@@ -25,5 +26,4 @@ export async function initRequests() {
       ...userSettings,
     };
   }
-  
 }

@@ -22,21 +22,30 @@ export class ResultsPage {
   async render() {
     const results = await Statistics.get();
     const settings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
-    const pictureData = settings.englishPuzzle.useLearnedWords ? paintings[this.level + 1][this.page]: paintings[this.level][this.page - 1];
+    const pictureData = settings.englishPuzzle.useLearnedWords
+      ? paintings[this.level + 1][this.page]
+      : paintings[this.level][this.page - 1];
     const fragment = document.createDocumentFragment();
     const container = createElement('div', fragment, ['container']);
     const pictureBlock = createElement('div', container, ['picture-container']);
-    const picture = createElement('a', pictureBlock,
-        ['picture-container__picture'], undefined, 'href',
-        `https://raw.githubusercontent.com/yulbka/rslang_data_paintings/master/${pictureData.imageSrc}`);
+    const picture = createElement(
+      'a',
+      pictureBlock,
+      ['picture-container__picture'],
+      undefined,
+      'href',
+      `https://raw.githubusercontent.com/yulbka/rslang_data_paintings/master/${pictureData.imageSrc}`
+    );
     picture.target = '_blank';
-    picture.style.backgroundImage =
-    `url(https://raw.githubusercontent.com/yulbka/rslang_data_paintings/master/${pictureData.cutSrc})`;
-    createElement('p', pictureBlock, ['picture__title', 'text-dark'],
-        `${pictureData.author} - ${pictureData.name} (${pictureData.year})`);
+    picture.style.backgroundImage = `url(https://raw.githubusercontent.com/yulbka/rslang_data_paintings/master/${pictureData.cutSrc})`;
+    createElement(
+      'p',
+      pictureBlock,
+      ['picture__title', 'text-dark'],
+      `${pictureData.author} - ${pictureData.name} (${pictureData.year})`
+    );
     const notKnow = createElement('div', container, ['know']);
-    const notKnowTitle =
-    createElement('p', notKnow, ['know__title'], `Я не знаю: `);
+    const notKnowTitle = createElement('p', notKnow, ['know__title'], `Я не знаю: `);
     const know = createElement('div', container, ['know']);
     const knowTitle = createElement('p', know, ['know__title'], 'Я знаю: ');
     let countWrongs = 0;
@@ -44,12 +53,10 @@ export class ResultsPage {
     for (const value of Object.values(results.optional.englishPuzzle.short)) {
       let sentence;
       if (value.mistake === 'wrong') {
-        sentence =
-        createElement('p', notKnow, ['results__sentence', 'text-dark']);
+        sentence = createElement('p', notKnow, ['results__sentence', 'text-dark']);
         countWrongs += 1;
       } else {
-        sentence =
-        createElement('p', know, ['results__sentence', 'text-dark']);
+        sentence = createElement('p', know, ['results__sentence', 'text-dark']);
         countRights += 1;
       }
       const ico = createElement('span', sentence, ['results__ico']);
@@ -60,20 +67,17 @@ export class ResultsPage {
       sentence.addEventListener('click', () => {
         audio.play();
       });
-    };
+    }
     createElement('span', notKnowTitle, ['results__count', 'text-danger'], ` ${countWrongs}`);
     createElement('span', knowTitle, ['results__count', 'text-success'], ` ${countRights}`);
     const buttons = createElement('div', fragment, ['results__buttons']);
-    createElement('button', buttons, ['btn', 'btn-primary', 'puzzle-btn', 'results__button_continue'],
-        'Продолжить');
-    createElement('button', buttons, ['btn', 'btn-primary', 'puzzle-btn', 'results__button_statistic'],
-        'Статистика');
+    createElement('button', buttons, ['btn', 'btn-primary', 'puzzle-btn', 'results__button_continue'], 'Продолжить');
+    createElement('button', buttons, ['btn', 'btn-primary', 'puzzle-btn', 'results__button_statistic'], 'Статистика');
     MAIN.append(fragment);
   }
 
   continue() {
-    const continueBtn =
-    document.querySelector('.results__button_continue');
+    const continueBtn = document.querySelector('.results__button_continue');
     continueBtn.addEventListener('click', async () => {
       Game.resetShortStatistics();
       MAIN.innerHTML = '';
@@ -84,8 +88,7 @@ export class ResultsPage {
   }
 
   statistic() {
-    const statisticBtn =
-    document.querySelector('.results__button_statistic');
+    const statisticBtn = document.querySelector('.results__button_statistic');
     statisticBtn.addEventListener('click', () => {
       MAIN.innerHTML = '';
       StatisticsPage.init();

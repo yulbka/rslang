@@ -3,9 +3,9 @@
 }
 
 .picture-container {
-  margin: 20px 0;
   display: flex;
-  flex-direction: column;  
+  flex-direction: column;
+  margin: 20px 0;
 }
 
 p.picture__title {
@@ -14,19 +14,19 @@ p.picture__title {
 }
 
 .picture-container__picture {
-  margin: 10px 0;
-  display: block;
   align-self: center;
-  width: 150px;
-  height: 84px;
   background-size: cover;
+  display: block;
+  height: 84px;
+  margin: 10px 0;
+  width: 150px;
 }
 
 .know {
   padding-left: 40px;
 }
 
-.know__title {  
+.know__title {
   font-weight: 600;
 }
 
@@ -35,26 +35,27 @@ p.picture__title {
 }
 
 .results__sentence {
-  margin: 0 0 20px 40px;
-  position: relative;  
-  height: 80px;
-  margin: 10px;
   cursor: pointer;
+  height: 80px;
+  margin: 0 0 20px 40px;
+  margin: 10px;
+  position: relative;
 }
 
-.sentence__example, .sentence__translate {
-  margin: 0;
+.sentence__example,
+.sentence__translate {
   height: 40px;
+  margin: 0;
 }
 
 .results__ico {
+  background-image: url('/assets/images/puzzle/audio.png');
+  display: inline-block;
+  height: 30px;
+  left: -40px;
   position: absolute;
   top: -6px;
-  left: -40px;
-  display: inline-block;
   width: 30px;
-  height: 30px;
-  background-image: url('/assets/images/puzzle/audio.png');
 }
 
 .results__buttons {

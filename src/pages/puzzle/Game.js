@@ -10,7 +10,7 @@ import { ResultsPage } from './ResultsPage';
 import { WordService } from '../../scripts/service/Word.Service';
 import { Statistics } from '../../scripts/Statistics';
 
-export class Game {  
+export class Game {
   constructor() {
     this._sentence = [];
     this._firstWord;
@@ -135,7 +135,7 @@ export class Game {
           const level = +levelDropList.value;
           this.loadPage(page + 1, level);
         }
-        this.resetShortStatistics();     
+        this.resetShortStatistics();
       } else {
         this.finishRow();
         const translate = document.querySelector('.prompt__text');
@@ -240,9 +240,8 @@ export class Game {
       if (translatePrompt.classList.contains('prompt-btn_active')) {
         const checkbox = document.querySelector('#customSwitch');
         const level = checkbox.checked ? this.word.group: +document.querySelector('.level__droplist').value;
-        const page = checkbox.checked ? this.word.page: +document.querySelector('.page__droplist').value; 
+        const page = checkbox.checked ? this.word.page: +document.querySelector('.page__droplist').value;
         const round = findCurrentRow();
-        console.log(level, page, round)
         Sentence.translateSentence(level, page, round);
       }
     });
@@ -327,10 +326,9 @@ export class Game {
             ...updatedFields,
           },
         },
-      } 
+      }
     });
     store.user.englishPuzzle = newSettings.englishPuzzle;
-    console.log(newSettings);
   }
 
   static sentenceCollected() {
@@ -398,7 +396,7 @@ export class Game {
           page += 1;
           await this.updateSettings({ page });
         }
-      }      
+      }
       const answerBtn = document.querySelector('.puzzle-btn_help');
       answerBtn.classList.add('btn_hidden');
       const resultsBtn = document.querySelector('.puzzle-btn_results');
@@ -478,7 +476,7 @@ export class Game {
       }
     });
   }
-  
+
   static async disableDropLists() {
     const data = await WordService.getWordsForGames(1, null, '"wordsPerExampleSentence":{"$lte": 10}');
     if (typeof data === 'string') {

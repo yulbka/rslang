@@ -15,8 +15,7 @@ export class StatisticsPage {
     const container = createElement('div', fragment, ['statistic__container', 'container']);
     const statistics = await Statistics.get();
     if (!statistics) {
-      createElement('p', container, ['info'],
-          'Statistics are temporarily unavailable');
+      createElement('p', container, ['info'], 'Statistics are temporarily unavailable');
     } else {
       for (const [round, value] of Object.entries(statistics.optional.englishPuzzle.long)) {
         const p = createElement('p', container, ['statistic__text', 'text-center']);
@@ -26,19 +25,16 @@ export class StatisticsPage {
       }
     }
     const buttons = createElement('div', fragment, ['statistic__buttons', 'justify-content-center', 'flex-row']);
-    createElement('button', buttons, ['btn', 'btn-primary', 'puzzle-btn', 'button_continue'],
-        'Продолжить');
+    createElement('button', buttons, ['btn', 'btn-primary', 'puzzle-btn', 'button_continue'], 'Продолжить');
     MAIN.append(fragment);
   }
 
   static continue() {
-    const continueBtn =
-    document.querySelector('.button_continue');
+    const continueBtn = document.querySelector('.button_continue');
     continueBtn.addEventListener('click', () => {
       MAIN.innerHTML = '';
       GamePage.render();
       Game.init();
     });
   }
-
 }

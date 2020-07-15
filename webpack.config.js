@@ -92,9 +92,7 @@ module.exports = {
     }),
     new MiniCssExtractPlugin(),
     new CopyPlugin({
-      patterns: [
-        { from: './src/assets/', to: './assets/'},
-      ],
+      patterns: [{ from: './src/assets/', to: './assets/' }],
     }),
   ],
   output: {
