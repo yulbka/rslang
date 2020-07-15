@@ -1,5 +1,5 @@
 import { createElement } from './helpers/createElement';
-import { HEADER } from './helpers/variables';
+import { HEADER, routeKeys, routesMap } from './helpers/variables';
 import { router } from '../routes/index';
 import { store } from '../store/index';
 
@@ -18,8 +18,10 @@ export class Header {
     const logoutBtn = document.querySelector('.logout');
     logoutBtn.addEventListener('click', () => {
       store.user.auth.token = null;
+      localStorage.removeItem('token');
       store.user.auth.userId = null;
-      router.navigate('login');
+      localStorage.removeItem('userId');
+      router.navigate(routesMap.get(routeKeys.login).url);
     });
   }
 }
