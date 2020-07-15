@@ -86,9 +86,9 @@ $border-radius: 5px;
   margin: 0;
   overflow: hidden;
   padding: 0;
-  .items{
-    justify-content: space-around;
+  .items {
     grid-template-columns: repeat(auto-fill, 200px);
+    justify-content: space-around;
   }
 }
 
@@ -326,9 +326,9 @@ $border-radius: 5px;
     .wrong__count {
       background: $color-wrong;
     }
-    .item{
+    .item {
       padding: 15px 15px 15px 40px;
-      &>p{
+      & > p {
         margin-bottom: 0;
       }
     }

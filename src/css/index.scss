@@ -29,16 +29,15 @@
 
 /********* CUSTOM RESET: START **********/
 
-
 *::-webkit-scrollbar {
-  width: 6px;
   background-color: $colorPrompt;
+  width: 6px;
 }
 
 *::-webkit-scrollbar-thumb {
   background: $colorGray;
 }
-html{
+html {
   overflow: auto;
 }
 

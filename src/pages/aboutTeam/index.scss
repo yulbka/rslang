@@ -27,13 +27,16 @@
   }
 
   .person-name {
+    font-size: 2rem;
+    font-weight: 700;
     margin-top: 20px;
     text-align: center;
-    font-weight: 700;
-    font-size: 2rem;
   }
 
   .block-with-person {
+    @media (max-width: 767px) {
+      text-align: center;
+    }
     img {
       border-radius: 50%;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -42,10 +45,6 @@
 
     .person-description {
       font-size: 1.2em;
-    }
-
-    @media (max-width: 767px) {
-      text-align: center;
     }
   }
 }
