@@ -1,5 +1,6 @@
 import tippy from 'tippy.js';
-import { PRELOADER } from '../helpers/variables';
+import $ from 'jquery';
+import { PRELOADER, MAIN, routeKeys, routesMap } from '../helpers/variables';
 import { createElement } from '../helpers/createElement';
 import { initializeSwiper } from './swiper';
 import { WordService } from '../service/Word.Service';
@@ -7,11 +8,54 @@ import { Card } from './Card';
 import { setWordDayRepeat } from '../helpers/setWordDayRepeat';
 import { store } from '../../store';
 import { getRandomNumber } from '../helpers/getRandomNumber';
+import { Statistics } from '../Statistics';
+import { API_USER } from '../../api/user';
+import { router } from '../../routes';
 
 export class LearnWords {
-  static async render() {
+  static async init() {
+    const userSettings = await API_USER.getUserSettings({ userId: localStorage.getItem('userId') });
+    store.user.learning = {
+      wordsPerDay: userSettings.wordsPerDay,
+      ...userSettings.learning,
+    };
+    const statistics = await Statistics.get();
+    store.statistics = {
+      learnedWords: statistics.learnedWords,
+      mainGame: {
+        ...statistics.optional.mainGame,
+      },
+      ...statistics.optional,
+    }
+    this.createPopUp();
+    const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
+    if (!store.statistics.mainGame.short || store.statistics.mainGame.short.day !== today) {
+      store.statistics.mainGame.short = {
+        day: today,
+        cards: 0,
+        newWords: 0,
+        answers: ''
+      };
+      store.statistics.mainGame.long = {
+        [today]: {
+          cards: 0,
+          newWords: 0,
+          mistakes: 0
+        },
+        ...store.statistics.mainGame.long,
+      }
+    }
     PRELOADER.classList.remove('preload-wrapper-hidden');
-    const MAIN = document.querySelector('#main');
+    if (store.statistics.mainGame.long[today] &&
+        +store.statistics.mainGame.long[today].cards >= +store.user.learning.cardsPerDay) {
+      $('#learnModal').modal('show');
+    } else {
+      await this.render();
+    }
+    PRELOADER.classList.add('preload-wrapper-hidden');
+  }
+
+  static async render() {
     const fragment = document.createDocumentFragment();
     const wrapper = createElement('div', fragment, ['learn-wrapper']);
     const main = createElement('div', wrapper, ['learn-main']);
@@ -28,13 +72,16 @@ export class LearnWords {
     createElement('div', progressWrapper, ['progress-number', 'progress-max', 'text-primary'], '100');
     MAIN.append(fragment);
     await this.addCards();
+    const mySwiper = initializeSwiper('.swiper-container');
+    if (mySwiper.slides.length < 1) {
+      $('#learnModal').modal('show');
+    }
     tippy('[data-tippy-content]');
     this.inputHandler();
     this.showAnswerHandler();
     this.deleteButtonHandler();
     this.hardButtonHandler();
     this.ratingHandler();
-    PRELOADER.classList.add('preload-wrapper-hidden');
     const input = document.querySelector('.card-input');
     input.focus();
   }
@@ -42,22 +89,35 @@ export class LearnWords {
   static async addCards() {
     const mySwiper = initializeSwiper('.swiper-container');
     const { wordsPerDay, cardsPerDay, learnNewWords, learnOldWords } = store.user.learning;
-    const numToRepeat = cardsPerDay - wordsPerDay;
+    const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
+    let newWords;
+    let numToRepeat;
     if (learnNewWords && learnOldWords) {
-      await this.addNewWordsToSlider(mySwiper, wordsPerDay);
-      await this.addWordsToRepeatToSlider(mySwiper, numToRepeat, wordsPerDay);
+      newWords = wordsPerDay - store.statistics.mainGame.long[today].newWords;
+      if (newWords < 0) newWords = 0;
+      numToRepeat = cardsPerDay - newWords - store.statistics.mainGame.long[today].cards;
+      if (numToRepeat < 0) numToRepeat = 0;
+      await this.addNewWordsToSlider(mySwiper, newWords);
+      await this.addWordsToRepeatToSlider(mySwiper, numToRepeat, newWords);
     } else if (learnNewWords) {
-      await this.addNewWordsToSlider(mySwiper, wordsPerDay);
+      newWords = wordsPerDay - store.statistics.mainGame.long[today].cards;
+      if (newWords < 0) newWords = 0;
+      await this.addNewWordsToSlider(mySwiper, newWords);
     } else {
+      numToRepeat = cardsPerDay - store.statistics.mainGame.long[today].cards;
+      if (numToRepeat < 0) numToRepeat = 0;
       await this.addWordsToRepeatToSlider(mySwiper, numToRepeat, numToRepeat);
     }
+    const progressValue = document.querySelector('.progress-value');
+    progressValue.textContent = store.statistics.mainGame.short.cards;
     const progressMax = document.querySelector('.progress-max');
-    progressMax.textContent = mySwiper.slides.length;
+    progressMax.textContent = mySwiper.slides.length + store.statistics.mainGame.short.cards;
     const progressBar = document.querySelector('.progress-bar');
-    progressBar.setAttribute('aria-valuemax', `${mySwiper.slides.length}`);
+    progressBar.setAttribute('aria-valuemax', `${mySwiper.slides.length + store.statistics.mainGame.short.cards}`);
   }
 
   static async addNewWordsToSlider(slider, wordsNumber) {
+    if (!wordsNumber) return;
     const words = await WordService.getNewWords(wordsNumber);
     words.forEach((word) => {
       const card = new Card(word, store.user.learning).render();
@@ -66,6 +126,7 @@ export class LearnWords {
   }
 
   static async addWordsToRepeatToSlider(slider, wordsNumber, slidesNumber) {
+    if (!wordsNumber) return;
     const userWords = await WordService.getAllUserWords();
     const filteredWords = userWords
       .filter((word) => word.optional.category !== 'deleted')
@@ -115,9 +176,17 @@ export class LearnWords {
       const activeSlide = document.querySelector('.swiper-slide-active');
       const input = activeSlide.querySelector('.card-input');
       if (input.hasAttribute('readonly')) return;
+      input.dataset.mistake = 'mistake';
+      if (store.user.learning.autoTranslate) {
+        this.showTranslate();
+      }
       this.showAnswer();
       await this.playAudio();
-      this.goToNextCard();
+      const ratingBtns = activeSlide.querySelectorAll('.btn-rating');
+      ratingBtns.forEach((btn) => btn.classList.remove('btn-hidden'));
+      if (!store.user.learning.wordRating) {
+        this.goToNextCard();
+      }
     });
   }
 
@@ -129,7 +198,7 @@ export class LearnWords {
       this.showTranslate();
     }
     if (input.value.toLowerCase() === input.dataset.word.toLowerCase()) {
-      this.showAnswer();
+      await this.showAnswer();
       const wordContainer = activeSlide.querySelector('.word-container');
       wordContainer.classList.add('text-success');
       await this.playAudio();
@@ -178,7 +247,6 @@ export class LearnWords {
   }
 
   static async showAnswer() {
-    const mySwiper = document.querySelector('.swiper-container').swiper;
     const activeSlide = document.querySelector('.swiper-slide-active');
     const input = activeSlide.querySelector('.card-input');
     input.value = '';
@@ -188,47 +256,33 @@ export class LearnWords {
     let progressCount;
     if (input.dataset.repeat === 'new') {
       if (input.dataset.mistake) {
-        WordService.createUserWord(
-          input.dataset.wordId,
-          input.dataset.word,
-          'weak',
-          'learned',
-          setWordDayRepeat(),
-          setWordDayRepeat('weak', true),
-          '1',
-          '0'
-        );
+        WordService.writeMistake(input.dataset.wordId);
       } else {
         WordService.createUserWord(
           input.dataset.wordId,
           input.dataset.word,
           'normal',
           'learned',
-          setWordDayRepeat(),
+          new Date().toJSON(),
           setWordDayRepeat('normal'),
           '0',
           '1'
         );
+      }
+      if (!store.user.learning.wordRating) {
+        this.showProgress();
       }
     }
     if (input.dataset.repeat === 'repeated') {
       const word = await WordService.getAggregatedWord(input.dataset.wordId);
       const { optional } = word.userWord;
       if (input.dataset.mistake) {
-        const mistakeCount = +optional.mistakeCount + 1;
-        progressCount = +optional.progressCount - 1;
-        if (progressCount < 0) progressCount = 0;
-        WordService.updateUserWord(input.dataset.wordId, 'weak', {
-          lastDayRepeat: setWordDayRepeat(),
-          nextDayRepeat: setWordDayRepeat('weak', true),
-          mistakeCount,
-          progressCount,
-        });
+        WordService.writeMistake(input.dataset.wordId);
       } else {
         progressCount = +optional.progressCount + 1;
         const mistakeCount = +optional.mistakeCount;
         WordService.updateUserWord(input.dataset.wordId, 'normal', {
-          lastDayRepeat: setWordDayRepeat(),
+          lastDayRepeat: new Date().toJSON(),
           nextDayRepeat: setWordDayRepeat('normal', false, progressCount),
           mistakeCount,
           progressCount,
@@ -238,16 +292,23 @@ export class LearnWords {
         }
       }
     }
+    await this.sendStatistics(input);
     if (input.dataset.mistake && !store.user.learning.wordRating) {
       const wordToRepeat = await WordService.getAggregatedWord(input.dataset.wordId);
-      const slideIndex = getRandomNumber(mySwiper.slides.length, mySwiper.activeIndex);
       const card = new Card(wordToRepeat, store.user.learning).render();
-      mySwiper.addSlide(slideIndex, card);
+      this.addSlide(card);
     }
   }
 
   static async goToNextCard() {
     const mySwiper = document.querySelector('.swiper-container').swiper;
+    // if (+store.statistics.mainGame.short.cards === +store.user.learning.cardsPerDay) {
+    //   Statistics.renderShortPage();
+    // }
+    if (+store.statistics.mainGame.short.cards === +store.user.learning.cardsPerDay ||
+      mySwiper.activeIndex === mySwiper.slides.length - 1) {
+      Statistics.renderShortPage();
+    }
     mySwiper.allowSlideNext = true;
     mySwiper.slideNext();
     mySwiper.allowSlideNext = false;
@@ -297,7 +358,7 @@ export class LearnWords {
       const target = event.target.closest('.btn-delete');
       if (!target) return;
       if (input.dataset.repeat === 'new') {
-        WordService.createUserWord(input.dataset.wordId, input.dataset.word, 'normal', 'deleted', '');
+        WordService.createUserWord(input.dataset.wordId, input.dataset.word, 'normal', 'deleted', new Date().toJSON(), new Date().toJSON());
       } else {
         WordService.updateUserWord(input.dataset.wordId, 'normal', { category: 'deleted' });
       }
@@ -336,7 +397,6 @@ export class LearnWords {
     if (!store.user.learning.wordRating) return;
     const learnPage = document.querySelector('.learn-wrapper');
     learnPage.addEventListener('click', async (event) => {
-      const mySwiper = document.querySelector('.swiper-container').swiper;
       const activeSlide = document.querySelector('.swiper-slide-active');
       const input = activeSlide.querySelector('.card-input');
       const target = event.target.closest('.btn-rating');
@@ -344,15 +404,13 @@ export class LearnWords {
       const isMistake = input.dataset.mistake === 'mistake';
       const word = await WordService.getAggregatedWord(input.dataset.wordId);
       WordService.updateUserWord(input.dataset.wordId, target.dataset.rating, {
-        nextDayRepeat: setWordDayRepeat(target.dataset.rating, isMistake, word.userWord.optional.progressCount),
+        nextDayRepeat: setWordDayRepeat(target.dataset.rating, isMistake, word.userWord.optional.progressCount - 1),
       });
       if (target.dataset.rating === 'weak' || isMistake) {
-        const slideIndex = getRandomNumber(mySwiper.slides.length, mySwiper.activeIndex);
         const card = new Card(word, store.user.learning).render();
-        mySwiper.addSlide(slideIndex, card);
-      } else {
-        this.showProgress();
+        this.addSlide(card);
       }
+      this.showProgress();
       this.goToNextCard();
     });
   }
@@ -365,4 +423,91 @@ export class LearnWords {
     progressBar.setAttribute('aria-valuenow', `${progressNum}`);
     progressBar.style.width = `${Math.round((progressNum / +progressBar.getAttribute('aria-valuemax')) * 100)}%`;
   }
+
+  static async sendStatistics(input) {
+    const today = new Date().toLocaleString(undefined, { year: 'numeric', month: 'numeric', day: 'numeric' });
+      let shortNewWords;
+      let longNewWords;
+      let learnedWords;
+      if (input.dataset.repeat === 'new') {
+        shortNewWords = store.statistics.mainGame.short.newWords + 1;
+        longNewWords = store.statistics.mainGame.long[today].newWords + 1;
+        learnedWords = store.statistics.learnedWords + 1;
+      } else {
+        shortNewWords = store.statistics.mainGame.short.newWords;
+        longNewWords = store.statistics.mainGame.long[today].newWords
+        learnedWords = store.statistics.learnedWords
+      }
+      let answer;
+      let mistakes;
+      if (input.dataset.mistake === 'mistake') {
+        answer = 'W';
+        mistakes = store.statistics.mainGame.long[today].mistakes + 1;
+      } else {
+        answer = 'T';
+        mistakes = store.statistics.mainGame.long[today].mistakes
+      }
+      const statistics = await Statistics.set({
+        "learnedWords": learnedWords,
+        "optional": {
+          ...store.statistics,
+          "mainGame": {
+            "short": {
+              "day": today,
+              "cards": store.statistics.mainGame.short.cards + 1,
+              "newWords": shortNewWords,
+              "answers": store.statistics.mainGame.short.answers + answer,
+            },
+            "long": {
+              ...store.statistics.mainGame.long,
+              [today]: {
+                "cards": store.statistics.mainGame.long[today].cards + 1,
+                "newWords": longNewWords,
+                "mistakes": mistakes,
+              }
+            },
+          },
+        }
+      });
+    store.statistics.mainGame = {
+       ...statistics.optional.mainGame
+    }
+    store.statistics.learnedWords = learnedWords;
+  }
+
+  static addSlide(card) {
+    const mySwiper = document.querySelector('.swiper-container').swiper;
+    const slideIndex = getRandomNumber(mySwiper.slides.length, mySwiper.activeIndex);
+    mySwiper.addSlide(slideIndex, card);
+    const progressMax = document.querySelector('.progress-max');
+    progressMax.textContent = +progressMax.textContent + 1;
+    const progressBar = document.querySelector('.progress-bar');
+    progressBar.setAttribute('aria-valuemax', progressMax.textContent);
+  }
+
+  static createPopUp() {
+    MAIN.insertAdjacentHTML('beforeend',
+    `<div class="modal" id="learnModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Ура! На сегодня всё.</h5>     
+            </div>
+            <div class="modal-body">
+              <p>Есть ещё новые карточки, но дневной лимит исчерпан. Вы можете увеличить лимит в настройках, но, пожалуйста, имейте в виду, что чем больше новых карточек вы просмотрите, тем больше вам надо будет повторять в ближайшее время.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary btn-popup">Настройки</button>
+            </div>
+          </div>
+        </div>
+      </div>`
+    );
+    const link = document.querySelector('.btn-popup');
+    link.addEventListener('click', () => {
+      $('#learnModal').modal('hide');
+      router.navigate(routesMap.get(routeKeys.home).url);
+    });
+  }
+
 }

@@ -1,15 +1,23 @@
 import { SIDEBAR, MAIN, HEADER, routesMap, routeKeys } from 'scripts/helpers/variables';
 import { pageHomeCreate } from 'pages/main';
 import { store } from 'store';
+import { audioCallGameCreate } from 'pages/games/audiocall';
+import { aboutTeamCreate } from 'pages/aboutTeam';
+import { create_dictionary } from './dictionary';
 import { createSidebar } from './burger';
-import { create_hangman2 } from './hangman2'
 import { Header } from './Header';
 import { Authorization } from './Authorization';
 import { LearnWords } from './learn_words/learnWords';
 import { router } from '../routes';
+import { PuzzleStartPage } from '../pages/puzzle/StartPage';
+import { Statistics } from './Statistics';
+import { createSavannahGame } from '../games/savannah/js/mainApp';
+import { renderSavannah } from '../games/savannah/js/render';
+import { createSpeakItGame } from '../games/speakit/js/mainApp';
+import { renderSpeakIt } from '../games/speakit/js/render';
 
 export class App {
-  static reRender(page) {
+  static async reRender(page) {
     const isAuthPage = [routesMap.get(routeKeys.login).url, routesMap.get(routeKeys.registration).url].includes(page);
     const isAuthorized = !!store.user.auth.token;
     if (isAuthPage) {
@@ -21,6 +29,7 @@ export class App {
       this.checkHeader();
     }
     MAIN.innerHTML = '';
+    document.body.classList.remove('content-page');
     this.setContent(page);
   }
 
@@ -48,37 +57,39 @@ export class App {
         Authorization.render(url);
         break;
       case routesMap.get(routeKeys.learn).url:
-        LearnWords.render();
+        LearnWords.init();
         break;
       case routesMap.get(routeKeys.progress).url:
-        MAIN.innerHTML = '<div>progress</div>'; // replace with function that render progress page
+        Statistics.renderLongPage();
         break;
       case routesMap.get(routeKeys.vocabulary).url:
-        MAIN.innerHTML = '<div>vocabulary</div>'; // replace with function that render dictionary page
+        create_dictionary();
         break;
       case routesMap.get(routeKeys.speakIt).url:
-        MAIN.innerHTML = '<div>speakIt</div>'; // replace with function that render speakIt mini-game page
+        renderSpeakIt();
+        createSpeakItGame();
         break;
       case routesMap.get(routeKeys.englishPuzzle).url:
-        MAIN.innerHTML = '<div>puzzle</div>'; // replace with function that render puzzle mini-game page
+        PuzzleStartPage.render();
         break;
       case routesMap.get(routeKeys.savannah).url:
-        MAIN.innerHTML = '<div>savannah</div>'; // replace with function that render savannah mini-game page
+        renderSavannah();
+        createSavannahGame();
         break;
       case routesMap.get(routeKeys.audio).url:
-        MAIN.innerHTML = '<div>audioCall</div>'; // replace with function that render audioCall mini-game page
+        audioCallGameCreate();
         break;
       case routesMap.get(routeKeys.sprint).url:
         MAIN.innerHTML = '<div>sprint</div>'; // replace with function that render sprint mini-game page
         break;
       case routesMap.get(routeKeys.ourGame).url:
-        create_hangman2(); // replace with function that render ourGame mini-game page
+        MAIN.innerHTML = '<div>ourGame</div>'; // replace with function that render ourGame mini-game page
         break;
       case routesMap.get(routeKeys.promo).url:
-        MAIN.innerHTML = `<div>Promo</div>` // replace with function that render promo page
+        MAIN.innerHTML = '<div>promo</div>'; // replace with function that render promo page
         break;
       case routesMap.get(routeKeys.team).url:
-        MAIN.innerHTML = '<div>aboutUs</div>'; // replace with function that render aboutUs page
+        aboutTeamCreate();
         break;
       default:
         break;

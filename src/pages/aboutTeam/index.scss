@@ -1,0 +1,51 @@
+.about-team {
+  color: $colorLilac;
+  font-family: 'Arimo', sans-serif;
+
+  .title {
+    margin: 30px auto;
+    text-align: center;
+  }
+
+  .about-team-section {
+    padding: 40px 20px;
+  }
+
+  .about-team-block {
+    display: grid;
+    grid-column-gap: 30px;
+    grid-row-gap: 28px;
+    grid-template-columns: repeat(auto-fill, 280px);
+    justify-content: space-between;
+    @media (max-width: 767px) {
+      justify-content: center;
+    }
+
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(auto-fill, minmax(300px, 30%));
+    }
+  }
+
+  .person-name {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 2rem;
+  }
+
+  .block-with-person {
+    img {
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      object-fit: cover;
+    }
+
+    .person-description {
+      font-size: 1.2em;
+    }
+
+    @media (max-width: 767px) {
+      text-align: center;
+    }
+  }
+}
