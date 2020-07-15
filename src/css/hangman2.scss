@@ -322,7 +322,6 @@ body {
 }
 
 #tastatur {
-    background-color: rgba(238, 238, 238, 0.9);
     bottom: 0;
     left: 0;
     margin: auto;
@@ -490,5 +489,27 @@ body {
     80% {
         transform: rotate(5deg) scale(1.05);
         -webkit-transform: rotate(5deg) scale(1.05);
+    }
+}
+
+@media all and (max-width: 445px) {
+    .rules_ul{
+        font-size: 1.3rem;
+    }
+
+    .rules {
+        margin-left: 14%;
+    }
+    
+    .my_button{
+        margin-right: 3px;
+    }
+
+    .game_levels {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        top: 650px;
     }
 }

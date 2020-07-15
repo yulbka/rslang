@@ -2,11 +2,10 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import '../css/hangman2.scss';
 import {WordService} from './service/Word.Service';
-// import { Statistics } from './Statistics';
 
 export function create_hangman2() {
 
-    const main = document.getElementById('main');
+    const main = gId('main');
     const new_arr = [];
     let level = 0;
     let new_words;
@@ -34,8 +33,6 @@ export function create_hangman2() {
                 <div class="title" id="rT"></div>
                 <div class="body" id="rM"></div>
                 <div class="button anim" id='startGameAgain'>Попоробовать снова?</div>
-                <div class="button anim" id='go_to_stat_page'>Статистика</div>
-                <div class='hidden' id='statistic_div'></div>
             </div>
             <div id="pGame">
                 <div id="letter"></div>
@@ -62,12 +59,12 @@ export function create_hangman2() {
                     <div class="body" id="hintText"></div>
                 </div>
                 <div class='game_levels' id='game_levels'>
-                    <button type="button" class="btn btn-primary my_button" id='first_level'>Уровень 1</button><br>
-                    <button type="button" class="btn btn-primary my_button" id='second_level'>Уровень 2</button><br>
-                    <button type="button" class="btn btn-success my_button" id='third_level'>Уровень 3</button><br>
-                    <button type="button" class="btn btn-info my_button" id='fourth_level'>Уровень 4</button><br>
-                    <button type="button" class="btn btn-warning my_button" id='fifth_level'>Уровень 5</button><br>
-                    <button type="button" class="btn btn-danger my_button" id='fixth_level'>Уровень 6</button>
+                    <div><button type="button" class="btn btn-primary my_button" id='first_level'>Уровень 1</button><br></div>
+                    <div><button type="button" class="btn btn-primary my_button" id='second_level'>Уровень 2</button><br></div>
+                    <div><button type="button" class="btn btn-success my_button" id='third_level'>Уровень 3</button><br></div>
+                    <div><button type="button" class="btn btn-info my_button" id='fourth_level'>Уровень 4</button><br></div>
+                    <div><button type="button" class="btn btn-warning my_button" id='fifth_level'>Уровень 5</button><br></div>
+                    <div><button type="button" class="btn btn-danger my_button" id='fixth_level'>Уровень 6</button></div>
                 </div>
             </div>
         `
@@ -82,7 +79,7 @@ export function create_hangman2() {
             )
     }
 
-    document.getElementById('game_levels').addEventListener('click', (e) => {
+    gId('game_levels').addEventListener('click', (e) => {
         const target = e.target.closest('button');
         if (target.id === 'first_level') {
             level = 0;
@@ -110,17 +107,11 @@ export function create_hangman2() {
         }
     })
 
-    // Game keyboard
     const tastatur = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     
-    // Game memory
     let select = 0
     let wordLeft = []
     let fail = 0;
-    // let wincount = 0;
-    // let losecount = 0;
-
-    // ingame_statictic()
     
     window.onload = function() {
         gId("moveKeybord").addEventListener('touchmove', function(e) {
@@ -140,7 +131,6 @@ export function create_hangman2() {
 
     createTastur()
     
-    // Start game
     function startGame() {
         gId("home").className = "h"
         gId("result").className = "h"
@@ -155,14 +145,12 @@ export function create_hangman2() {
         startGame();
     })
     
-    // New game
     function newGame(data) {
         clearTastatur()
         clearPlayer()
         createWord(data);
     }
     
-    // Clear keyboard
     function clearTastatur() {
         const e = document.getElementsByClassName("b")
         for(let a = 0; a < e.length; a++) {
@@ -170,7 +158,6 @@ export function create_hangman2() {
         }
     }
     
-    // Clear player
     function clearPlayer() {
         fail = 0
         wordLeft = []
@@ -189,15 +176,16 @@ export function create_hangman2() {
         gId("hint").style.display = "none"
     }
     
-    // Get new word
     async function createWord(data) {
         if(data === undefined){
             new_words = await WordService.getWordsByCategory('learned');
+            if (new_words.length < 10){
+                new_words = await WordService.getNewWords();
+            }
         }
         if(data !== undefined){
             new_words = data;
         }
-        // const new_words = await WordService.getWordsForGames();
         new_words.map(item => new_arr.push([item.word, item.textMeaning, item._id]))
         const d = gId("letter")
         d.innerHTML = ""
@@ -217,70 +205,7 @@ export function create_hangman2() {
             }
         }
     }
-
-    // function create_statistic_page() {
-    //     const statistic_page = `<div id="long_stat">
-    //     <p>Долгосрочная статистика</p>
-    //     </div>`
-
-    // }
-
-    // async function setLongStatistics() {
-    //     const statistics = await Statistics.get();
-    //     console.log(statistics);
-    //     // let mistakes = 0;
-    //     // for (const value of Object.values(statistics.optional.englishPuzzle.short)) {
-    //     //   if (value.mistake === 'wrong') {
-    //     //     mistakes += 1;
-    //     //   }
-    //     // }
-    //     // await Statistics.set({
-    //     //   learnedWords: statistics.learnedWords,
-    //     //   optional: {
-    //     //     ...statistics.optional,
-    //     //     hangman: {
-    //     //       long: {
-    //     //         ...statistics.optional.hangman.long,
-    //     //         [new Date().toLocaleString()]: {
-    //     //           "mistakes": 'нету',
-    //     //         }
-    //     //       },
-    //     //     }
-    //     //   }
-    //     // });
-    //   }
-
-    // function ingame_statictic() {
-    //     const block_for_statictick = `
-    //     <div class='ingame_statictic' id='block_for_statictick'>W : ${wincount} - L : ${losecount} </div>
-    //     `
-    //     main.innerHTML += block_for_statictick;
-    // }
-
-    // async function createWord() {
-    //     const new_words = await WordService.getWordsForGames();
-    //     const new_arr = [];
-    //     new_words.map(item => new_arr.push([item.word, item.textMeaning]))
-    //     const d = gId("letter")
-    //     d.innerHTML = ""
-    //     select = Math.floor(Math.random() * word.length)
-    //     for(let a = 0; a < word[select][0].length; a++) {
-    //         const x = word[select][0][a].toUpperCase()
-    //         const b = document.createElement("span")
-    //         b.className = `l${(x === " " ? " ls" : "")}`
-    //         b.innerHTML = "&nbsp"
-    //         b.id = `l${a}`;
-    //         d.appendChild(b)
-            
-    //         if(x !== " ") {
-    //             if(wordLeft.indexOf(x) === -1) {
-    //                 wordLeft.push(x)
-    //             }
-    //         }
-    //     }
-    // }
-    
-    // Create keyboard
+ 
     function createTastur() {
         const tas = gId("keybord")
         tas.innerHTML = ""
@@ -296,7 +221,6 @@ export function create_hangman2() {
         }
     }
     
-    // Game check, If show next error / game end
     function bTas(a) {
         if(a.getAttribute("data") === "") {
             const x = isExist(a.innerText)
@@ -312,7 +236,6 @@ export function create_hangman2() {
         }
     }
     
-    // If letter "X" exist
     function isExist(e) {
         e.toUpperCase()
         const x = wordLeft.indexOf(e)
@@ -324,7 +247,6 @@ export function create_hangman2() {
         return false
     }
     
-    // Show next fail drawing
     function showNextFail() {
         fail++
         switch(fail) {
@@ -383,7 +305,6 @@ export function create_hangman2() {
         }
     }
     
-    // Game result
     function gameEnd(e) {
         const d = gId("result")
         d.setAttribute("data", e)
@@ -400,23 +321,17 @@ export function create_hangman2() {
         d.className = ""
     }
     
-    // Show hint
     function hint() {
         const str = `${new_arr[select][1]}`
         const newstr = str.replace(`${new_arr[select][0]}`, 'Needed word');
         gId("hintText").innerText = newstr;
         gId("hint").style.display = "block"
     }
-    // function hint() {
-    //     gId("hintText").innerText = `${word[select][1]}`
-    //     gId("hint").style.display = "block"
-    // }
     
     gId('hintButton').addEventListener('click', () => {
         hint()
     })
     
-    // Exit hint
     function hintExit() {
         gId("hint").style.display = "none"
     }
@@ -424,7 +339,6 @@ export function create_hangman2() {
         hintExit()
     })
     
-    // Get HTML ID element by name
     function gId(a) {
         return document.getElementById(a)
     }
